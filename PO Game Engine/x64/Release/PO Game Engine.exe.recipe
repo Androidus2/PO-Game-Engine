@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\C++ Codes\Visual Studio\PO Game Engine\x64\Release\PO Game Engine.exe</FullPath>
+      <FullPath>D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\x64\Release\PO Game Engine.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

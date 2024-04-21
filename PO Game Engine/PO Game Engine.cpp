@@ -728,6 +728,24 @@ public:
     bool sceneHasObject(int id) const;
     void removeSelectedObject();
 
+    void modifySelectedName(string name);
+    void modifySelectedRotation(string rotation);
+    void modifySelectedScaleX(string scaleX);
+    void modifySelectedScaleY(string scaleY);
+    void modifySelectedPositionX(string positionX);
+    void modifySelectedPositionY(string positionY);
+    void modifySelectedVelocityX(string velocityX);
+    void modifySelectedVelocityY(string velocityY);
+
+    string getSelectedName() const;
+    string getSelectedRotation() const;
+    string getSelectedScaleX() const;
+    string getSelectedScaleY() const;
+    string getSelectedPositionX() const;
+    string getSelectedPositionY() const;
+    string getSelectedVelocityX() const;
+	string getSelectedVelocityY() const;
+
     void setLastPositions(const vector<Vector2f>& lastPositions);
     const vector<Vector2f>& getLastPositions() const;
     void modifyLastPosition(int index, const Vector2f& position);
@@ -843,6 +861,80 @@ void Scene::removeSelectedObject() {
     }
 }
 
+void Scene::modifySelectedName(string name) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setName(name);
+}
+void Scene::modifySelectedRotation(string rotation) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setRotation(stof(rotation));
+}
+void Scene::modifySelectedScaleX(string scaleX) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setScale(stof(scaleX), sceneObjects[selectedObjectIndex]->getScale().y);
+}
+void Scene::modifySelectedScaleY(string scaleY) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setScale(sceneObjects[selectedObjectIndex]->getScale().x, stof(scaleY));
+}
+void Scene::modifySelectedPositionX(string positionX) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setPosition(stof(positionX), sceneObjects[selectedObjectIndex]->getPosition().y);
+}
+void Scene::modifySelectedPositionY(string positionY) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setPosition(sceneObjects[selectedObjectIndex]->getPosition().x, stof(positionY));
+}
+void Scene::modifySelectedVelocityX(string velocityX) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setVelocity(stof(velocityX), sceneObjects[selectedObjectIndex]->getVelocity().y);
+}
+void Scene::modifySelectedVelocityY(string velocityY) {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setVelocity(sceneObjects[selectedObjectIndex]->getVelocity().x, stof(velocityY));
+}
+
+string Scene::getSelectedName() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return sceneObjects[selectedObjectIndex]->getName();
+	return "";
+}
+string Scene::getSelectedRotation() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return to_string(sceneObjects[selectedObjectIndex]->getRotation());
+	return "";
+}
+string Scene::getSelectedScaleX() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return to_string(sceneObjects[selectedObjectIndex]->getScale().x);
+	return "";
+}
+string Scene::getSelectedScaleY() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return to_string(sceneObjects[selectedObjectIndex]->getScale().y);
+	return "";
+}
+string Scene::getSelectedPositionX() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return to_string(sceneObjects[selectedObjectIndex]->getPosition().x);
+	return "";
+}
+string Scene::getSelectedPositionY() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return to_string(sceneObjects[selectedObjectIndex]->getPosition().y);
+	return "";
+}
+string Scene::getSelectedVelocityX() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return to_string(sceneObjects[selectedObjectIndex]->getVelocity().x);
+	return "";
+}
+string Scene::getSelectedVelocityY() const {
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		return to_string(sceneObjects[selectedObjectIndex]->getVelocity().y);
+	return "";
+}
+
 void Scene::setLastPositions(const vector<Vector2f>& lastPositions) {
     this->lastPositions = lastPositions;
 }
@@ -894,6 +986,17 @@ void Scene::setSelectedObjectIndex(int index) {
 }
 
 Scene::~Scene() {}
+
+class EditorWindow;
+
+class Game {
+public:
+    static Font* font;
+    static RenderWindow* window;
+    static Scene* currentScene;
+    static int collisionCounter;
+    static EditorWindow* hierarchy;
+};
 
 
 
@@ -998,6 +1101,7 @@ bool Collider::circleCollision(GameObject& collider1, GameObject& collider2)
 bool Collider::collision(GameObject& collider1, GameObject& collider2) {
     if (!collider1.colliderIsActive || !collider2.colliderIsActive)
         return false;
+    Game::collisionCounter++;
     bool ret = false;
     if (collider1.colliderIsCircle && collider2.colliderIsCircle)
         ret = circleCollision(collider1, collider2);
@@ -1037,17 +1141,6 @@ void Collider::handleAllCollisions(const vector<GameObject*>& objects, const vec
         }
     }
 }
-
-
-
-
-
-class Game {
-public:
-    static RenderWindow* window;
-    static Scene* currentScene;
-    static int collisionCounter;
-};
 
 
 class FollowMouseScript : public BehaviourScript {
@@ -1102,6 +1195,8 @@ int Game::collisionCounter = 0;
 GameTime* GameTime::instance = NULL;
 RenderWindow* Game::window = NULL;
 Scene* Game::currentScene = NULL;
+EditorWindow* Game::hierarchy = NULL;
+Font* Game::font = NULL;
 
 void makeObj(GameObject& ob, const Vector2f& position, float sideLen) {
     ob.setPointCount(4);
@@ -1128,6 +1223,8 @@ private:
     int cursorIndex;
     bool onlyNumbers;
     string str;
+    void (Scene::*onChange)(string str);
+    string(Scene::* updateValue)() const;
 
 public:
     InputField(const Font& font, const Vector2f& position, const Vector2f& size, const string& defaultText = "");
@@ -1140,10 +1237,14 @@ public:
     string getText() const;
     void setText(const string& text);
     void clear();
+    void setPosition(const Vector2f& position);
+    Vector2f getPosition() const;
     void setOnlyNumbers(bool onlyNumbers);
     bool getOnlyNumbers() const;
     void checkMouseClick();
     void changeBackground();
+    void setOnChange(void (Scene::*onChange)(string str));
+    void setUpdateValue(string(Scene::* updateValue)() const);
     string processText();
 };
 
@@ -1163,6 +1264,9 @@ InputField::InputField(const Font& font, const Vector2f& position, const Vector2
     isSelected = false;
     cursorIndex = 0;
     onlyNumbers = false;
+    str = defaultText;
+    onChange = NULL;
+    updateValue = NULL;
 }
 void InputField::draw(RenderWindow& window) {
     window.draw(field);
@@ -1180,6 +1284,10 @@ void InputField::update() {
             text.setString(str);
         }
     }
+    else {
+        if(updateValue) str = (Game::currentScene->*updateValue)();
+        text.setString(str);
+	}
 }
 void InputField::handleEvent(Event& event) {
     if (isSelected) {
@@ -1232,6 +1340,7 @@ void InputField::handleEvent(Event& event) {
                     str = str.substr(0, cursorIndex) + event.text.unicode + str.substr(cursorIndex++);
                 }
             }
+            if(onChange) (Game::currentScene->*onChange)(processText());
         }
         if (event.type == Event::KeyPressed) {
             if (event.key.code == Keyboard::Left) {
@@ -1265,7 +1374,8 @@ void InputField::handleEvent(Event& event) {
                     str = tmp;
                 }
                 cursorIndex = str.size();
-                processText();
+                str = processText();
+                if (onChange) (Game::currentScene->*onChange)(str);
             }
             if (event.key.control && event.key.code == Keyboard::C) {
                 Clipboard::setString(str);
@@ -1312,6 +1422,13 @@ void InputField::clear() {
     }
     text.setString(str);
 }
+void InputField::setPosition(const Vector2f& position) {
+	field.setPosition(position);
+	text.setPosition(position.x, position.y);
+}
+Vector2f InputField::getPosition() const {
+	return field.getPosition();
+}
 void InputField::setOnlyNumbers(bool onlyNumbers) {
     this->onlyNumbers = onlyNumbers;
 }
@@ -1335,6 +1452,12 @@ void InputField::changeBackground() {
     else {
         field.setFillColor(Color(150, 150, 150));
     }
+}
+void InputField::setOnChange(void (Scene::* onChange)(string str)) {
+	this->onChange = onChange;
+}
+void InputField::setUpdateValue(string(Scene::* updateValue)() const) {
+	this->updateValue = updateValue;
 }
 string InputField::processText() {
     string ret = str;
@@ -1390,6 +1513,8 @@ public:
     bool getActive() const;
     void setText(const string& text);
     string getText() const;
+    void setPosition(const Vector2f& position);
+    Vector2f getPosition() const;
     void setDefaultColor(const Color& color);
     Color getDefaultColor() const;
     void setPressedColor(const Color& color);
@@ -1507,6 +1632,13 @@ void Button::setText(const string& text) {
 string Button::getText() const {
     return text.getString();
 }
+void Button::setPosition(const Vector2f& position) {
+	button.setPosition(position);
+	text.setPosition(position.x + button.getSize().x / 2 - text.getLocalBounds().getSize().x / 2, position.y + button.getSize().y / 2 - text.getLocalBounds().getSize().y / 2);
+}
+Vector2f Button::getPosition() const {
+	return button.getPosition();
+}
 void Button::setDefaultColor(const Color& color) {
     defaultColor = color;
 }
@@ -1537,15 +1669,6 @@ void Button::setOnClick(void (*onClick)()) {
 }
 
 
-void createObj() {
-    GameObject* ob = new GameObject();
-    makeObj(*ob, Vector2f(100, 100), 100.f);
-    Game::currentScene->addObject(ob);
-}
-
-void deleteObj() {
-    Game::currentScene->removeSelectedObject();
-}
 
 Text* updateHierarchy(Text* objectTexts, const RectangleShape& hierarchy, const Font& font, const Text& hierarchyTitle) {
     if (objectTexts)
@@ -1564,6 +1687,312 @@ Text* updateHierarchy(Text* objectTexts, const RectangleShape& hierarchy, const 
 }
 
 
+class EditorWindow {
+protected:
+    RectangleShape window;
+	Text title;
+	vector<Button> buttons;
+	vector<InputField> inputFields;
+	vector<Text> texts;
+	Vector2f position;
+	Vector2f size;
+public:
+    EditorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
+
+	void draw(RenderWindow& window);
+	void update();
+	void handleEvent(Event& event);
+
+    virtual void mouseOver() = 0;
+
+	void addButton(const Button& button);
+	void addInputField(const InputField& inputField);
+	virtual void addText(const Text& text);
+
+    void changeText(int index, const string& text);
+    virtual void deleteText(int index);
+    int getTextCount() const;
+
+	void setTitle(const string& titleText);
+	string getTitle() const;
+
+	void setPosition(const Vector2f& position);
+	Vector2f getPosition() const;
+
+	void setSize(const Vector2f& size);
+	Vector2f getSize() const;
+
+    virtual ~EditorWindow();
+};
+EditorWindow::EditorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) {
+	window.setPosition(position);
+	window.setSize(size);
+	window.setFillColor(Color(50, 50, 50));
+	window.setOutlineColor(Color::Black);
+	window.setOutlineThickness(1);
+
+	title.setFont(font);
+	title.setCharacterSize(20);
+	title.setFillColor(Color::Cyan);
+	title.setString(titleText);
+	title.setOrigin(title.getLocalBounds().getSize().x / 2.f, 0.f);
+	title.setPosition(position.x + size.x / 2.f, position.y);
+
+	this->position = position;
+	this->size = size;
+}
+void EditorWindow::draw(RenderWindow& window) {
+	window.draw(this->window);
+	window.draw(title);
+	for (int i = 0; i < buttons.size(); i++)
+		buttons[i].draw(window);
+	for (int i = 0; i < inputFields.size(); i++)
+		inputFields[i].draw(window);
+	for (int i = 0; i < texts.size(); i++)
+		window.draw(texts[i]);
+}
+void EditorWindow::update() {
+	for (int i = 0; i < buttons.size(); i++)
+		buttons[i].update();
+    for (int i = 0; i < inputFields.size(); i++) {
+        inputFields[i].update();
+        inputFields[i].changeBackground();
+    }
+
+}
+void EditorWindow::handleEvent(Event& event) {
+	for (int i = 0; i < buttons.size(); i++)
+		buttons[i].handleEvent(event);
+    for (int i = 0; i < inputFields.size(); i++)
+        inputFields[i].handleEvent(event);
+}
+void EditorWindow::addButton(const Button& button) {
+	buttons.push_back(button);
+}
+void EditorWindow::addInputField(const InputField& inputField) {
+	inputFields.push_back(inputField);
+}
+void EditorWindow::addText(const Text& text) {
+	texts.push_back(text);
+}
+void EditorWindow::changeText(int index, const string& text) {
+	if (index < texts.size() && index >= 0)
+		texts[index].setString(text);
+}
+void EditorWindow::deleteText(int index) {
+    if (index < texts.size() && index >= 0)
+        texts.erase(texts.begin() + index);
+}
+int EditorWindow::getTextCount() const {
+	return texts.size();
+}
+void EditorWindow::setTitle(const string& titleText) {
+	title.setString(titleText);
+	title.setOrigin(title.getLocalBounds().getSize().x / 2.f, 0.f);
+	title.setPosition(position.x + size.x / 2.f, position.y);
+}
+string EditorWindow::getTitle() const {
+	return title.getString();
+}
+void EditorWindow::setPosition(const Vector2f& position) {
+	window.setPosition(position);
+	title.setPosition(position.x + size.x / 2.f, position.y);
+	this->position = position;
+}
+Vector2f EditorWindow::getPosition() const {
+	return position;
+}
+void EditorWindow::setSize(const Vector2f& size) {
+	window.setSize(size);
+	title.setPosition(position.x + size.x / 2.f, position.y);
+	this->size = size;
+}
+Vector2f EditorWindow::getSize() const {
+	return size;
+}
+EditorWindow::~EditorWindow() {
+	buttons.clear();
+	inputFields.clear();
+	texts.clear();
+}
+
+void createObj();
+void deleteObj();
+
+class HierarchyWindow : public EditorWindow {
+private:
+    void repositionTexts();
+public:
+    HierarchyWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
+	void mouseOver();
+    void addText(const Text& text) override;
+    void deleteText(int index) override;
+};
+void HierarchyWindow::repositionTexts() {
+	float objectHeight = (window.getSize().y - title.getCharacterSize() * 2) / texts.size();
+    for (int i = 0; i < texts.size(); i++) {
+		texts[i].setPosition(window.getPosition().x + 10, window.getPosition().y + i * objectHeight + title.getCharacterSize() + 10);
+	}
+}
+HierarchyWindow::HierarchyWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText) {
+    setTitle("Hierarchy");
+    Button* createButton = new Button(font, Vector2f(position.x + 10, position.y + size.y - 40), Vector2f(size.x - 20, 30), "Create Object");
+    createButton->setOnClick(createObj);
+    addButton(*createButton);
+    delete createButton;
+
+    //Adding texts for the objects in the hierarchy
+    Text* tmp = new Text("Tmp", font, 15);
+    for (int i = 0; i < Game::currentScene->getObjects().size(); i++) {
+        tmp->setString(Game::currentScene->getObjectByIndex(i)->getName());
+        tmp->setPosition(position.x + 10, position.y + i * 30 + tmp->getCharacterSize() + 10);
+        addText(*tmp);
+    }
+    delete tmp;
+
+    Game::hierarchy = this;
+}
+void HierarchyWindow::mouseOver() {
+    Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::window).x, Mouse::getPosition(*Game::window).y);
+    if (window.getGlobalBounds().contains(mousePos)) {
+        if(Game::currentScene->getSelectedObjectIndex()!=-1)
+            texts[Game::currentScene->getSelectedObjectIndex()].setFillColor(Color::White);
+        Game::currentScene->setSelectedObjectIndex(-1);
+        for (int i = 0; i < Game::currentScene->getObjectsCount(); i++) {
+            if (texts[i].getGlobalBounds().contains(mousePos)) {
+                Game::currentScene->setSelectedObjectIndex(i);
+                break;
+            }
+        }
+        if (Game::currentScene->getSelectedObjectIndex() != -1)
+            texts[Game::currentScene->getSelectedObjectIndex()].setFillColor(Color::Cyan);
+    }
+}
+void HierarchyWindow::addText(const Text& text) {
+	texts.push_back(text);
+    repositionTexts();
+}
+void HierarchyWindow::deleteText(int index) {
+	if (index < texts.size() && index >= 0){
+		texts.erase(texts.begin() + index);
+        repositionTexts();
+	}
+}
+
+
+class InspectorWindow : public EditorWindow {
+public:
+    InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
+	void mouseOver();
+};
+InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText) {
+    Text* tmp = new Text("Position:", font, 15);
+    tmp->setFillColor(Color::White);
+
+    InputField* tmpField = new InputField(font, Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
+
+    tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 10);
+    addText(*tmp);
+
+    tmp->setString("X: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
+    addText(*tmp);
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedPositionX);
+    tmpField->setUpdateValue(&Scene::getSelectedPositionX);
+    addInputField(*tmpField);
+
+    tmp->setString("Y: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
+    addText(*tmp);
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedPositionY);
+    tmpField->setUpdateValue(&Scene::getSelectedPositionY);
+    addInputField(*tmpField);
+
+    tmp->setString("Rotation: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
+    addText(*tmp);
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedRotation);
+    tmpField->setUpdateValue(&Scene::getSelectedRotation);
+    addInputField(*tmpField);
+
+    tmp->setString("Scale: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    addText(*tmp);
+
+    tmp->setString("X: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
+    addText(*tmp);
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedScaleX);
+    tmpField->setUpdateValue(&Scene::getSelectedScaleX);
+    addInputField(*tmpField);
+
+    tmp->setString("Y: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
+    addText(*tmp);
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedScaleY);
+    tmpField->setUpdateValue(&Scene::getSelectedScaleY);
+    addInputField(*tmpField);
+
+    tmp->setString("Velocity: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    addText(*tmp);
+
+    tmp->setString("X: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
+    addText(*tmp);
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedVelocityX);
+    tmpField->setUpdateValue(&Scene::getSelectedVelocityX);
+    addInputField(*tmpField);
+
+    tmp->setString("Y: ");
+    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
+    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
+    addText(*tmp);
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedVelocityY);
+    tmpField->setUpdateValue(&Scene::getSelectedVelocityY);
+    addInputField(*tmpField);
+
+    delete tmp;
+    delete tmpField;
+}
+void InspectorWindow::mouseOver() {
+	Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::window).x, Mouse::getPosition(*Game::window).y);
+    if (window.getGlobalBounds().contains(mousePos)) {
+        for (int i = 0; i < inputFields.size(); i++) {
+			inputFields[i].checkMouseClick();
+		}
+	}
+}
+
+void createObj() {
+    GameObject* ob = new GameObject();
+    makeObj(*ob, Vector2f(100, 100), 100.f);
+    Game::currentScene->addObject(ob);
+    Text tmp(ob->getName(), *Game::font, 15);
+    tmp.setPosition(Game::hierarchy->getPosition().x + 10, Game::hierarchy->getPosition().y + Game::currentScene->getObjects().size() * 30 + tmp.getCharacterSize() + 10);
+    Game::hierarchy->addText(tmp);
+}
+
+void deleteObj() {
+    Game::hierarchy->deleteText(Game::currentScene->getSelectedObjectIndex());
+    Game::currentScene->removeSelectedObject();
+}
+
+
+
 
 int main()
 {
@@ -1572,6 +2001,7 @@ int main()
     Game::window = &window;
     Font font;
     font.loadFromFile("Resources/Roboto-Black.ttf");
+    Game::font = &font;
     //window.setFramerateLimit(60);
     Scene scene;
     Game::currentScene = &scene;
@@ -1583,131 +2013,46 @@ int main()
     ob.setName("Object 0");
     makeObj(ob, Vector2f(100, 100), 100.f);
 
-    GameObject ob2;
-    ob2.setName("Object 1");
-    makeObj(ob2, Vector2f(500, 500), 100.f);
-
-    GameObject ob3;
-    ob3.setName("Object 2");
-    makeObj(ob3, Vector2f(300, 300), 100.f);
-
-    ob3.setUseGravity(true);
-
     BehaviourScript* script = new TestScript(Color::Magenta, Color::Cyan);
     ob.addScript(script);
-
-    (static_cast<TestScript&>(*script)).setColors(Color::Green, Color::Yellow);
-
-    ob2.addScript(script);
-    ob2.startScripts();
-
     delete script;
+
     script = new FollowMouseScript(true);
     ob.addScript(script);
     delete script;
 
     ob.startScripts();
+    scene.addObject(&ob);
 
     GameTime* time = GameTime::getInstance();
-    ob2.setVelocity(100, 100);
-
-    scene.addObject(&ob);
-    //scene.addObject(&ob2);
-    //scene.addObject(&ob3);
-
-
-
-    RectangleShape hierarchy(Vector2f(window.getSize().x * 0.25f, window.getSize().y * 1.f));
-    hierarchy.setFillColor(Color(100, 100, 100));
-
-    Text hierarchyTitle("Hierarchy", font, 20);
-    hierarchyTitle.setFillColor(Color::Cyan);
-    hierarchyTitle.setOrigin(hierarchyTitle.getLocalBounds().getSize().x / 2.f, 0.f);
-    hierarchyTitle.setPosition(hierarchy.getPosition().x + hierarchy.getSize().x / 2.f, 0.f);
-
-    Text* objectTexts = updateHierarchy(NULL, hierarchy, font, hierarchyTitle);
-
-    RectangleShape inspector(Vector2f(window.getSize().x * 0.25f, window.getSize().y * 1.f));
-    inspector.setFillColor(Color(100, 100, 100));
-    inspector.setPosition(window.getSize().x - inspector.getSize().x, 0.f);
-
-    Text inspectorTitle("Inspector", font, 20);
-    inspectorTitle.setFillColor(Color::Cyan);
-    inspectorTitle.setOrigin(inspectorTitle.getLocalBounds().getSize().x / 2.f, 0.f);
-    inspectorTitle.setPosition(inspector.getPosition().x + inspector.getSize().x / 2.f, 0.f);
-
-    Text objectName("Name: ", font, 15);
-    objectName.setFillColor(Color::White);
-    objectName.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10);
-
-    Text objectPosition("Position: ", font, 15);
-    objectPosition.setFillColor(Color::White);
-    objectPosition.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10);
-
-    Text objectRotation("Rotation: ", font, 15);
-    objectRotation.setFillColor(Color::White);
-    objectRotation.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10 + objectPosition.getCharacterSize() + 10);
-
-    Text objectScale("Scale: ", font, 15);
-    objectScale.setFillColor(Color::White);
-    objectScale.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10 + objectPosition.getCharacterSize() + 10 + objectRotation.getCharacterSize() + 10);
-
-    Text objectVelocity("Velocity: ", font, 15);
-    objectVelocity.setFillColor(Color::White);
-    objectVelocity.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10 + objectPosition.getCharacterSize() + 10 + objectRotation.getCharacterSize() + 10 + objectScale.getCharacterSize() + 10);
-
-    Text objectActive("Active: ", font, 15);
-    objectActive.setFillColor(Color::White);
-    objectActive.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10 + objectPosition.getCharacterSize() + 10 + objectRotation.getCharacterSize() + 10 + objectScale.getCharacterSize() + 10 + objectVelocity.getCharacterSize() + 10);
-
-    Text objectZLayer("Z Layer: ", font, 15);
-    objectZLayer.setFillColor(Color::White);
-    objectZLayer.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10 + objectPosition.getCharacterSize() + 10 + objectRotation.getCharacterSize() + 10 + objectScale.getCharacterSize() + 10 + objectVelocity.getCharacterSize() + 10 + objectActive.getCharacterSize() + 10);
-
-    Text objectScript("Scripts: ", font, 15);
-    objectScript.setFillColor(Color::White);
-    objectScript.setPosition(inspector.getPosition().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10 + objectPosition.getCharacterSize() + 10 + objectRotation.getCharacterSize() + 10 + objectScale.getCharacterSize() + 10 + objectVelocity.getCharacterSize() + 10 + objectActive.getCharacterSize() + 10 + objectZLayer.getCharacterSize() + 10);
-
-    InputField rotationField(font, Vector2f(inspector.getPosition().x + 50 + objectRotation.getLocalBounds().getSize().x + 10, inspector.getPosition().y + inspectorTitle.getCharacterSize() + 10 + objectName.getCharacterSize() + 10 + objectPosition.getCharacterSize() + 10), Vector2f(100, 20), "0");
-    rotationField.setOnlyNumbers(true);
-
-    Button hierarchyAddButton(font, Vector2f(hierarchy.getPosition().x + 10, hierarchy.getPosition().y + hierarchy.getSize().y - 40), Vector2f(100, 30), "Add Object");
-    hierarchyAddButton.setOnClick(createObj);
-
-    Button inspectorDeleteButton(font, Vector2f(inspector.getPosition().x + 10, inspector.getPosition().y + inspector.getSize().y - 40), Vector2f(100, 30), "Delete Object");
-    inspectorDeleteButton.setOnClick(deleteObj);
 
     Text fpsCounter("FPS: ", font, 15);
     fpsCounter.setFillColor(Color::White);
     fpsCounter.setPosition(10, 10);
 
+    HierarchyWindow hierarchyWindow(font, Vector2f(0, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y), "Hierarchy");
+    InspectorWindow inspectorWindow(font, Vector2f(window.getSize().x * 0.75f, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y), "Inspector");
+
+
     while (window.isOpen())
     {
         //Calculate time and delta time
         time->update();
+
+        Game::collisionCounter = 0;
+
         Event event;
         while (window.pollEvent(event))
         {
             if (event.type == Event::Closed)
                 window.close();
 
-            if (rotationField.getSelected() && scene.getSelectedObjectIndex() != -1) {
-                rotationField.handleEvent(event);
-                GameObject* tmp = new GameObject(*scene.getObjectByIndex(scene.getSelectedObjectIndex()));
-                tmp->setRotation(stof(rotationField.processText()));
-                scene.setObjectByIndex(scene.getSelectedObjectIndex(), tmp);
-                delete tmp;
-            }
-
-            if (hierarchyAddButton.getActive())
-                hierarchyAddButton.handleEvent(event);
-
-            if (inspectorDeleteButton.getActive())
-                inspectorDeleteButton.handleEvent(event);
+            hierarchyWindow.handleEvent(event);
+            inspectorWindow.handleEvent(event);
 
             if (scene.getSelectedObjectIndex() != -1) {
                 if (Keyboard::isKeyPressed(Keyboard::Delete)) {
-                    scene.removeSelectedObject();
+                    deleteObj();
                 }
             }
         }
@@ -1718,83 +2063,16 @@ int main()
             fpsCounter.setString("FPS: " + floatToString(1.f / time->getDeltaTime()));
         }
 
-
-        //Update the objects
-
-        if (scene.getSelectedObjectIndex() != -1) {
-            objectTexts[scene.getSelectedObjectIndex()].setFillColor(Color::White);
-        }
-        objectName.setString("Name: ");
-        objectPosition.setString("Position: ");
-        objectRotation.setString("Rotation: ");
-        objectScale.setString("Scale: ");
-        objectActive.setString("Active: ");
-        objectZLayer.setString("Z Layer: ");
-        objectVelocity.setString("Velocity: ");
-        objectScript.setString("Scripts: ");
-
-        rotationField.update();
-        rotationField.changeBackground();
-
-        hierarchyAddButton.update();
-
-        inspectorDeleteButton.update();
-
-        objectTexts = updateHierarchy(objectTexts, hierarchy, font, hierarchyTitle);
+        hierarchyWindow.update();
+        inspectorWindow.update();
 
         //Select object
         if (Mouse::isButtonPressed(Mouse::Left)) {
-            Vector2f mousePos = Vector2f(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
-            if (hierarchy.getGlobalBounds().contains(mousePos)) {
-                scene.setSelectedObjectIndex(-1);
-                for (int i = 0; i < scene.getObjectsCount(); i++) {
-                    if (objectTexts[i].getGlobalBounds().contains(mousePos)) {
-                        scene.setSelectedObjectIndex(i);
-                        break;
-                    }
-                }
-                if (scene.getSelectedObjectIndex() != -1)
-                    rotationField.setText(floatToString(scene.getObjectByIndex(scene.getSelectedObjectIndex())->getRotation()));
-            }
-            if (inspector.getGlobalBounds().contains(mousePos)) {
-                rotationField.checkMouseClick();
-            }
-            else {
-                rotationField.deselect();
-            }
-        }
-
-        if (scene.getSelectedObjectIndex() != -1) {
-            objectTexts[scene.getSelectedObjectIndex()].setFillColor(Color::Red);
-            objectName.setString("Name: " + scene.getObjectByIndex(scene.getSelectedObjectIndex())->getName());
-
-            float x = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getPosition().x;
-            float y = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getPosition().y;
-            objectPosition.setString("Position: " + floatToString(x) + " " + floatToString(y));
-
-            float rotation = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getRotation();
-            objectRotation.setString("Rotation: " + floatToString(rotation));
-
-            float scaleX = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getScale().x;
-            float scaleY = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getScale().y;
-            objectScale.setString("Scale: " + floatToString(scaleX) + " " + floatToString(scaleY));
-
-            bool active = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getActive();
-            objectActive.setString("Active: " + to_string(active));
-
-            int zLayer = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getZLayer();
-            objectZLayer.setString("Z Layer: " + to_string(zLayer));
-
-            Vector2f velocity = scene.getObjectByIndex(scene.getSelectedObjectIndex())->getVelocity();
-            objectVelocity.setString("Velocity: " + floatToString(velocity.x) + " " + floatToString(velocity.y));
-
-            objectScript.setString("Scripts: " + to_string(scene.getObjectByIndex(scene.getSelectedObjectIndex())->getScriptsCount()));
-            //cout<<scene.getObjectByIndex(selectedObject)->getScriptsCount()<<endl;
+            hierarchyWindow.mouseOver();
+            inspectorWindow.mouseOver();
         }
 
         scene.updateScene();
-
-        //cout<<selectedObject<<endl;
 
         //Clear the window
         window.clear();
@@ -1803,25 +2081,11 @@ int main()
         for (int i = 0; i < scene.getObjectsCount(); i++)
             window.draw(*scene.getObjectByIndex(i));
 
-        hierarchyTitle.setString("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
-        window.draw(hierarchy);
-        window.draw(hierarchyTitle);
-        for (int i = 0; i < scene.getObjectsCount(); i++)
-            window.draw(objectTexts[i]);
 
-        window.draw(inspector);
-        window.draw(inspectorTitle);
-        window.draw(objectName);
-        window.draw(objectPosition);
-        window.draw(objectRotation);
-        window.draw(objectScale);
-        window.draw(objectActive);
-        window.draw(objectZLayer);
-        window.draw(objectVelocity);
-        window.draw(objectScript);
-        rotationField.draw(window);
-        hierarchyAddButton.draw(window);
-        inspectorDeleteButton.draw(window);
+        hierarchyWindow.setTitle("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
+
+        hierarchyWindow.draw(window);
+        inspectorWindow.draw(window);
         window.draw(fpsCounter);
 
         window.display();
