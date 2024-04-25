@@ -123,6 +123,30 @@ Keyboard::Key stringToKey(string s) { //for loading key bindings
     return Keyboard::Unknown;
 }
 
+string ColorToString(Color color) {
+    char hex[16];
+    sprintf_s(hex, "%02X%02X%02X%02X", color.r, color.g, color.b, color.a);
+    string ret(hex);
+    return ret;
+}
+
+Color stringToColor(string inp) {
+    //return Color::Black;
+    //Clean up the string
+    string s = "";
+    for (int i = 0; i < inp.size(); i++)
+        if ((inp[i] >= '0' && inp[i] <= '9') || (inp[i] >= 'a' && inp[i] <= 'f') || (inp[i] >= 'A' && inp[i] <= 'F'))
+            s += inp[i];
+    for(int i=s.size(); i<8; i++)
+        s+="F";
+    Color color;
+	color.r = stoi(s.substr(0, 2), nullptr, 16);
+	color.g = stoi(s.substr(2, 2), nullptr, 16);
+	color.b = stoi(s.substr(4, 2), nullptr, 16);
+	color.a = stoi(s.substr(6, 2), nullptr, 16);
+	return color;
+}
+
 class Utility { //for vector calculations
 public:
     static float magnitude(const Vector2f& source);
@@ -610,6 +634,8 @@ Collider::~Collider() { //destructor
 
 
 class BehaviourScript { //Base class for all scripts that can be attached to GameObjects (interface)
+protected:
+    int attributeCount;
 public:
     virtual BehaviourScript* clone() const = 0;
     virtual void start(GameObject& gameObject) = 0;
@@ -617,6 +643,13 @@ public:
     virtual void collision(GameObject& gameObject, GameObject& collisionObject) = 0;
     virtual void trigger(GameObject& gameObject, GameObject& triggerObject) = 0;
     virtual void destroy(GameObject& gameObject) = 0;
+
+    virtual int getAttributeCount() const { return attributeCount; }
+    virtual string getAttributeName(int index) const = 0;
+
+    virtual string getAttribute(int index) const = 0;
+    virtual void setAttribute(int index, string value) = 0;
+
     virtual ~BehaviourScript() {}
 };
 
@@ -666,6 +699,13 @@ public:
     virtual void triggerScripts(GameObject& trigger);
     virtual void collisionScripts(GameObject& collision);
     virtual void destroyScripts();
+
+    void setAttributeOnScripts(int scriptIndex, int attributeIndex, string value);
+    string getAttributeFromScripts(int scriptIndex, int attributeIndex) const;
+
+    string getAttributeNamesFromScripts(int scriptIndex, int attributeIndex) const;
+
+    int getAttributeCountFromScripts(int scriptIndex) const;
 
     void setPosition(const Vector2f& position);
     void setPosition(float x, float y);
@@ -828,6 +868,26 @@ void GameObject::destroyScripts() { //destroy all scripts
         attachedScripts[i]->destroy(*this);
 }
 
+void GameObject::setAttributeOnScripts(int scriptIndex, int attributeIndex, string value) { //set attribute on all scripts
+	if (scriptIndex < attachedScripts.size() && scriptIndex >= 0)
+		attachedScripts[scriptIndex]->setAttribute(attributeIndex, value);
+}
+string GameObject::getAttributeFromScripts(int scriptIndex, int attributeIndex) const { //get attribute from all scripts
+	if (scriptIndex < attachedScripts.size() && scriptIndex >= 0)
+		return attachedScripts[scriptIndex]->getAttribute(attributeIndex);
+	return "";
+}
+string GameObject::getAttributeNamesFromScripts(int scriptIndex, int attributeIndex) const { //get attribute names from all scripts
+    if (scriptIndex < attachedScripts.size() && scriptIndex >= 0)
+        return attachedScripts[scriptIndex]->getAttributeName(attributeIndex);
+    return "";
+}
+int GameObject::getAttributeCountFromScripts(int scriptIndex) const { //get attribute count from all scripts
+	if (scriptIndex < attachedScripts.size() && scriptIndex >= 0)
+		return attachedScripts[scriptIndex]->getAttributeCount();
+	return 0;
+}
+
 void GameObject::setPosition(const Vector2f& position) { //set position
     ConvexShape::setPosition(position);
     Collider::updateTransform(*this);
@@ -870,6 +930,7 @@ private:
     Color defaultColor;
     Color pressedColor;
 public:
+    TestScript();
     TestScript(Color a, Color b);
     void setColors(Color a, Color b);
     TestScript* clone() const;
@@ -878,11 +939,23 @@ public:
     void collision(GameObject& gameObject, GameObject& collisionObject);
     void trigger(GameObject& gameObject, GameObject& triggerObject);
     void destroy(GameObject& gameObject);
+
+    string getAttribute(int index) const;
+    void setAttribute(int index, string value);
+
+    string getAttributeName(int index) const;
+
     ~TestScript();
 };
+TestScript::TestScript() { //default constructor
+	defaultColor = Color::White;
+	pressedColor = Color::Red;
+	attributeCount = 2;
+}
 TestScript::TestScript(Color a, Color b) { //constructor
 	defaultColor = a;
 	pressedColor = b;
+    attributeCount = 2;
 }
 void TestScript::setColors(Color a, Color b) { //set colors
 	defaultColor = a;
@@ -909,6 +982,34 @@ void TestScript::trigger(GameObject& gameObject, GameObject& triggerObject) { //
 }
 void TestScript::destroy(GameObject& gameObject) { //destroy function
     cout << "Destroy function called on object with id " << gameObject.getId() << endl;
+}
+string TestScript::getAttribute(int index) const { //get attribute
+	if (index == 0)
+		return to_string(defaultColor.r) + " " + to_string(defaultColor.g) + " " + to_string(defaultColor.b) + " " + to_string(defaultColor.a);
+	if (index == 1)
+		return to_string(pressedColor.r) + " " + to_string(pressedColor.g) + " " + to_string(pressedColor.b) + " " + to_string(pressedColor.a);
+	return "";
+}
+void TestScript::setAttribute(int index, string value) { //set attribute
+    if (index == 0) {
+		int r, g, b, a;
+		istringstream iss(value);
+		iss >> r >> g >> b >> a;
+		defaultColor = Color(r, g, b, a);
+	}
+    if (index == 1) {
+		int r, g, b, a;
+		istringstream iss(value);
+		iss >> r >> g >> b >> a;
+		pressedColor = Color(r, g, b, a);
+	}
+}
+string TestScript::getAttributeName(int index) const { //get attribute name
+	if (index == 0)
+		return "Default Color";
+	if (index == 1)
+		return "Pressed Color";
+	return "";
 }
 TestScript::~TestScript() { //destructor
     cout << "Destructor called" << endl;
@@ -971,6 +1072,11 @@ public:
     string getSelectedPositionY() const;
     string getSelectedVelocityX() const;
 	string getSelectedVelocityY() const;
+
+    void modifySelectedCustom(string value, int index);
+    string getSelectedCustom(int index) const;
+
+    string getSelectedCustomName(int index) const;
 
     void changeSelectedIsMovable();
 
@@ -1184,6 +1290,43 @@ string Scene::getSelectedVelocityY() const { //get the y velocity of the selecte
 	return "";
 }
 
+void Scene::modifySelectedCustom(string value, int index) { //modify a custom value of the selected object
+    if(index < 0)
+        return;
+    int poz = 0;
+    for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
+        if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
+			sceneObjects[selectedObjectIndex]->setAttributeOnScripts(i, index - poz, value);
+			break;
+		}
+		poz += sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i);
+	}
+}
+string Scene::getSelectedCustom(int index) const { //get a custom value of the selected object
+    if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
+		int poz = 0;
+        for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
+            if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
+                return sceneObjects[selectedObjectIndex]->getAttributeFromScripts(i, index - poz);
+            }
+			poz += sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i);
+		}
+	}
+	return "";
+}
+
+string Scene::getSelectedCustomName(int index) const { //get the name of a custom value of the selected object
+    if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
+		int poz = 0;
+        for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
+			if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
+				return sceneObjects[selectedObjectIndex]->getAttributeNamesFromScripts(i, index-poz);
+			poz += sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i);
+		}
+	}
+	return "";
+}
+
 void Scene::changeSelectedIsMovable() { //change if the selected object is movable
 	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
 		sceneObjects[selectedObjectIndex]->setIsMovable(!sceneObjects[selectedObjectIndex]->getIsMovable());
@@ -1283,6 +1426,7 @@ private:
     static RenderWindow* window;
     static Scene* currentScene;
     static EditorWindow* hierarchy;
+    static EditorWindow* inspector;
 public:
     static void setFont(Font* font);
 	static Font* getFont();
@@ -1295,6 +1439,9 @@ public:
 
 	static void setHierarchy(EditorWindow* hierarchy);
 	static EditorWindow* getHierarchy();
+
+    static void setInspector(EditorWindow* inspector);
+    static EditorWindow* getInspector();
 };
 
 void Game::setFont(Font* font) {  //set the font
@@ -1323,6 +1470,13 @@ void Game::setHierarchy(EditorWindow* hierarchy) { //set the hierarchy
 }
 EditorWindow* Game::getHierarchy() { //get the hierarchy
 	return Game::hierarchy;
+}
+
+void Game::setInspector(EditorWindow* inspector) { //set the inspector
+	Game::inspector = inspector;
+}
+EditorWindow* Game::getInspector() { //get the inspector
+	return Game::inspector;
 }
 
 
@@ -1489,6 +1643,7 @@ private:
     bool applySmoothness;
     float smoothnessSpeed;
 public:
+    FollowMouseScript();
     FollowMouseScript(bool applySmoothness = false, float smoothnessSpeed = 5.f);
     FollowMouseScript* clone() const;
     void start(GameObject& gameObject);
@@ -1496,11 +1651,23 @@ public:
     void collision(GameObject& gameObject, GameObject& collisionObject);
     void trigger(GameObject& gameObject, GameObject& triggerObject);
     void destroy(GameObject& gameObject);
+
+    string getAttribute(int index) const;
+    void setAttribute(int index, string value);
+
+    string getAttributeName(int index) const;
+
     ~FollowMouseScript();
 };
+FollowMouseScript::FollowMouseScript() { //default constructor
+	applySmoothness = false;
+	smoothnessSpeed = 5.f;
+	attributeCount = 2;
+}
 FollowMouseScript::FollowMouseScript(bool applySmoothness, float smoothnessSpeed) { //constructor
     this->applySmoothness = applySmoothness;
     this->smoothnessSpeed = smoothnessSpeed;
+    attributeCount = 2;
 }
 FollowMouseScript* FollowMouseScript::clone() const { //clone function
     return new FollowMouseScript(*this);
@@ -1525,6 +1692,29 @@ void FollowMouseScript::trigger(GameObject& gameObject, GameObject& triggerObjec
 void FollowMouseScript::destroy(GameObject& gameObject) { //destroy function (does nothing)
 
 }
+string FollowMouseScript::getAttribute(int index) const { //get attribute
+	if (index == 0)
+		return applySmoothness ? "true" : "false";
+	if (index == 1)
+		return floatToString(smoothnessSpeed);
+	return "";
+}
+void FollowMouseScript::setAttribute(int index, string value) { //set attribute
+    if (index == 0) {
+		applySmoothness = value == "true";
+	}
+    if (index == 1) {
+		smoothnessSpeed = stof(value);
+	}
+}
+
+string FollowMouseScript::getAttributeName(int index) const { //get attribute name
+	if (index == 0)
+		return "Apply Smoothness";
+	if (index == 1)
+		return "Smoothness Speed";
+	return "";
+}
 FollowMouseScript::~FollowMouseScript() { //destructor (does nothing)
 
 }
@@ -1537,6 +1727,7 @@ GameTime* GameTime::instance = NULL;
 RenderWindow* Game::window = NULL;
 Scene* Game::currentScene = NULL;
 EditorWindow* Game::hierarchy = NULL;
+EditorWindow* Game::inspector = NULL;
 Font* Game::font = NULL;
 
 void makeObj(GameObject& ob, const Vector2f& position, float sideLen) { //make a square object
@@ -1563,12 +1754,13 @@ private:
     int cursorIndex;
     bool onlyNumbers;
     string str;
-    void (Scene::*onChange)(string str); //Function pointer to a member function of Scene that takes a string as an argument and returns void (used to call a function when the text changes)
-    string(Scene::* updateValue)() const; //Function pointer to a member function of Scene that takes no arguments and returns a string (used to get the value of a variable from the scene)
+    int callIndex;
+    void (Scene::*onChange)(string str, int index); //Function pointer to a member function of Scene that takes a string as an argument and returns void (used to call a function when the text changes)
+    string(Scene::* updateValue)(int index) const; //Function pointer to a member function of Scene that takes no arguments and returns a string (used to get the value of a variable from the scene)
 
 public:
     InputField(const Font& font, const Vector2f& position, const Vector2f& size, const string& defaultText = "");
-    void draw(RenderWindow& window);
+    void draw(RenderWindow& window) const;
     void update();
     void handleEvent(Event& event);
     void select();
@@ -1583,8 +1775,9 @@ public:
     bool getOnlyNumbers() const;
     void checkMouseClick();
     void changeBackground();
-    void setOnChange(void (Scene::*onChange)(string str));
-    void setUpdateValue(string(Scene::* updateValue)() const);
+    void setOnChange(void (Scene::*onChange)(string str, int index));
+    void setUpdateValue(string(Scene::* updateValue)(int index) const);
+    void setCallIndex(int index);
     string processText();
 };
 
@@ -1607,8 +1800,9 @@ InputField::InputField(const Font& font, const Vector2f& position, const Vector2
     str = defaultText;
     onChange = NULL;
     updateValue = NULL;
+    callIndex = 0;
 }
-void InputField::draw(RenderWindow& window) { //draw function
+void InputField::draw(RenderWindow& window) const { //draw function
     window.draw(field);
     window.draw(text);
 }
@@ -1625,7 +1819,7 @@ void InputField::update() { //update function
         }
     }
     else {
-        if(updateValue) str = (Game::getCurrentScene()->*updateValue)();
+        if(updateValue) str = (Game::getCurrentScene()->*updateValue)(callIndex);
         text.setString(str);
 	}
 }
@@ -1670,17 +1864,19 @@ void InputField::handleEvent(Event& event) { //handle event function
             else { //If all characters are allowed
                 if (event.text.unicode == 8) {
                     if (str.size() > 0 && cursorIndex > 0) {
-                        str = str.substr(0, cursorIndex - 1) + str.substr(cursorIndex--);
+                        str = str.substr(0, cursorIndex - 1) + str.substr(cursorIndex);
+                        cursorIndex--;
                     }
                 }
                 else if (event.text.unicode == 13) {
                     deselect();
                 }
                 else {
-                    str = str.substr(0, cursorIndex) + event.text.unicode + str.substr(cursorIndex++);
+                    str = str.substr(0, cursorIndex) + event.text.unicode + str.substr(cursorIndex);
+                    cursorIndex++;
                 }
             }
-            if(onChange) (Game::getCurrentScene()->*onChange)(processText()); //Call the onChange function
+            if(onChange) (Game::getCurrentScene()->*onChange)(processText(), callIndex); //Call the onChange function
         }
         if (event.type == Event::KeyPressed) { //Handle arrow keys and copy-paste
             if (event.key.code == Keyboard::Left) {
@@ -1715,7 +1911,7 @@ void InputField::handleEvent(Event& event) { //handle event function
                 }
                 cursorIndex = str.size();
                 str = processText();
-                if (onChange) (Game::getCurrentScene()->*onChange)(str); //Call the onChange function
+                if (onChange) (Game::getCurrentScene()->*onChange)(str, callIndex); //Call the onChange function
             }
             if (event.key.control && event.key.code == Keyboard::C) {
                 Clipboard::setString(str);
@@ -1751,6 +1947,8 @@ string InputField::getText() const { //get the text of the input field
 }
 void InputField::setText(const string& text) { //set the text of the input field
     str = text;
+    str = processText();
+    cursorIndex = str.size();
     this->text.setString(str);
 }
 void InputField::clear() { //clear the input field
@@ -1793,11 +1991,14 @@ void InputField::changeBackground() { //change the background of the input field
         field.setFillColor(Color(150, 150, 150));
     }
 }
-void InputField::setOnChange(void (Scene::* onChange)(string str)) { //set the onChange function
+void InputField::setOnChange(void (Scene::* onChange)(string str, int index)) { //set the onChange function
 	this->onChange = onChange;
 }
-void InputField::setUpdateValue(string(Scene::* updateValue)() const) { //set the updateValue function
+void InputField::setUpdateValue(string(Scene::* updateValue)(int index) const) { //set the updateValue function
 	this->updateValue = updateValue;
+}
+void InputField::setCallIndex(int index) { //set the call index
+	callIndex = index;
 }
 string InputField::processText() { //process the text of the input field
     string ret = str;
@@ -1838,7 +2039,7 @@ private:
     void (*onClick)(); //Function pointer to a function that takes no arguments and returns void (used to call a function when the button is clicked)
 public:
     Button(const Font& font, const Vector2f& position, const Vector2f& size, const string& buttonText = "");
-    void draw(RenderWindow& window);
+    void draw(RenderWindow& window) const;
     void update();
     void handleEvent(Event& event);
     void press();
@@ -1890,7 +2091,7 @@ Button::Button(const Font& font, const Vector2f& position, const Vector2f& size,
     textColor = Color::White;
     onClick = NULL;
 }
-void Button::draw(RenderWindow& window) { //draw function
+void Button::draw(RenderWindow& window) const { //draw function
     window.draw(button);
     window.draw(text);
 }
@@ -2037,20 +2238,26 @@ Text* updateHierarchy(Text* objectTexts, const RectangleShape& hierarchy, const 
 class EditorWindow { //Editor window class(used for the hierarchy and inspector windows and can be expanded upon), abstract class
 protected:
     RectangleShape window;
+    RectangleShape draggingArea;
 	Text title;
 	vector<Button> buttons;
 	vector<InputField> inputFields;
 	vector<Text> texts;
 	Vector2f position;
 	Vector2f size;
+    bool isActive;
+    bool isDragglable;
+    bool isDragging;
+    Vector2f dragOffset;
 public:
     EditorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
 
-	void draw(RenderWindow& window);
-	void update();
-	void handleEvent(Event& event);
+	virtual void draw(RenderWindow& window) const;
+	virtual void update();
+	virtual void handleEvent(Event& event);
 
     virtual void mouseOver() = 0; //pure virtual function because it is completely different for the hierarchy and inspector windows
+    virtual void drag(Event& event);
 
 	void addButton(const Button& button);
 	void addInputField(const InputField& inputField);
@@ -2058,6 +2265,7 @@ public:
 
     void changeText(int index, const string& text);
     virtual void deleteText(int index);
+    void deleteFields();
     int getTextCount() const;
 
 	void setTitle(const string& titleText);
@@ -2069,6 +2277,9 @@ public:
 	void setSize(const Vector2f& size);
 	Vector2f getSize() const;
 
+    virtual void setActive(bool isActive);
+    bool getActive() const;
+
     virtual ~EditorWindow();
 };
 EditorWindow::EditorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) { //constructor
@@ -2077,6 +2288,12 @@ EditorWindow::EditorWindow(const Font& font, const Vector2f& position, const Vec
 	window.setFillColor(Color(50, 50, 50));
 	window.setOutlineColor(Color::Black);
 	window.setOutlineThickness(1);
+
+    draggingArea.setPosition(position);
+    draggingArea.setSize(Vector2f(size.x, 25));
+    draggingArea.setFillColor(Color(100, 100, 100));
+    draggingArea.setOutlineColor(Color::Black);
+    draggingArea.setOutlineThickness(1);
 
 	title.setFont(font);
 	title.setCharacterSize(20);
@@ -2087,9 +2304,17 @@ EditorWindow::EditorWindow(const Font& font, const Vector2f& position, const Vec
 
 	this->position = position;
 	this->size = size;
+	isActive = true;
+    isDragglable = false;
+    isDragging = false;
+    dragOffset = Vector2f(0, 0);
 }
-void EditorWindow::draw(RenderWindow& window) { //draw function
+void EditorWindow::draw(RenderWindow& window) const { //draw function
+    if(!isActive)
+		return;
 	window.draw(this->window);
+    if(isDragglable)
+		window.draw(draggingArea);
 	window.draw(title);
 	for (int i = 0; i < buttons.size(); i++)
 		buttons[i].draw(window);
@@ -2099,6 +2324,8 @@ void EditorWindow::draw(RenderWindow& window) { //draw function
 		window.draw(texts[i]);
 }
 void EditorWindow::update() { //update function
+    if (!isActive)
+        return;
 	for (int i = 0; i < buttons.size(); i++)
 		buttons[i].update();
     for (int i = 0; i < inputFields.size(); i++) {
@@ -2108,10 +2335,39 @@ void EditorWindow::update() { //update function
 
 }
 void EditorWindow::handleEvent(Event& event) { //handle event function
+    if (!isActive)
+        return;
+    drag(event);
 	for (int i = 0; i < buttons.size(); i++)
 		buttons[i].handleEvent(event);
     for (int i = 0; i < inputFields.size(); i++)
         inputFields[i].handleEvent(event);
+}
+void EditorWindow::drag(Event& event) { //drag function
+    if (isDragglable) {
+		Vector2f mousePosition = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+        if (isDragging) {
+            Vector2f deltaMovedAmount = mousePosition - dragOffset - position;
+            setPosition(mousePosition - dragOffset);
+			draggingArea.setPosition(position);
+
+            title.setPosition(position.x + size.x / 2.f, position.y);
+
+            for (int i = 0; i < buttons.size(); i++)
+				buttons[i].setPosition(buttons[i].getPosition() + deltaMovedAmount);
+            for (int i = 0; i < inputFields.size(); i++)
+				inputFields[i].setPosition(inputFields[i].getPosition() + deltaMovedAmount);
+			for (int i = 0; i < texts.size(); i++)
+				texts[i].setPosition(texts[i].getPosition() + deltaMovedAmount);
+		}
+        if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && draggingArea.getGlobalBounds().contains(mousePosition)) {
+            isDragging = true;
+			dragOffset = mousePosition - position;
+		}
+        if (!Mouse::isButtonPressed(Mouse::Left)) {
+			isDragging = false;
+		}
+	}
 }
 void EditorWindow::addButton(const Button& button) { //add a button to the window
 	buttons.push_back(button);
@@ -2129,6 +2385,9 @@ void EditorWindow::changeText(int index, const string& text) { //change the text
 void EditorWindow::deleteText(int index) { //delete a text from the window
     if (index < texts.size() && index >= 0)
         texts.erase(texts.begin() + index);
+}
+void EditorWindow::deleteFields() { //delete all the input fields from the window
+	inputFields.clear();
 }
 int EditorWindow::getTextCount() const { //get the number of texts in the window
 	return texts.size();
@@ -2157,6 +2416,12 @@ void EditorWindow::setSize(const Vector2f& size) { //set the size of the window
 Vector2f EditorWindow::getSize() const { //get the size of the window
 	return size;
 }
+void EditorWindow::setActive(bool isActive) { //set if the window is active
+	this->isActive = isActive;
+}
+bool EditorWindow::getActive() const { //get if the window is active
+	return isActive;
+}
 EditorWindow::~EditorWindow() { //destructor
 	buttons.clear();
 	inputFields.clear();
@@ -2165,6 +2430,337 @@ EditorWindow::~EditorWindow() { //destructor
 
 void createObj();
 void deleteObj();
+
+
+class ColorPicker : public EditorWindow {
+private:
+    VertexArray colorsDisplay;
+    VertexArray hueBarDisplay;
+    VertexArray alphaBarDisplay;
+    RectangleShape alphaBarBackground;
+    CircleShape colorsCursor;
+    CircleShape hueBarCursor;
+    CircleShape alphaBarCursor;
+    Color selectedColor;
+    int selected;
+
+    Vector2f colorsOffset;
+    Vector2f hueBarOffset;
+    Vector2f alphaBarOffset;
+
+    void drawHSV(Vertex& point, double h, double s, double v, double alpha);
+    void modulate(VertexArray& points, double hue);
+    void accuratePosition(int& x, int& y, int xLimit, int yLimit);
+    void setCursorsBasedOnColor();
+    void reposition();
+public:
+    ColorPicker(Font& font, const Vector2f& position, const Vector2f& size, const string& title);
+    void handleEvent(Event& event) override;
+    void draw(RenderWindow& window) const override;
+    void update() override;
+    void mouseOver() override;
+    void drag(Event& event) override;
+    Color getSelectedColor() const;
+    void setActive(bool active) override;
+    ~ColorPicker() override;
+};
+void ColorPicker::drawHSV(Vertex& point, double h, double s, double v, double alpha) {
+    // Pick the correct case based on our position on the color wheel.
+    const int cs = h * 6;
+
+    // Calculate some helper values used in our cases below.
+    const double f = h * 6 - cs;
+    const double p = v * (1 - s);
+    const double q = v * (1 - s * f);
+    const double t = v * (1 - s * (1 - f));
+
+    switch (cs) {
+    case 0:
+    case 6:
+        point.color = Color(v * 255, t * 255, p * 255, 255 * alpha);
+        break;
+    case 1:
+        point.color = Color(q * 255, v * 255, p * 255, 255 * alpha);
+        break;
+    case 2:
+        point.color = Color(p * 255, v * 255, t * 255, 255 * alpha);
+        break;
+    case 3:
+        point.color = Color(p * 255, q * 255, v * 255, 255 * alpha);
+        break;
+    case 4:
+        point.color = Color(t * 255, p * 255, v * 255, 255 * alpha);
+        break;
+    case 5:
+        point.color = Color(v * 255, p * 255, q * 255, 255 * alpha);
+        break;
+    }
+}
+void ColorPicker::modulate(VertexArray& points, double hue) {
+    // First, Let's "sanitize" inputs a bit.
+    // Don't accept negative numbers.
+    if (hue < 0)
+        hue = 0;
+    // Lazy overflow by subtracting the integer portion of the number.
+    else if (hue > 1)
+        hue -= static_cast<int>(hue);
+
+    // Now iterate over all "pixels" and upate their colors.
+    for (unsigned int y = 0; y <= 255; ++y) {
+        for (unsigned int x = 0; x <= 255; ++x) {
+            // "Calculate" our missing HSV components with ranges from 0 to 1.
+            const double s = x / 255.; // x is our saturation
+            const double v = y / 255.; // y is our value
+
+            // Draw the pixel.
+            drawHSV(points[y * 256 + x], hue, s, v, 1);
+        }
+    }
+}
+void ColorPicker::accuratePosition(int& x, int& y, int xLimit, int yLimit) {
+    if (x < 0)
+        x = 0;
+    if (y < 0)
+        y = 0;
+    if (x > xLimit)
+        x = xLimit;
+    if (y > yLimit)
+        y = yLimit;
+}
+void ColorPicker::setCursorsBasedOnColor() {
+    double r = selectedColor.r / 255.;
+    double g = selectedColor.g / 255.;
+    double b = selectedColor.b / 255.;
+    double maxx = max(r, max(g, b));
+    double minn = min(r, min(g, b));
+    double delta = maxx - minn;
+    double h = 0;
+    if (delta == 0)
+		h = 0;
+	else if (maxx == r)
+		h = 60 * fmod((g - b) / delta, 6);
+	else if (maxx == g)
+		h = 60 * ((b - r) / delta + 2);
+	else
+		h = 60 * ((r - g) / delta + 4);
+    if (h < 0)
+		h += 360;
+	double s = maxx == 0 ? 0 : delta / maxx;
+	double v = maxx;
+	double a = selectedColor.a / 255.;
+
+    colorsOffset = Vector2f(255 * s, 255 * v);
+	hueBarOffset = Vector2f(hueBarOffset.x, h * 255 / 360);
+	alphaBarOffset = Vector2f(alphaBarOffset.x, a * 255);
+
+    modulate(colorsDisplay, h / 360);
+
+	reposition();
+}
+void ColorPicker::reposition() {
+    for (unsigned int y = 0; y <= 255; ++y) {
+        for (unsigned int x = 0; x <= 255; ++x) {
+            Vertex& vertex(colorsDisplay[y * 256 + x]);
+            vertex.position.x = 255 - x + position.x + 5;
+            vertex.position.y = 255 - y + position.y + 30;
+        }
+    }
+
+    for (unsigned int y = 0; y <= 255; ++y) {
+        for (unsigned int x = 0; x < 20; ++x) {
+            Vertex& vertex(hueBarDisplay[y * 20 + x]);
+            vertex.position.x = x + position.x + size.x - 55;
+            vertex.position.y = y + position.y + 30;
+
+            // Calculate the hue value based on the y position.
+            const double hue = y / 255.;
+            drawHSV(vertex, hue, 1, 1, 1);
+        }
+    }
+
+    for (unsigned int y = 0; y <= 255; ++y) {
+        for (unsigned int x = 0; x < 20; ++x) {
+            Vertex& vertex(alphaBarDisplay[y * 20 + x]);
+            vertex.position.x = x + position.x + size.x - 25;
+            vertex.position.y = y + position.y + 30;
+
+            // Calculate the hue value based on the y position.
+            drawHSV(vertex, 1, 0, y / 255., y / 255.);
+        }
+    }
+
+    alphaBarBackground.setPosition(position.x + size.x - 25, position.y + 29);
+
+    colorsCursor.setPosition(colorsDisplay[colorsOffset.y * 256 + colorsOffset.x].position);
+    hueBarCursor.setPosition(hueBarDisplay[hueBarOffset.y * 20 + hueBarOffset.x].position);
+    alphaBarCursor.setPosition(alphaBarDisplay[alphaBarOffset.y * 20 + alphaBarOffset.x].position);
+}
+ColorPicker::ColorPicker(Font& font, const Vector2f& position, const Vector2f& size, const string& title) : EditorWindow(font, position, size, title) {
+    colorsDisplay = VertexArray(Points, 256 * 256);
+    hueBarDisplay = VertexArray(Points, 256 * 20);
+    alphaBarDisplay = VertexArray(Points, 256 * 20);
+
+    colorsOffset = Vector2f(0, 255);
+    hueBarOffset = Vector2f(0, 0);
+    alphaBarOffset = Vector2f(19, 255);
+
+    colorsCursor = CircleShape(5);
+    colorsCursor.setOrigin(5, 5);
+    colorsCursor.setFillColor(Color::Transparent);
+    colorsCursor.setOutlineColor(Color::Black);
+    colorsCursor.setOutlineThickness(2);
+
+    hueBarCursor = CircleShape(5);
+    hueBarCursor.setOrigin(5, 5);
+    hueBarCursor.setFillColor(Color::Transparent);
+    hueBarCursor.setOutlineColor(Color::Black);
+    hueBarCursor.setOutlineThickness(2);
+
+    alphaBarCursor = CircleShape(5);
+    alphaBarCursor.setOrigin(5, 5);
+    alphaBarCursor.setFillColor(Color::Transparent);
+    alphaBarCursor.setOutlineColor(Color::Red);
+    alphaBarCursor.setOutlineThickness(2);
+
+    alphaBarBackground = RectangleShape(Vector2f(20, 256));
+    alphaBarBackground.setFillColor(Color::Black);
+    alphaBarBackground.setOutlineColor(Color::White);
+    alphaBarBackground.setOutlineThickness(1);
+    alphaBarBackground.setPosition(position.x + size.x - 25, position.y + 29);
+
+    reposition();
+
+    modulate(colorsDisplay, 0);
+
+    Text* tmp = new Text("Color: ", font, 15);
+    tmp->setPosition(position.x + 15, position.y + 295);
+    texts.push_back(*tmp);
+    delete tmp;
+
+    InputField* tmp2 = new InputField(font, Vector2f(position.x + 70, position.y + 295), Vector2f(100, 20), "#00000000");
+    tmp2->setOnlyNumbers(false);
+    inputFields.push_back(*tmp2);
+    delete tmp2;
+
+
+    selectedColor = Color::White;
+    selected = -1;
+    isActive = false;
+    isDragglable = true;
+
+    
+}
+void ColorPicker::handleEvent(Event& event) { //handle event function
+    if (!isActive)
+        return;
+    if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+        Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+        if (colorsDisplay.getBounds().contains(mousePos))
+            selected = 0;
+        else if (hueBarDisplay.getBounds().contains(mousePos))
+            selected = 1;
+        else if (alphaBarDisplay.getBounds().contains(mousePos))
+            selected = 2;
+        else if (!window.getGlobalBounds().contains(mousePos))
+            setActive(false);
+    }
+    else if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
+        selected = -1;
+    EditorWindow::handleEvent(event);
+}
+void ColorPicker::draw(RenderWindow& window) const { //draw function
+    if (!isActive)
+        return;
+    EditorWindow::draw(window);
+    window.draw(colorsDisplay);
+    window.draw(hueBarDisplay);
+    window.draw(alphaBarBackground);
+    window.draw(alphaBarDisplay);
+    window.draw(colorsCursor);
+    window.draw(hueBarCursor);
+    window.draw(alphaBarCursor);
+}
+void ColorPicker::update() { //update function
+	if (!isActive)
+		return;
+	EditorWindow::update();
+    if (selected == -1) {
+        if (!inputFields[0].getSelected())
+            inputFields[0].setText("#" + ColorToString(selectedColor));
+        else {
+            selectedColor = stringToColor(inputFields[0].getText());
+            setCursorsBasedOnColor();
+        }
+    }
+}
+void ColorPicker::mouseOver() { //mouse over function (used to check if the mouse is over the color picker window and to check the color picker's elements)
+    if (!isActive)
+        return;
+    Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+    if (selected == 0) {
+        int relativeX = 255 - (mousePos.x - colorsDisplay[255].position.x);
+        int relativeY = 255 - (mousePos.y - colorsDisplay[255 * 256 - 1].position.y);
+        accuratePosition(relativeX, relativeY, 255, 255);
+        colorsCursor.setPosition(255 - relativeX + colorsDisplay[255].position.x, 255 - relativeY + colorsDisplay[255 * 256 - 1].position.y);
+        selectedColor = colorsDisplay[relativeY * 256 + relativeX].color;
+        colorsOffset = Vector2f(relativeX, relativeY);
+    }
+    else if (selected == 1) {
+        int relativeY = mousePos.y - hueBarDisplay[0].position.y;
+        int relativeX = mousePos.x - hueBarDisplay[0].position.x;
+        accuratePosition(relativeX, relativeY, 19, 255);
+        hueBarCursor.setPosition(relativeX + hueBarDisplay[0].position.x, relativeY + hueBarDisplay[0].position.y);
+        modulate(colorsDisplay, relativeY / 255.);
+        hueBarOffset = Vector2f(relativeX, relativeY);
+        relativeX = 255 - (colorsCursor.getPosition().x - colorsDisplay[255].position.x);
+        int relativeY2 = 255 - (colorsCursor.getPosition().y - colorsDisplay[255 * 256 - 1].position.y);
+        accuratePosition(relativeX, relativeY2, 255, 255);
+        selectedColor = colorsDisplay[relativeY2 * 256 + relativeX].color;
+    }
+    else if (selected == 2) {
+        int relativeX = mousePos.x - alphaBarDisplay[0].position.x;
+        int relativeY = mousePos.y - alphaBarDisplay[0].position.y;
+        accuratePosition(relativeX, relativeY, 19, 255);
+        alphaBarCursor.setPosition(relativeX + alphaBarDisplay[0].position.x, relativeY + alphaBarDisplay[0].position.y);
+        selectedColor.a = alphaBarDisplay[relativeY * 20 + relativeX].color.a;
+        alphaBarOffset = Vector2f(relativeX, relativeY);
+    }
+    if (!inputFields[0].getSelected())
+        inputFields[0].setText("#" + ColorToString(selectedColor));
+    for (int i = 0; i < inputFields.size(); i++) {
+        inputFields[i].checkMouseClick();
+    }
+}
+void ColorPicker::drag(Event& event) {
+	EditorWindow::drag(event);
+    if (isDragging) {
+        reposition();
+	}
+
+}
+Color ColorPicker::getSelectedColor() const { //get the selected color of the color picker
+    return selectedColor;
+}
+void ColorPicker::setActive(bool active) { //set the active state of the color picker
+    isActive = active;
+    selected = -1;
+    if (!active) {
+        inputFields[0].deselect();
+		inputFields[0].setText("#" + ColorToString(selectedColor));
+	}
+}
+ColorPicker::~ColorPicker() {} //destructor
+
+
+
+class InspectorWindow : public EditorWindow { //Inspector window class
+public:
+    InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
+    void makeCustomFields();
+    void draw(RenderWindow& window) const;
+    void mouseOver();
+};
+
 
 class HierarchyWindow : public EditorWindow { //Hierarchy window class
 private:
@@ -2201,19 +2797,27 @@ HierarchyWindow::HierarchyWindow(const Font& font, const Vector2f& position, con
     Game::setHierarchy(this);
 }
 void HierarchyWindow::mouseOver() { //mouse over function (responsible for selecting objects in the hierarchy window)
+    if (!isActive)
+        return;
     Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
     if (window.getGlobalBounds().contains(mousePos)) {
-        if(Game::getCurrentScene()->getSelectedObjectIndex() != -1)
-            texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::White);
-        Game::getCurrentScene()->setSelectedObjectIndex(-1);
+        int newSelectedIndex = -1;
         for (int i = 0; i < Game::getCurrentScene()->getObjectsCount(); i++) {
             if (texts[i].getGlobalBounds().contains(mousePos)) {
-                Game::getCurrentScene()->setSelectedObjectIndex(i);
+                newSelectedIndex = i;
                 break;
             }
         }
-        if (Game::getCurrentScene()->getSelectedObjectIndex() != -1)
-            texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::Cyan);
+        if (newSelectedIndex != Game::getCurrentScene()->getSelectedObjectIndex()) {
+            if(Game::getCurrentScene()->getSelectedObjectIndex() != -1)
+				texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::White);
+			Game::getCurrentScene()->setSelectedObjectIndex(newSelectedIndex);
+			InspectorWindow* tmp = dynamic_cast<InspectorWindow*>(Game::getInspector());
+			if (tmp)
+				tmp->makeCustomFields();
+            if (Game::getCurrentScene()->getSelectedObjectIndex() != -1)
+                texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::Cyan);
+        }
     }
 }
 void HierarchyWindow::addText(const Text& text) { //add a text to the hierarchy window
@@ -2228,14 +2832,10 @@ void HierarchyWindow::deleteText(int index) { //delete a text from the hierarchy
 }
 
 
-class InspectorWindow : public EditorWindow { //Inspector window class
-public:
-    InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
-	void mouseOver();
-};
+
 //Inspector window constructor (makes input fields for the position, rotation, scale, and velocity of the selected object, a button to delete the selected object, and a button to change if the selected object is movable) will need to be expanded upon
 InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText) {
-    Text* tmp = new Text("Position:", font, 15);
+    /*Text* tmp = new Text("Position:", font, 15);
     tmp->setFillColor(Color::White);
 
     InputField* tmpField = new InputField(font, Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
@@ -2322,7 +2922,7 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
     tmpField->setOnlyNumbers(true);
     tmpField->setOnChange(&Scene::modifySelectedVelocityY); //Select the modifySelectedVelocityY function to be called when the text changes
     tmpField->setUpdateValue(&Scene::getSelectedVelocityY); //Select the getSelectedVelocityY function to get the value of the selected object's velocity Y
-    addInputField(*tmpField);
+    addInputField(*tmpField);*/
 
     //Delete button
     Button* deleteButton = new Button(font, Vector2f(position.x + 10, position.y + size.y - 40), Vector2f(size.x - 20, 30), "Delete Object");
@@ -2337,11 +2937,44 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
     addButton(*changeIsMoveableButton);
     delete changeIsMoveableButton;
 
-    delete tmp;
-    delete tmpField;
+    //delete tmp;
+    //delete tmpField;
+}
+void InspectorWindow::makeCustomFields() { //make custom fields function (used to add custom fields to the inspector window)
+    deleteFields();
+    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
+		const GameObject* selectedObject = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex());
+        InputField* tmp = NULL;
+        int cnt = 0;
+        for (int i = 0; i < selectedObject->getScriptsCount(); i++) {
+            for (int j = 0; j < selectedObject->getAttributeCountFromScripts(i); j++) {
+				tmp = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
+                tmp->setPosition(Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10 + 30 * cnt));
+                tmp->setOnChange(&Scene::modifySelectedCustom);
+                tmp->setUpdateValue(&Scene::getSelectedCustom);
+                tmp->setCallIndex(cnt);
+                addInputField(*tmp);
+                cnt++;
+			}
+		}
+        if(tmp)
+            delete tmp;
+	}
+}
+void InspectorWindow::draw(RenderWindow& window) const { //draw function
+    if (!isActive)
+        return;
+    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) //If an object is selected, draw the inspector window
+        EditorWindow::draw(window);
+    else {
+        window.draw(this->window);
+        window.draw(title);
+    }
 }
 void InspectorWindow::mouseOver() { //mouse over function (used to check if the mouse is over the inspector window and to check the input fields)
-	Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+    if (!isActive)
+        return;
+    Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
     if (window.getGlobalBounds().contains(mousePos)) {
         for (int i = 0; i < inputFields.size(); i++) {
 			inputFields[i].checkMouseClick();
@@ -2974,6 +3607,11 @@ GameObject* makeObjFromString(const string& obj) { //Make object from string fun
 }
 
 
+
+
+
+
+
 int main()
 {
     //Setup
@@ -2987,16 +3625,21 @@ int main()
     Game::setCurrentScene(&scene);
     HierarchyWindow hierarchyWindow(font, Vector2f(0, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y), "Hierarchy");
     InspectorWindow inspectorWindow(font, Vector2f(window.getSize().x * 0.75f, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y), "Inspector");
+    ColorPicker colorPicker(font, Vector2f(window.getSize().x * 0.25f, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y * 0.5f), "Color Picker");
     Game::setHierarchy(&hierarchyWindow);
+    Game::setInspector(&inspectorWindow);
     GameTime* time = GameTime::getInstance();
+
+    bool save = false;
+    bool load = false;
 
     bool showEditor = true;
 
 
     float nextSpace = 0;
 
-    /*Hitable ob;
-    ob.setName("Object 0");
+    GameObject ob;
+    ob.setName("Object0");
     makeObj(ob, Vector2f(100, 100), 100.f);
 
     BehaviourScript* script = new TestScript(Color::Magenta, Color::Cyan);
@@ -3011,13 +3654,13 @@ int main()
     scene.addObject(&ob);
 
 
-    Shootable ob2;
+    GameObject ob2;
     ob2.setFillColor(Color::Green);
     ob2.setName("Object1");
     ob2.setPosition(Vector2f(300, 300));
     scene.addObject(&ob2);
 
-    Player ob3;
+    /*Player ob3;
     ob3.setName("Player1");
     ob3.setPosition(Vector2f(500, 500));
     ob3.setFillColor(Color::Blue);
@@ -3034,16 +3677,17 @@ int main()
     ob4.setUpKey(Keyboard::Up);
     ob4.setShootKey(Keyboard::RControl);
     scene.addObject(&ob4);*/
-    ifstream in("Resources/Scene.txt"); //Read scene
-    in >> scene;
-    in.close();
-
-    ofstream out("Resources/Scene.txt");
+    if (load) {
+        ifstream in("Resources/Scene.txt"); //Read scene
+        in >> scene;
+        in.close();
+    }
 
 
     Text fpsCounter("FPS: ", font, 15);
     fpsCounter.setFillColor(Color::White);
     fpsCounter.setPosition(10, 10);
+
 
 
     while (window.isOpen()) //Game loop
@@ -3061,6 +3705,7 @@ int main()
 
             hierarchyWindow.handleEvent(event);
             inspectorWindow.handleEvent(event);
+            colorPicker.handleEvent(event);
 
             if (scene.getSelectedObjectIndex() != -1) {
                 if (Keyboard::isKeyPressed(Keyboard::Delete)) {
@@ -3069,8 +3714,10 @@ int main()
             }
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::F1) {
-					showEditor = !showEditor;
-				}
+                    showEditor = !showEditor;
+                }
+                else if (event.key.code == Keyboard::F2)
+                    colorPicker.setActive(!colorPicker.getActive());
 			}
         }
 
@@ -3083,11 +3730,14 @@ int main()
         //Update the editor
         hierarchyWindow.update();
         inspectorWindow.update();
+        colorPicker.update();
+
 
         //Select object
         if (Mouse::isButtonPressed(Mouse::Left)) {
             hierarchyWindow.mouseOver();
             inspectorWindow.mouseOver();
+            colorPicker.mouseOver();
         }
 
         //Update the scene
@@ -3097,20 +3747,33 @@ int main()
         window.clear();
 
         //Draw the objects
-        Game::getCurrentScene()->drawScene(true, window);
+        Game::getCurrentScene()->drawScene(false, window);
 
         //Draw the editor
         if (showEditor) {
             hierarchyWindow.setTitle("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
             hierarchyWindow.draw(window);
             inspectorWindow.draw(window);
+            colorPicker.draw(window);
             window.draw(fpsCounter);
         }
+
+        GameObject* tmp = new GameObject(*scene.getObjectByIndex(1));
+        Color color = colorPicker.getSelectedColor();
+        tmp->setFillColor(color);
+        scene.addObject(tmp);
+        scene.removeObjectByIndex(1);
+        delete tmp;
+
         window.display();
     }
 
     //Save scene
-    out<<scene;
+    if (save) {
+        ofstream out("Resources/Scene.txt");
+        out << scene;
+        out.close();
+    }
 
     return 0;
 }
