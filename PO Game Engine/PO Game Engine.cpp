@@ -147,6 +147,16 @@ Color stringToColor(string inp) {
 	return color;
 }
 
+bool isColorFormat(string s) {
+    if(s.size() != 8)
+		return false;
+	for(int i=0; i<s.size(); i++)
+		if(!((s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'f') || (s[i] >= 'A' && s[i] <= 'F')))
+			return false;
+	return true;
+
+}
+
 class Utility { //for vector calculations
 public:
     static float magnitude(const Vector2f& source);
@@ -664,6 +674,8 @@ protected:
     static int idCounter;
     vector<BehaviourScript*> attachedScripts; //Scripts attached to the GameObject
 
+    GameObject* objectBeforePlaying;
+
     istream& pRead(istream& in) override;
     ostream& pWrite(ostream& out) const override;
 public:
@@ -842,6 +854,9 @@ int GameObject::getScriptsCount() const { //get the number of scripts attached t
 }
 
 void GameObject::startScripts() { //start all scripts
+    if(objectBeforePlaying)
+        delete objectBeforePlaying;
+    objectBeforePlaying = clone();
     for (int i = 0; i < attachedScripts.size(); i++)
         attachedScripts[i]->start(*this);
 }
@@ -866,6 +881,11 @@ void GameObject::collisionScripts(GameObject& collision) { //collision all scrip
 void GameObject::destroyScripts() { //destroy all scripts
     for (int i = 0; i < attachedScripts.size(); i++)
         attachedScripts[i]->destroy(*this);
+    if (objectBeforePlaying) {
+		*this = *objectBeforePlaying;
+		delete objectBeforePlaying;
+		objectBeforePlaying = NULL;
+    }
 }
 
 void GameObject::setAttributeOnScripts(int scriptIndex, int attributeIndex, string value) { //set attribute on all scripts
@@ -985,23 +1005,17 @@ void TestScript::destroy(GameObject& gameObject) { //destroy function
 }
 string TestScript::getAttribute(int index) const { //get attribute
 	if (index == 0)
-		return to_string(defaultColor.r) + " " + to_string(defaultColor.g) + " " + to_string(defaultColor.b) + " " + to_string(defaultColor.a);
+		return ColorToString(defaultColor);
 	if (index == 1)
-		return to_string(pressedColor.r) + " " + to_string(pressedColor.g) + " " + to_string(pressedColor.b) + " " + to_string(pressedColor.a);
+		return ColorToString(pressedColor);
 	return "";
 }
 void TestScript::setAttribute(int index, string value) { //set attribute
     if (index == 0) {
-		int r, g, b, a;
-		istringstream iss(value);
-		iss >> r >> g >> b >> a;
-		defaultColor = Color(r, g, b, a);
+		defaultColor = stringToColor(value);
 	}
     if (index == 1) {
-		int r, g, b, a;
-		istringstream iss(value);
-		iss >> r >> g >> b >> a;
-		pressedColor = Color(r, g, b, a);
+		pressedColor = stringToColor(value);
 	}
 }
 string TestScript::getAttributeName(int index) const { //get attribute name
@@ -1055,23 +1069,7 @@ public:
     int getIndexOfObject(int id) const;
     void removeSelectedObject();
 
-    void modifySelectedName(string name);
-    void modifySelectedRotation(string rotation);
-    void modifySelectedScaleX(string scaleX);
-    void modifySelectedScaleY(string scaleY);
-    void modifySelectedPositionX(string positionX);
-    void modifySelectedPositionY(string positionY);
-    void modifySelectedVelocityX(string velocityX);
-    void modifySelectedVelocityY(string velocityY);
-
-    string getSelectedName() const;
-    string getSelectedRotation() const;
-    string getSelectedScaleX() const;
-    string getSelectedScaleY() const;
-    string getSelectedPositionX() const;
-    string getSelectedPositionY() const;
-    string getSelectedVelocityX() const;
-	string getSelectedVelocityY() const;
+    void moveSelectedObject(Vector2f moveBy);
 
     void modifySelectedCustom(string value, int index);
     string getSelectedCustom(int index) const;
@@ -1084,8 +1082,10 @@ public:
     const vector<Vector2f>& getLastPositions() const;
     void modifyLastPosition(int index, const Vector2f& position);
 
+    void startScene();
     void drawScene(bool drawColliders, RenderWindow& window) const;
     void updateScene();
+    void endScene();
 
     int getId() const;
 
@@ -1216,84 +1216,58 @@ void Scene::removeSelectedObject() { //remove the selected object
     }
 }
 
-void Scene::modifySelectedName(string name) { //modify the name of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setName(name);
-}
-void Scene::modifySelectedRotation(string rotation) { //modify the rotation of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setRotation(stof(rotation));
-}
-void Scene::modifySelectedScaleX(string scaleX) { //modify the x scale of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setScale(stof(scaleX), sceneObjects[selectedObjectIndex]->getScale().y);
-}
-void Scene::modifySelectedScaleY(string scaleY) { //modify the y scale of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setScale(sceneObjects[selectedObjectIndex]->getScale().x, stof(scaleY));
-}
-void Scene::modifySelectedPositionX(string positionX) { //modify the x position of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setPosition(stof(positionX), sceneObjects[selectedObjectIndex]->getPosition().y);
-}
-void Scene::modifySelectedPositionY(string positionY) { //modify the y position of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setPosition(sceneObjects[selectedObjectIndex]->getPosition().x, stof(positionY));
-}
-void Scene::modifySelectedVelocityX(string velocityX) { //modify the x velocity of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setVelocity(stof(velocityX), sceneObjects[selectedObjectIndex]->getVelocity().y);
-}
-void Scene::modifySelectedVelocityY(string velocityY) { //modify the y velocity of the selected object (uses strings to make it easier to use with GUI)
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		sceneObjects[selectedObjectIndex]->setVelocity(sceneObjects[selectedObjectIndex]->getVelocity().x, stof(velocityY));
-}
-
-string Scene::getSelectedName() const { //get the name of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return sceneObjects[selectedObjectIndex]->getName();
-	return "";
-}
-string Scene::getSelectedRotation() const { //get the rotation of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return floatToString(sceneObjects[selectedObjectIndex]->getRotation());
-	return "";
-}
-string Scene::getSelectedScaleX() const { //get the x scale of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return floatToString(sceneObjects[selectedObjectIndex]->getScale().x);
-	return "";
-}
-string Scene::getSelectedScaleY() const { //get the y scale of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return floatToString(sceneObjects[selectedObjectIndex]->getScale().y);
-	return "";
-}
-string Scene::getSelectedPositionX() const { //get the x position of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return floatToString(sceneObjects[selectedObjectIndex]->getPosition().x);
-	return "";
-}
-string Scene::getSelectedPositionY() const { //get the y position of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return floatToString(sceneObjects[selectedObjectIndex]->getPosition().y);
-	return "";
-}
-string Scene::getSelectedVelocityX() const { //get the x velocity of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().x);
-	return "";
-}
-string Scene::getSelectedVelocityY() const { //get the y velocity of the selected object
-	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
-		return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().y);
-	return "";
+void Scene::moveSelectedObject(Vector2f moveBy) { //move the selected object
+    if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
+		sceneObjects[selectedObjectIndex]->move(moveBy);
+		modifyLastPosition(selectedObjectIndex, sceneObjects[selectedObjectIndex]->getPosition());
+	}
 }
 
 void Scene::modifySelectedCustom(string value, int index) { //modify a custom value of the selected object
     if(index < 0)
         return;
-    int poz = 0;
+    if (index == 0) {
+        //Change name
+		sceneObjects[selectedObjectIndex]->setName(value);
+		return;
+    }
+    if (index == 1) { //Change position.x
+        sceneObjects[selectedObjectIndex]->setPosition(stof(value), sceneObjects[selectedObjectIndex]->getPosition().y);
+        return;
+    }
+    if (index == 2) { //Change position.y
+    	sceneObjects[selectedObjectIndex]->setPosition(sceneObjects[selectedObjectIndex]->getPosition().x, stof(value));
+    	return;
+    }
+    if (index == 3) { //Change rotation
+        sceneObjects[selectedObjectIndex]->setRotation(stof(value));
+        return;
+    }
+    if (index == 4) { //Change scale.x
+    	sceneObjects[selectedObjectIndex]->setScale(stof(value), sceneObjects[selectedObjectIndex]->getScale().y);
+    	return;
+    }
+    if (index == 5) { //Change scale.y
+    	sceneObjects[selectedObjectIndex]->setScale(sceneObjects[selectedObjectIndex]->getScale().x, stof(value));
+    	return;
+    }
+    if (index == 6) { //Change velocity.x
+    	sceneObjects[selectedObjectIndex]->setVelocity(stof(value), sceneObjects[selectedObjectIndex]->getVelocity().y);
+		return;
+    }
+    if (index == 7) { //Change velocity.y
+    	sceneObjects[selectedObjectIndex]->setVelocity(sceneObjects[selectedObjectIndex]->getVelocity().x, stof(value));
+    	return;
+    }
+    if (index == 8) { //Change mass
+        sceneObjects[selectedObjectIndex]->setMass(stof(value));
+		return;
+    }
+    if(index == 9){ //Change color
+        sceneObjects[selectedObjectIndex]->setFillColor(stringToColor(value));
+        return;
+    }
+    int poz = 10;
     for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
         if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
 			sceneObjects[selectedObjectIndex]->setAttributeOnScripts(i, index - poz, value);
@@ -1304,7 +1278,27 @@ void Scene::modifySelectedCustom(string value, int index) { //modify a custom va
 }
 string Scene::getSelectedCustom(int index) const { //get a custom value of the selected object
     if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
-		int poz = 0;
+        if (index == 0)
+            return sceneObjects[selectedObjectIndex]->getName();
+        if (index == 1)
+            return floatToString(sceneObjects[selectedObjectIndex]->getPosition().x);
+        if (index == 2)
+            return floatToString(sceneObjects[selectedObjectIndex]->getPosition().y);
+        if (index == 3)
+            return floatToString(sceneObjects[selectedObjectIndex]->getRotation());
+        if (index == 4)
+            return floatToString(sceneObjects[selectedObjectIndex]->getScale().x);
+        if (index == 5)
+            return floatToString(sceneObjects[selectedObjectIndex]->getScale().y);
+        if (index == 6)
+            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().x);
+        if (index == 7)
+            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().y);
+        if (index == 8)
+            return floatToString(sceneObjects[selectedObjectIndex]->getMass());
+        if(index == 9)
+            return ColorToString(sceneObjects[selectedObjectIndex]->getFillColor());
+		int poz = 10;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
                 return sceneObjects[selectedObjectIndex]->getAttributeFromScripts(i, index - poz);
@@ -1317,7 +1311,7 @@ string Scene::getSelectedCustom(int index) const { //get a custom value of the s
 
 string Scene::getSelectedCustomName(int index) const { //get the name of a custom value of the selected object
     if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
-		int poz = 0;
+		int poz = 9;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
 			if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
 				return sceneObjects[selectedObjectIndex]->getAttributeNamesFromScripts(i, index-poz);
@@ -1353,6 +1347,12 @@ void Scene::clearLastPositions() { //clear all last positions
     lastPositions.clear();
 }
 
+void Scene::startScene() { //start the scene
+    for (int i = 0; i < sceneObjects.size(); i++) {
+		if (sceneObjects[i]->getActive())
+			sceneObjects[i]->startScripts();
+	}
+}
 void Scene::drawScene(bool drawColliders, RenderWindow& window) const { //draw the scene
     for (int i = 0; i < sceneObjects.size(); i++) {
         if (sceneObjects[i]->getActive()) {
@@ -1374,6 +1374,12 @@ void Scene::updateScene() { //update the scene
     lastPositions.clear();
     for (int i = 0; i < sceneObjects.size(); i++)
         addLastPosition(sceneObjects[i]->getPosition()); //Last positions are used to reset the velocity of objects when they collide (to prevent them from going through each other)
+}
+void Scene::endScene() { //end the scene
+    for (int i = 0; i < sceneObjects.size(); i++) {
+		if (sceneObjects[i]->getActive())
+			sceneObjects[i]->destroyScripts();
+	}
 }
 
 int Scene::getId() const { //get the id of the scene
@@ -1427,6 +1433,9 @@ private:
     static Scene* currentScene;
     static EditorWindow* hierarchy;
     static EditorWindow* inspector;
+    static EditorWindow* colorPicker;
+    static bool isPlaying;
+    static bool drawEditor;
 public:
     static void setFont(Font* font);
 	static Font* getFont();
@@ -1442,6 +1451,15 @@ public:
 
     static void setInspector(EditorWindow* inspector);
     static EditorWindow* getInspector();
+
+    static void setColorPicker(EditorWindow* colorPicker);
+    static EditorWindow* getColorPicker();
+
+    static bool getIsPlaying();
+    static void setIsPlaying(bool isPlaying);
+
+    static bool getDrawEditor();
+    static void setDrawEditor(bool drawEditor);
 };
 
 void Game::setFont(Font* font) {  //set the font
@@ -1479,6 +1497,32 @@ EditorWindow* Game::getInspector() { //get the inspector
 	return Game::inspector;
 }
 
+void Game::setColorPicker(EditorWindow* colorPicker) { //set the color picker
+	Game::colorPicker = colorPicker;
+}
+EditorWindow* Game::getColorPicker() { //get the color picker
+	return Game::colorPicker;
+}
+
+bool Game::getIsPlaying() { //get if the game is playing
+	return isPlaying;
+}
+void Game::setIsPlaying(bool isPlaying) { //set if the game is playing
+	Game::isPlaying = isPlaying;
+    if (isPlaying && currentScene) {
+        currentScene->startScene();
+    }
+    else if (!isPlaying && currentScene) {
+		currentScene->endScene();
+    }
+}
+
+bool Game::getDrawEditor() { //get if the editor is drawn
+	return drawEditor;
+}
+void Game::setDrawEditor(bool drawEditor) { //set if the editor is drawn
+	Game::drawEditor = drawEditor;
+}
 
 bool Collider::findMinSeparation(const GameObject& collider1, const GameObject& collider2, Vector2f& sep) { //Find the minimum separation between two colliders
     //Separating axis theorem
@@ -1729,6 +1773,9 @@ Scene* Game::currentScene = NULL;
 EditorWindow* Game::hierarchy = NULL;
 EditorWindow* Game::inspector = NULL;
 Font* Game::font = NULL;
+bool Game::isPlaying = false;
+bool Game::drawEditor = true;
+EditorWindow* Game::colorPicker = NULL;
 
 void makeObj(GameObject& ob, const Vector2f& position, float sideLen) { //make a square object
     ob.setPointCount(4);
@@ -2217,7 +2264,6 @@ void Button::setOnClick(void (*onClick)()) { //set the onClick function
 }
 
 
-
 Text* updateHierarchy(Text* objectTexts, const RectangleShape& hierarchy, const Font& font, const Text& hierarchyTitle) { //update the hierarchy window
     if (objectTexts)
         delete[] objectTexts;
@@ -2249,6 +2295,8 @@ protected:
     bool isDragglable;
     bool isDragging;
     Vector2f dragOffset;
+
+    static bool clickedUI;
 public:
     EditorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
 
@@ -2279,6 +2327,9 @@ public:
 
     virtual void setActive(bool isActive);
     bool getActive() const;
+
+    static void setClickedUI(bool clickedUI);
+    static bool getClickedUI();
 
     virtual ~EditorWindow();
 };
@@ -2337,6 +2388,14 @@ void EditorWindow::update() { //update function
 void EditorWindow::handleEvent(Event& event) { //handle event function
     if (!isActive)
         return;
+
+    //Check if we clicked on the window and update the clickedUI variable
+    if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+		Vector2f mousePosition = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+        if (window.getGlobalBounds().contains(mousePosition))
+			clickedUI = true;
+	}
+
     drag(event);
 	for (int i = 0; i < buttons.size(); i++)
 		buttons[i].handleEvent(event);
@@ -2422,11 +2481,20 @@ void EditorWindow::setActive(bool isActive) { //set if the window is active
 bool EditorWindow::getActive() const { //get if the window is active
 	return isActive;
 }
+void EditorWindow::setClickedUI(bool clickedUI) { //set if the UI is clicked
+	EditorWindow::clickedUI = clickedUI;
+}
+bool EditorWindow::getClickedUI() { //get if the UI is clicked
+	return clickedUI;
+}
 EditorWindow::~EditorWindow() { //destructor
 	buttons.clear();
 	inputFields.clear();
 	texts.clear();
 }
+
+
+bool EditorWindow::clickedUI = false;
 
 void createObj();
 void deleteObj();
@@ -2461,6 +2529,7 @@ public:
     void mouseOver() override;
     void drag(Event& event) override;
     Color getSelectedColor() const;
+    void setSelectedColor(const Color& color);
     void setActive(bool active) override;
     ~ColorPicker() override;
 };
@@ -2741,6 +2810,10 @@ void ColorPicker::drag(Event& event) {
 Color ColorPicker::getSelectedColor() const { //get the selected color of the color picker
     return selectedColor;
 }
+void ColorPicker::setSelectedColor(const Color& color) { //set the selected color of the color picker
+	selectedColor = color;
+	setCursorsBasedOnColor();
+}
 void ColorPicker::setActive(bool active) { //set the active state of the color picker
     isActive = active;
     selected = -1;
@@ -2753,10 +2826,129 @@ ColorPicker::~ColorPicker() {} //destructor
 
 
 
+class EditableColor {
+private:
+    RectangleShape colorBox;
+    void (Scene::* onChange) (string str, int index);
+    string(Scene::* updateValue)(int index) const;
+    int callIndex;
+    bool isSelected;
+public:
+    EditableColor(const Vector2f& position, const Vector2f& size, const Color& color, void (Scene::* onChange) (string str, int index), string(Scene::* updateValue)(int index) const, int callIndex);
+	void draw(RenderWindow& window) const;
+	void update();
+	void handleEvent(Event& event);
+	void mouseOver();
+	void setSelected(bool isSelected);
+	bool getSelected() const;
+	void setColor(const Color& color);
+	Color getColor() const;
+	void setPosition(const Vector2f& position);
+	Vector2f getPosition() const;
+	void setSize(const Vector2f& size);
+	Vector2f getSize() const;
+	void setOnChange(void (Scene::* onChange) (string str, int index));
+	void setUpdateValue(string(Scene::* updateValue)(int index) const);
+	void setCallIndex(int callIndex);
+	int getCallIndex() const;
+};
+EditableColor::EditableColor(const Vector2f& position, const Vector2f& size, const Color& color, void (Scene::* onChange) (string str, int index), string(Scene::* updateValue)(int index) const, int callIndex) {
+	colorBox.setPosition(position);
+	colorBox.setSize(size);
+	colorBox.setFillColor(color);
+	colorBox.setOutlineColor(Color::Black);
+	colorBox.setOutlineThickness(1);
+
+	this->onChange = onChange;
+	this->updateValue = updateValue;
+	this->callIndex = callIndex;
+	isSelected = false;
+}
+void EditableColor::draw(RenderWindow& window) const { //draw function
+	window.draw(colorBox);
+}
+void EditableColor::update() { //update function
+    if (isSelected) {
+		ColorPicker* colorPicker = dynamic_cast<ColorPicker*>(Game::getColorPicker());
+        if (colorPicker) {
+			colorBox.setFillColor(colorPicker->getSelectedColor());
+			(Game::getCurrentScene()->*onChange)(ColorToString(colorBox.getFillColor()), callIndex);
+            if(!colorPicker->getActive())
+                isSelected = false;
+		}
+	}
+    else {
+        if (updateValue) {
+            colorBox.setFillColor(stringToColor((Game::getCurrentScene()->*updateValue)(callIndex)));
+            (Game::getCurrentScene()->*onChange)(ColorToString(colorBox.getFillColor()), callIndex);
+		}
+    }
+}
+void EditableColor::handleEvent(Event& event) { //handle event function
+    if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+		Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+        if (colorBox.getGlobalBounds().contains(mousePos)) {
+            isSelected = true;
+            ColorPicker* colorPicker = dynamic_cast<ColorPicker*>(Game::getColorPicker());
+            if (colorPicker) {
+				colorPicker->setActive(true);
+                //colorBox.setFillColor(Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getFillColor());
+                cout<<"Tanta " << ColorToString(colorBox.getFillColor()) << endl;
+                colorPicker->setSelectedColor(colorBox.getFillColor());
+			}
+		}
+	}
+}
+void EditableColor::mouseOver() { //mouse over function
+}
+void EditableColor::setSelected(bool isSelected) { //set if the color is selected
+	this->isSelected = isSelected;
+}
+bool EditableColor::getSelected() const { //get if the color is selected
+	return isSelected;
+}
+void EditableColor::setColor(const Color& color) { //set the color of the color box
+	colorBox.setFillColor(color);
+}
+Color EditableColor::getColor() const { //get the color of the color box
+	return colorBox.getFillColor();
+}
+void EditableColor::setPosition(const Vector2f& position) { //set the position of the color box
+	colorBox.setPosition(position);
+}
+Vector2f EditableColor::getPosition() const { //get the position of the color box
+	return colorBox.getPosition();
+}
+void EditableColor::setSize(const Vector2f& size) { //set the size of the color box
+	colorBox.setSize(size);
+}
+Vector2f EditableColor::getSize() const { //get the size of the color box
+	return colorBox.getSize();
+}
+void EditableColor::setOnChange(void (Scene::* onChange) (string str, int index)) { //set the onChange function
+	this->onChange = onChange;
+}
+void EditableColor::setUpdateValue(string(Scene::* updateValue)(int index) const) { //set the updateValue function
+	this->updateValue = updateValue;
+}
+void EditableColor::setCallIndex(int callIndex) { //set the call index
+	this->callIndex = callIndex;
+}
+int EditableColor::getCallIndex() const { //get the call index
+	return callIndex;
+}
+
+
+
 class InspectorWindow : public EditorWindow { //Inspector window class
+private:
+    vector<EditableColor> colors;
+    void makeDefaultFields();
 public:
     InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
     void makeCustomFields();
+    void update() override;
+    void handleEvent(Event& event) override;
     void draw(RenderWindow& window) const;
     void mouseOver();
 };
@@ -2767,7 +2959,10 @@ private:
     void repositionTexts();
 public:
     HierarchyWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText = "");
+    void update() override;
+    void handleEvent(Event& event) override;
 	void mouseOver();
+    void changeSelectedObject(int index);
     void addText(const Text& text) override;
     void deleteText(int index) override;
 };
@@ -2796,28 +2991,55 @@ HierarchyWindow::HierarchyWindow(const Font& font, const Vector2f& position, con
 
     Game::setHierarchy(this);
 }
-void HierarchyWindow::mouseOver() { //mouse over function (responsible for selecting objects in the hierarchy window)
-    if (!isActive)
-        return;
-    Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-    if (window.getGlobalBounds().contains(mousePos)) {
-        int newSelectedIndex = -1;
-        for (int i = 0; i < Game::getCurrentScene()->getObjectsCount(); i++) {
-            if (texts[i].getGlobalBounds().contains(mousePos)) {
-                newSelectedIndex = i;
-                break;
+void HierarchyWindow::update() { //update the texts in the hierarchy window
+    EditorWindow::update();
+    for (int i = 0; i < Game::getCurrentScene()->getObjects().size(); i++) {
+		texts[i].setString(Game::getCurrentScene()->getObjectByIndex(i)->getName());
+	}
+}
+void HierarchyWindow::handleEvent(Event& event) { //handle event function
+    if (isActive) {
+        if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !clickedUI) {
+			Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+            if (window.getGlobalBounds().contains(mousePos)) {
+				int newSelectedIndex = -1;
+                for (int i = 0; i < Game::getCurrentScene()->getObjectsCount(); i++) {
+                    if (texts[i].getGlobalBounds().contains(mousePos)) {
+						newSelectedIndex = i;
+						break;
+					}
+				}
+				changeSelectedObject(newSelectedIndex);
+			}
+            else{
+                int newSelectedIndex = -1;
+                //Loop through the objects in the scene and check if the mouse is over them
+                for (int i = 0; i < Game::getCurrentScene()->getObjectsCount(); i++) {
+                    if (Game::getCurrentScene()->getObjectByIndex(i)->getGlobalBounds().contains(mousePos)) {
+						newSelectedIndex = i;
+						break;
+					}
+				}
+                if(newSelectedIndex != Game::getCurrentScene()->getSelectedObjectIndex())
+					changeSelectedObject(newSelectedIndex);
             }
-        }
-        if (newSelectedIndex != Game::getCurrentScene()->getSelectedObjectIndex()) {
-            if(Game::getCurrentScene()->getSelectedObjectIndex() != -1)
-				texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::White);
-			Game::getCurrentScene()->setSelectedObjectIndex(newSelectedIndex);
-			InspectorWindow* tmp = dynamic_cast<InspectorWindow*>(Game::getInspector());
-			if (tmp)
-				tmp->makeCustomFields();
-            if (Game::getCurrentScene()->getSelectedObjectIndex() != -1)
-                texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::Cyan);
-        }
+		}
+	}
+	EditorWindow::handleEvent(event);
+}
+void HierarchyWindow::mouseOver() { //mouse over function (responsible for selecting objects in the hierarchy window)
+    
+}
+void HierarchyWindow::changeSelectedObject(int newSelectedIndex) {
+    if (newSelectedIndex != Game::getCurrentScene()->getSelectedObjectIndex()) {
+        if (Game::getCurrentScene()->getSelectedObjectIndex() != -1)
+            texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::White);
+        Game::getCurrentScene()->setSelectedObjectIndex(newSelectedIndex);
+        InspectorWindow* tmp = dynamic_cast<InspectorWindow*>(Game::getInspector());
+        if (tmp)
+            tmp->makeCustomFields();
+        if (Game::getCurrentScene()->getSelectedObjectIndex() != -1)
+            texts[Game::getCurrentScene()->getSelectedObjectIndex()].setFillColor(Color::Cyan);
     }
 }
 void HierarchyWindow::addText(const Text& text) { //add a text to the hierarchy window
@@ -2833,6 +3055,122 @@ void HierarchyWindow::deleteText(int index) { //delete a text from the hierarchy
 
 
 
+void InspectorWindow::makeDefaultFields() {
+    //Make the field for the object's name
+    InputField* tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "Name");
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(0);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    //Make the position fields
+    Text* tmp = new Text("Position:", *Game::getFont(), 15);
+    tmp->setFillColor(Color::White);
+    tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 40);
+    addText(*tmp);
+    delete tmp;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 70), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(1);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 100), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(2);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    //Make the rotation field
+    tmp = new Text("Rotation:", *Game::getFont(), 15);
+    tmp->setFillColor(Color::White);
+    tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 130);
+    addText(*tmp);
+    delete tmp;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 160), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(3);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    //Make the scale fields
+    tmp = new Text("Scale:", *Game::getFont(), 15);
+    tmp->setFillColor(Color::White);
+    tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 190);
+    addText(*tmp);
+    delete tmp;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 220), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(4);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 250), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(5);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    //Make the velocity fields
+    tmp = new Text("Velocity:", *Game::getFont(), 15);
+    tmp->setFillColor(Color::White);
+    tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 280);
+    addText(*tmp);
+    delete tmp;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 310), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(6);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 340), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(7);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    //Make the mass field
+    tmp = new Text("Mass:", *Game::getFont(), 15);
+    tmp->setFillColor(Color::White);
+    tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 370);
+    addText(*tmp);
+    delete tmp;
+
+    tmpField = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 400), Vector2f(100, 20), "0");
+    tmpField->setOnlyNumbers(true);
+    tmpField->setOnChange(&Scene::modifySelectedCustom);
+    tmpField->setUpdateValue(&Scene::getSelectedCustom);
+    tmpField->setCallIndex(8);
+    addInputField(*tmpField);
+    delete tmpField;
+
+    //Make the color field
+    EditableColor* tmpColor = new EditableColor(Vector2f(position.x + 10, position.y + title.getCharacterSize() + 430), Vector2f(100, 20), Color::White, &Scene::modifySelectedCustom, &Scene::getSelectedCustom, 9);
+    tmpColor->setCallIndex(9);
+    tmpColor->setOnChange(&Scene::modifySelectedCustom);
+    tmpColor->setUpdateValue(&Scene::getSelectedCustom);
+    colors.push_back(*tmpColor);
+    delete tmpColor;
+}
 //Inspector window constructor (makes input fields for the position, rotation, scale, and velocity of the selected object, a button to delete the selected object, and a button to change if the selected object is movable) will need to be expanded upon
 InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText) {
     /*Text* tmp = new Text("Position:", font, 15);
@@ -2942,14 +3280,17 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
 }
 void InspectorWindow::makeCustomFields() { //make custom fields function (used to add custom fields to the inspector window)
     deleteFields();
+    colors.clear();
+    texts.clear();
+    makeDefaultFields();
     if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
 		const GameObject* selectedObject = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex());
         InputField* tmp = NULL;
-        int cnt = 0;
+        int cnt = 10;
         for (int i = 0; i < selectedObject->getScriptsCount(); i++) {
             for (int j = 0; j < selectedObject->getAttributeCountFromScripts(i); j++) {
 				tmp = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
-                tmp->setPosition(Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10 + 30 * cnt));
+                tmp->setPosition(Vector2f(position.x + 10, position.y + title.getCharacterSize() + 170 + 30 * cnt));
                 tmp->setOnChange(&Scene::modifySelectedCustom);
                 tmp->setUpdateValue(&Scene::getSelectedCustom);
                 tmp->setCallIndex(cnt);
@@ -2961,25 +3302,45 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
             delete tmp;
 	}
 }
+void InspectorWindow::update() { //update function
+	EditorWindow::update();
+    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
+        for (int i = 0; i < colors.size(); i++) {
+            colors[i].update();
+        }
+    }
+}
+void InspectorWindow::handleEvent(Event& event) { //handle event function
+	EditorWindow::handleEvent(event);
+    if (isActive) {
+        for(int i=0; i<colors.size(); i++)
+			colors[i].handleEvent(event);
+        if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+			Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+            if (window.getGlobalBounds().contains(mousePos)) {
+                for (int i = 0; i < inputFields.size(); i++) {
+                    inputFields[i].checkMouseClick();
+                }
+			}
+		}
+	}
+}
 void InspectorWindow::draw(RenderWindow& window) const { //draw function
     if (!isActive)
         return;
-    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) //If an object is selected, draw the inspector window
+    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) { //If an object is selected, draw the inspector window
         EditorWindow::draw(window);
+        for (int i = 0; i < colors.size(); i++) {
+			colors[i].draw(window);
+		}
+    }
     else {
         window.draw(this->window);
         window.draw(title);
     }
 }
 void InspectorWindow::mouseOver() { //mouse over function (used to check if the mouse is over the inspector window and to check the input fields)
-    if (!isActive)
-        return;
-    Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-    if (window.getGlobalBounds().contains(mousePos)) {
-        for (int i = 0; i < inputFields.size(); i++) {
-			inputFields[i].checkMouseClick();
-		}
-	}
+    
 }
 
 void createObj() { //Create object function (it is called when the create object button is clicked)
@@ -3607,6 +3968,63 @@ GameObject* makeObjFromString(const string& obj) { //Make object from string fun
 }
 
 
+class Gizmo {
+private:
+    RectangleShape selectionBox;
+    bool dragging;
+    Vector2f dragStart;
+    void reposition();
+public:
+    Gizmo();
+    void draw(RenderWindow& window) const;
+    void update();
+};
+void Gizmo::reposition() { //reposition function
+    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
+		int index = Game::getCurrentScene()->getSelectedObjectIndex();
+		const GameObject* selectedObject = Game::getCurrentScene()->getObjectByIndex(index);
+		selectionBox.setSize(selectedObject->getGlobalBounds().getSize());
+		selectionBox.setPosition(selectedObject->getPosition());
+		selectionBox.setOrigin(selectedObject->getGlobalBounds().getSize() / 2.f);
+	}
+}
+Gizmo::Gizmo() {
+	selectionBox.setSize(Vector2f(0, 0));
+	selectionBox.setFillColor(Color(0, 0, 0, 0));
+	selectionBox.setOutlineColor(Color::White);
+	selectionBox.setOutlineThickness(2);
+
+    dragging = false;
+    dragStart = Vector2f(0, 0);
+}
+void Gizmo::draw(RenderWindow& window) const { //draw function
+    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) 
+        window.draw(selectionBox);
+}
+void Gizmo::update() { //update function
+    if (Mouse::isButtonPressed(Mouse::Left) && Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
+        Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+        if (dragging) {
+            //Move the selected object
+            Vector2f dragEnd = mousePos;
+            Vector2f drag = dragEnd - dragStart;
+            Game::getCurrentScene()->moveSelectedObject(drag);
+            dragStart = dragEnd;
+
+            //Move the selection box
+            selectionBox.move(drag);
+        }
+        //If we are not dragging, check if the cursor is over the selected object and if it is start dragging
+        else if (Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getGlobalBounds().contains(mousePos)) {
+            dragging = true;
+            dragStart = mousePos;
+		}
+    }
+    else
+        dragging = false;
+    if(Game::getCurrentScene()->getSelectedObjectIndex() != -1)
+		reposition();
+}
 
 
 
@@ -3628,12 +4046,11 @@ int main()
     ColorPicker colorPicker(font, Vector2f(window.getSize().x * 0.25f, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y * 0.5f), "Color Picker");
     Game::setHierarchy(&hierarchyWindow);
     Game::setInspector(&inspectorWindow);
+    Game::setColorPicker(&colorPicker);
     GameTime* time = GameTime::getInstance();
 
     bool save = false;
     bool load = false;
-
-    bool showEditor = true;
 
 
     float nextSpace = 0;
@@ -3650,7 +4067,6 @@ int main()
     ob.addScript(script);
     delete script;
 
-    ob.startScripts();
     scene.addObject(&ob);
 
 
@@ -3658,6 +4074,7 @@ int main()
     ob2.setFillColor(Color::Green);
     ob2.setName("Object1");
     ob2.setPosition(Vector2f(300, 300));
+    ob2.setRotation(45);
     scene.addObject(&ob2);
 
     /*Player ob3;
@@ -3688,12 +4105,18 @@ int main()
     fpsCounter.setFillColor(Color::White);
     fpsCounter.setPosition(10, 10);
 
+    if(Game::getIsPlaying())
+        scene.startScene();
+
+    Gizmo moveGizmo;
+
 
 
     while (window.isOpen()) //Game loop
     {
         //Calculate time and delta time
         time->update();
+        EditorWindow::setClickedUI(false);
         //cout<<ob2.getPosition().x<<" "<<ob2.getPosition().y<<endl;
 
         //Event handling
@@ -3703,21 +4126,26 @@ int main()
             if (event.type == Event::Closed)
                 window.close();
 
-            hierarchyWindow.handleEvent(event);
-            inspectorWindow.handleEvent(event);
-            colorPicker.handleEvent(event);
+            if (Game::getDrawEditor()) {
+                colorPicker.handleEvent(event);
+                inspectorWindow.handleEvent(event);
+                hierarchyWindow.handleEvent(event); //Call last
 
-            if (scene.getSelectedObjectIndex() != -1) {
-                if (Keyboard::isKeyPressed(Keyboard::Delete)) {
-                    deleteObj();
+
+                if (scene.getSelectedObjectIndex() != -1) {
+                    if (Keyboard::isKeyPressed(Keyboard::Delete)) {
+                        deleteObj();
+                    }
                 }
             }
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::F1) {
-                    showEditor = !showEditor;
+                    Game::setDrawEditor(!Game::getDrawEditor());
                 }
                 else if (event.key.code == Keyboard::F2)
                     colorPicker.setActive(!colorPicker.getActive());
+                else if(event.key.code == Keyboard::F3)
+                    Game::setIsPlaying(!Game::getIsPlaying());
 			}
         }
 
@@ -3728,9 +4156,12 @@ int main()
         }
 
         //Update the editor
-        hierarchyWindow.update();
-        inspectorWindow.update();
-        colorPicker.update();
+        if (Game::getDrawEditor()) {
+            hierarchyWindow.update();
+            inspectorWindow.update();
+            colorPicker.update();
+            moveGizmo.update();
+        }
 
 
         //Select object
@@ -3741,7 +4172,8 @@ int main()
         }
 
         //Update the scene
-        scene.updateScene();
+        if(Game::getIsPlaying())
+            scene.updateScene();
 
         //Clear the window
         window.clear();
@@ -3750,7 +4182,8 @@ int main()
         Game::getCurrentScene()->drawScene(false, window);
 
         //Draw the editor
-        if (showEditor) {
+        if (Game::getDrawEditor()) {
+            moveGizmo.draw(window);
             hierarchyWindow.setTitle("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
             hierarchyWindow.draw(window);
             inspectorWindow.draw(window);
@@ -3758,12 +4191,12 @@ int main()
             window.draw(fpsCounter);
         }
 
-        GameObject* tmp = new GameObject(*scene.getObjectByIndex(1));
+        /*GameObject* tmp = new GameObject(*scene.getObjectByIndex(1));
         Color color = colorPicker.getSelectedColor();
         tmp->setFillColor(color);
         scene.addObject(tmp);
         scene.removeObjectByIndex(1);
-        delete tmp;
+        delete tmp;*/
 
         window.display();
     }
