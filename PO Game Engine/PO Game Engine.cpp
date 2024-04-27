@@ -1696,7 +1696,7 @@ void Collider::moveCollidersInCollision(GameObject& collider1, GameObject& colli
             collider2.move(displacement);
         }
         else {
-            cout << "Both objects are immovable!" << endl;
+            //cout << "Both objects are immovable!" << endl;
         }
     }
 }
@@ -4035,6 +4035,7 @@ class Gizmo {
 private:
     RectangleShape selectionBox;
     CircleShape rotationBox;
+    RectangleShape scaleBox;
     int type;
     bool dragging;
     Vector2f dragStart;
@@ -4071,6 +4072,12 @@ void Gizmo::reposition() { //reposition function
             rotationBox.setOrigin(radius, radius);
 
         }
+        else if (type == 2) { //Scale
+            // Set the size and position of the scale box
+            scaleBox.setSize(Vector2f(20.f, 20.f));
+            scaleBox.setPosition(selectedObject->getPosition() + selectedObject->getLocalBounds().getSize() / 2.f);
+            scaleBox.setOrigin(scaleBox.getSize() / 2.f);
+        }
 	}
 }
 Gizmo::Gizmo() {
@@ -4081,7 +4088,9 @@ Gizmo::Gizmo() {
 
     dragging = false;
     dragStart = Vector2f(0, 0);
-    type = 0; //0 = move, 1 = rotate
+    type = 0; //0 = move, 1 = rotate, 2 = scale
+    scaleBox.setSize(Vector2f(0, 0));
+    scaleBox.setFillColor(Color::White);
     rotationBox.setRadius(0);
     rotationBox.setFillColor(Color(0, 0, 0, 0));
     rotationBox.setOutlineColor(Color::White);
@@ -4095,7 +4104,9 @@ void Gizmo::draw(RenderWindow& window) const { //draw function
         else if (type == 1) {
 			window.draw(rotationBox);
 		}
-	
+        else if (type == 2) {
+            window.draw(scaleBox);
+        }
     }
 }
 void Gizmo::update() { //update function
@@ -4141,6 +4152,40 @@ void Gizmo::update() { //update function
                 dragStart = mousePos;
 
 			}
+            else if (type == 2) {
+                // Scale the selected object
+                Vector2f dragEnd = mousePos;
+                Vector2f drag = dragEnd - dragStart;
+
+                // Get the current object's rotation
+                float rotation = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getRotation();
+
+                // Rotate the drag vector by the negative of the object's rotation
+                float rad = -rotation * 3.14159265f / 180.f;
+                Vector2f rotatedDrag(drag.x * cos(rad) - drag.y * sin(rad), drag.x * sin(rad) + drag.y * cos(rad));
+
+                // Get the current object's scale
+                Vector2f initialScale = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getScale();
+
+                float sideLength = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getLocalBounds().getSize().x;
+
+                // Get the current object's position
+                Vector2f objectPos = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getPosition();
+
+                // Scale the object based on the distance
+                float scaleX = initialScale.x * (1.f + (rotatedDrag.x / sideLength));
+                float scaleY = initialScale.y * (1.f - (rotatedDrag.y / sideLength));
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scaleX), 4);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scaleY), 5);
+
+                dragStart = dragEnd;
+
+                // Move the scale box
+                scaleBox.move(drag);
+
+
+
+            }
         }
         //If we are not dragging, check if the cursor is over the selected object and if it is start dragging
         else if (type == 0 && Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getGlobalBounds().contains(mousePos)) {
@@ -4150,6 +4195,10 @@ void Gizmo::update() { //update function
         else if (type == 1 && rotationBox.getGlobalBounds().contains(mousePos)) {
 			dragging = true;
 			dragStart = mousePos;
+        }
+        else if (type == 2 && Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getGlobalBounds().contains(mousePos)) {
+            dragging = true;
+            dragStart = mousePos;
         }
     }
     else
@@ -4161,10 +4210,16 @@ void Gizmo::setGizmoType(int type) { //set gizmo type function
 	this->type = type;
     if (type == 0) {
 		rotationBox.setRadius(0);
+        scaleBox.setSize(Vector2f(0, 0));
 	}
     else if (type == 1) {
 		selectionBox.setSize(Vector2f(0, 0));
+        scaleBox.setSize(Vector2f(0, 0));
 	}
+    else if (type == 2) {
+        selectionBox.setSize(Vector2f(0, 0));
+        rotationBox.setRadius(0);
+    }
 }
 
 
@@ -4190,12 +4245,12 @@ int main()
     GameTime* time = GameTime::getInstance();
 
     bool save = false;
-    bool load = true;
+    bool load = false;
 
 
     float nextSpace = 0;
 
-    /*GameObject ob;
+    GameObject ob;
     ob.setName("Object0");
     makeObj(ob, Vector2f(100, 100), 100.f);
 
@@ -4215,7 +4270,7 @@ int main()
     ob2.setName("Object1");
     ob2.setPosition(Vector2f(300, 300));
     ob2.setRotation(45);
-    scene.addObject(&ob2);*/
+    scene.addObject(&ob2);
 
     /*Player ob3;
     ob3.setName("Player1");
@@ -4256,7 +4311,6 @@ int main()
         //Calculate time and delta time
         time->update();
         EditorWindow::setClickedUI(false);
-        //cout<<ob2.getPosition().x<<" "<<ob2.getPosition().y<<endl;
 
         //Event handling
         Event event;
@@ -4282,10 +4336,12 @@ int main()
                     Game::setDrawEditor(!Game::getDrawEditor());
                 else if(event.key.code == Keyboard::F2)
                     Game::setIsPlaying(!Game::getIsPlaying());
-                else if(event.key.code == Keyboard::F3)
+                else if(event.key.code == Keyboard::W)
                     gizmos.setGizmoType(0);
-                else if(event.key.code == Keyboard::F4)
+                else if(event.key.code == Keyboard::E)
                     gizmos.setGizmoType(1);
+                else if(event.key.code == Keyboard::R)
+                    gizmos.setGizmoType(2);
 			}
         }
 
@@ -4330,13 +4386,6 @@ int main()
             colorPicker.draw(window);
             window.draw(fpsCounter);
         }
-
-        /*GameObject* tmp = new GameObject(*scene.getObjectByIndex(1));
-        Color color = colorPicker.getSelectedColor();
-        tmp->setFillColor(color);
-        scene.addObject(tmp);
-        scene.removeObjectByIndex(1);
-        delete tmp;*/
 
         window.display();
     }
