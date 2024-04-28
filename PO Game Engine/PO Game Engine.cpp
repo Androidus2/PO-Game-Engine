@@ -1092,6 +1092,7 @@ public:
     int getSelectedCustomType(int index) const;
 
     void changeSelectedIsMovable();
+    void setTextureToSelectedObject(const Texture* tex);
 
     void setLastPositions(const vector<Vector2f>& lastPositions);
     const vector<Vector2f>& getLastPositions() const;
@@ -1409,6 +1410,10 @@ void Scene::changeSelectedIsMovable() { //change if the selected object is movab
 	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
 		sceneObjects[selectedObjectIndex]->setIsMovable(!sceneObjects[selectedObjectIndex]->getIsMovable());
 }
+void Scene::setTextureToSelectedObject(const Texture* tex) { //set a texture to the selected object
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->setTexture(tex, true);
+}
 
 void Scene::setLastPositions(const vector<Vector2f>& lastPositions) { //set the last positions of the objects
     this->lastPositions = lastPositions;
@@ -1537,6 +1542,7 @@ private:
     static EditorWindow* inspector;
     static EditorWindow* colorPicker;
     static EditorWindow* gameFilesWindow;
+    static Texture* folderTexture;
     static bool isPlaying;
     static bool drawEditor;
 public:
@@ -1566,6 +1572,9 @@ public:
 
     static bool getDrawEditor();
     static void setDrawEditor(bool drawEditor);
+
+    static Texture* getFolderTexture();
+    static void setFolderTexture(Texture* texture);
 };
 
 int getSelectedSceneId() {
@@ -1641,6 +1650,13 @@ bool Game::getDrawEditor() { //get if the editor is drawn
 }
 void Game::setDrawEditor(bool drawEditor) { //set if the editor is drawn
 	Game::drawEditor = drawEditor;
+}
+
+Texture* Game::getFolderTexture() { //get the folder texture
+	return folderTexture;
+}
+void Game::setFolderTexture(Texture* texture) { //set the folder texture
+	folderTexture = texture;
 }
 
 bool Collider::findMinSeparation(const GameObject& collider1, const GameObject& collider2, Vector2f& sep) { //Find the minimum separation between two colliders
@@ -1904,6 +1920,7 @@ bool Game::isPlaying = false;
 bool Game::drawEditor = true;
 EditorWindow* Game::colorPicker = NULL;
 EditorWindow* Game::gameFilesWindow = NULL;
+Texture* Game::folderTexture = NULL;
 
 void makeObj(GameObject& ob, const Vector2f& position, float sideLen) { //make a square object
     ob.setPointCount(4);
@@ -2292,7 +2309,7 @@ void Button::handleEvent(Event& event) { //handle event function
         }
         if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left) { //If the left mouse button is released, check if the mouse is over the button and release it or toggle it
             Vector2f mousePosition = Vector2f(event.mouseButton.x, event.mouseButton.y);
-            if (isToggle)
+            if (isToggle && button.getGlobalBounds().contains(mousePosition))
                 toggle();
             else if(isPressed)
                 release();
@@ -4125,6 +4142,7 @@ void Gizmo::draw(RenderWindow& window) const { //draw function
     }
 }
 void Gizmo::update() { //update function
+    //Check dragging logic to use events so the gizmo won't be called when the mouse is over UI
     if (Mouse::isButtonPressed(Mouse::Left) && Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
         Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
         if (dragging) {
@@ -4207,7 +4225,7 @@ void Gizmo::update() { //update function
             dragging = true;
             dragStart = mousePos;
 		}
-        else if (type == 1 && rotationBox.getGlobalBounds().contains(mousePos)) {
+        else if (type == 1 && Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getGlobalBounds().contains(mousePos)) {
 			dragging = true;
 			dragStart = mousePos;
         }
@@ -4238,18 +4256,114 @@ void Gizmo::setGizmoType(int type) { //set gizmo type function
 }
 
 
+class FileNode {
+private:
+    string name;
+    bool isDir;
+    Texture* icon;
+	vector<FileNode*> children;
+	FileNode* parent;
+public:
+    FileNode(const string& name, bool isDir);
+	void addChild(FileNode* child);
+    int childIndex(string name);
+	void removeChild(int index);
+	FileNode* getChild(int index) const;
+	int getChildCount() const;
+    void setName(const string& name);
+	string getName() const;
+    string getPath() const;
+	bool getIsDir() const;
+    void setIcon(Texture* icon);
+    Texture* getIcon() const;
+	FileNode* getParent() const;
+	void setParent(FileNode* parent);
+	~FileNode();
+};
+FileNode::FileNode(const string& name, bool isDir) { //constructor
+	this->name = name;
+	this->isDir = isDir;
+	parent = nullptr;
+	icon = nullptr;
+}
+void FileNode::addChild(FileNode* child) { //add child function
+	children.push_back(child);
+	child->setParent(this);
+}
+int FileNode::childIndex(string name) { //child index function
+    for (int i = 0; i < children.size(); i++) {
+		if (children[i]->getName() == name)
+			return i;
+	}
+	return -1;
+}
+void FileNode::removeChild(int index) { //remove child function
+    if (index < children.size() && index >= 0) {
+        delete children[index];
+		children.erase(children.begin() + index);
+	}
+}
+FileNode* FileNode::getChild(int index) const { //get child function
+	if (index < children.size() && index >= 0)
+		return children[index];
+	return nullptr;
+}
+int FileNode::getChildCount() const { //get child count function
+	return children.size();
+}
+void FileNode::setName(const string& name) { //set name function
+	this->name = name;
+}
+string FileNode::getPath() const { //get path function
+	string path = "";
+	const FileNode* tmp = this;
+    while (tmp != nullptr) {
+		path = tmp->getName() + "/" + path;
+		tmp = tmp->getParent();
+	}
+	return path;
+}
+string FileNode::getName() const { //get name function
+	return name;
+}
+bool FileNode::getIsDir() const { //get is directory function
+	return isDir;
+}
+void FileNode::setIcon(Texture* icon) { //set icon function
+	this->icon = icon;
+}
+Texture* FileNode::getIcon() const { //get icon function
+	return icon;
+}
+FileNode* FileNode::getParent() const { //get parent function
+	return parent;
+}
+void FileNode::setParent(FileNode* parent) { //set parent function
+	this->parent = parent;
+}
+FileNode::~FileNode() { //destructor
+    for (int i = 0; i < children.size(); i++) {
+		delete children[i];
+	}
+    if (icon != nullptr && !isDir)
+        delete icon;
+}
+
+
 
 class GameFilesWindow : public EditorWindow { //Game files window class (derived from EditorWindow)
 private:
-    vector<Texture*> textures;
+    FileNode* root;
     string currentDirectory;
     vector<RectangleShape> icons;
-    void loadFiles();
 
     float lastClickTime;
     int selectedFile;
 
     RectangleShape selectedBackground;
+    void loadFiles();
+    void makeTree(FileNode* node);
+    Texture* makeTexture(const string& path);
 public:
     GameFilesWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& title);
     void handleEvent(Event& event) override;
@@ -4259,14 +4373,95 @@ public:
     void mouseOver() override {};
     void makeDir();
 };
+Texture* GameFilesWindow::makeTexture(const string& path) { //make texture function
+	Image img;
+	img.loadFromFile(path);
+	Texture* tex = new Texture();
+	tex->loadFromImage(img);
+	return tex;
+}
+void GameFilesWindow::makeTree(FileNode* node) { //make tree function
+	string path = node->getPath();
+    for (const auto& entry : filesystem::directory_iterator(path)) {
+		string name = entry.path().filename().string();
+        //If a file exists and is not in the tree, add it
+        if (name.find(".") == string::npos && node->childIndex(name) == -1) {
+            FileNode* tmp = new FileNode(name, true);
+            tmp->setIcon(Game::getFolderTexture());
+            if(!Game::getFolderTexture())
+                cout<<"Folder texture not loaded"<<endl;
+            node->addChild(tmp);
+            makeTree(tmp);
+        }
+        else if (node->childIndex(name) == -1 && (name.find(".png") != string::npos || name.find(".psd") != string::npos || name.find(".jpg") != string::npos)) {
+			FileNode* tmp = new FileNode(name, false);
+            tmp->setIcon(makeTexture(path + "/" + name));
+			node->addChild(tmp);
+        }
+	}
+    //If a file is in the tree but doesn't exist, remove it
+    int n = node->getChildCount();
+    for (int i = 0; i < n; i++) {
+        string name = node->getChild(i)->getName();
+		bool exists = false;
+        for (const auto& entry : filesystem::directory_iterator(path)) {
+            if (entry.path().filename().string() == name) {
+                exists = true;
+            }
+        }
+        if (!exists) {
+            node->removeChild(i);
+            i--;
+            n--;
+        }
+        else if (name.find(".") == string::npos) {
+            makeTree(node->getChild(i));
+        }
+    }
+}
 void GameFilesWindow::loadFiles() { //load files function
 	icons.clear();
     texts.clear();
-    textures.clear();
+    makeTree(root);
 	string path = currentDirectory;
     Image img;
     Text text;
-    for (const auto& entry : filesystem::directory_iterator(path)) {
+    FileNode* node = root;
+    //Get the node that represents the current directory
+    if (currentDirectory != "GameFiles/") {
+        //Split the path into the respective directories
+        vector<string> dirs;
+        string dir = "";
+        for (int i = 0; i < path.size(); i++) {
+            if (path[i] == '/') {
+				dirs.push_back(dir);
+				dir = "";
+			}
+            else {
+				dir += path[i];
+			}
+		}
+        while (dirs.size() > 0) {
+            for (int i = 0; i < node->getChildCount(); i++) {
+                if (node->getChild(i)->getName() == dirs[0]) {
+					node = node->getChild(i);
+					break;
+				}
+			}
+			dirs.erase(dirs.begin());
+		}
+    }
+    //Load the files in the current directory
+    for (int i = 0; i < node->getChildCount(); i++) {
+        icons.push_back(RectangleShape(Vector2f(100, 100)));
+		icons[i].setTexture(node->getChild(i)->getIcon());
+		icons[i].setOutlineColor(Color::Black);
+		icons[i].setOutlineThickness(1);
+		icons[i].setPosition(position.x + 10 + (i % 4) * 110, position.y + 30 + (i / 4) * 130);
+		texts.push_back(Text(node->getChild(i)->getName(), *Game::getFont(), 13));
+		texts[i].setPosition(position.x + 10 + (i % 4) * 110 + icons[i].getSize().x / 2 - texts[i].getGlobalBounds().width / 2, position.y + 130 + (i / 4) * 130);
+    }
+    /*for (const auto& entry : filesystem::directory_iterator(path)) {
 		string name = entry.path().filename().string();
         if (name.find(".png") != string::npos || name.find(".psd") != string::npos || name.find(".jpg") != string::npos || name.find(".") == string::npos) {
             if(name.find(".") != string::npos)
@@ -4285,7 +4480,7 @@ void GameFilesWindow::loadFiles() { //load files function
             text = Text(name, *Game::getFont(), 13);
             texts.push_back(text);
 		}
-	}
+	}*/
     int elementsPerRow = (size.x - 20) / 110;
     for (int i = 0; i < icons.size(); i++) {
 		icons[i].setPosition(position.x + 10 + (i % elementsPerRow) * 110, position.y + 30 + (i / elementsPerRow) * 130);
@@ -4331,6 +4526,9 @@ GameFilesWindow::GameFilesWindow(const Font& font, const Vector2f& position, con
     selectedBackground.setOutlineColor(Color::Black);
     selectedBackground.setOutlineThickness(1);
 
+    root = new FileNode("GameFiles", true);
+    //makeTree(root);
+
     loadFiles();
 }
 void GameFilesWindow::handleEvent(Event& event) { //handle event function
@@ -4355,10 +4553,12 @@ void GameFilesWindow::handleEvent(Event& event) { //handle event function
             if (selectedFile != -1) {
                 selectedBackground.setPosition(icons[selectedFile].getPosition() - Vector2f(5, 5));
 				selectedBackground.setFillColor(Color(22, 48, 114, 194));
+                Game::getCurrentScene()->setTextureToSelectedObject(icons[selectedFile].getTexture());
             }
             else {
                 selectedBackground.setPosition(Vector2f(-1000, -1000));
 				selectedBackground.setFillColor(Color(22, 48, 114, 0));
+				//Game::getCurrentScene()->setTextureToSelectedObject(nullptr);
 			}
             lastClickTime = GameTime::getInstance()->getTime();
 		}
@@ -4414,6 +4614,17 @@ int main()
     font.loadFromFile("Resources/Roboto-Black.ttf");
     Game::setFont(&font);
     //window.setFramerateLimit(60);
+
+    Image folderIconimg;
+    if(!folderIconimg.loadFromFile("Resources/Folder.png"))
+        cout<<"Failed to load image"<<endl;
+    Texture* folderIcon = new Texture();
+    if(!folderIcon->loadFromImage(folderIconimg))
+        cout<<"Failed to load texture"<<endl;
+    Game::setFolderTexture(folderIcon);
+    if(!Game::getFolderTexture())
+		cout<<"Failed to set folder texture"<<endl;
+
     Scene scene;
     Game::setCurrentScene(&scene);
     HierarchyWindow hierarchyWindow(font, Vector2f(0, 0), Vector2f(250, window.getSize().y), "Hierarchy");
@@ -4425,6 +4636,7 @@ int main()
     Game::setColorPicker(&colorPicker);
     Game::setGameFilesWindow(&gameFilesWindow);
     GameTime* time = GameTime::getInstance();
+
 
     bool save = false;
     bool load = false;
