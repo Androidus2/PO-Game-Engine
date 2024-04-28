@@ -3,6 +3,8 @@
 #include <vector>
 #include <iomanip>
 #include <sstream>
+#include <filesystem>
+#include <functional>
 #include "SFML\Graphics.hpp"
 #include "SFML\Window.hpp"
 #include "SFML\System.hpp"
@@ -1534,6 +1536,7 @@ private:
     static EditorWindow* hierarchy;
     static EditorWindow* inspector;
     static EditorWindow* colorPicker;
+    static EditorWindow* gameFilesWindow;
     static bool isPlaying;
     static bool drawEditor;
 public:
@@ -1554,6 +1557,9 @@ public:
 
     static void setColorPicker(EditorWindow* colorPicker);
     static EditorWindow* getColorPicker();
+
+    static void setGameFilesWindow(EditorWindow* gameFilesWindow);
+    static EditorWindow* getGameFilesWindow();
 
     static bool getIsPlaying();
     static void setIsPlaying(bool isPlaying);
@@ -1608,6 +1614,13 @@ void Game::setColorPicker(EditorWindow* colorPicker) { //set the color picker
 }
 EditorWindow* Game::getColorPicker() { //get the color picker
 	return Game::colorPicker;
+}
+
+void Game::setGameFilesWindow(EditorWindow* gameFilesWindow) { //set the game files window
+	Game::gameFilesWindow = gameFilesWindow;
+}
+EditorWindow* Game::getGameFilesWindow() { //get the game files window
+	return Game::gameFilesWindow;
 }
 
 bool Game::getIsPlaying() { //get if the game is playing
@@ -1890,6 +1903,7 @@ Font* Game::font = NULL;
 bool Game::isPlaying = false;
 bool Game::drawEditor = true;
 EditorWindow* Game::colorPicker = NULL;
+EditorWindow* Game::gameFilesWindow = NULL;
 
 void makeObj(GameObject& ob, const Vector2f& position, float sideLen) { //make a square object
     ob.setPointCount(4);
@@ -2278,12 +2292,10 @@ void Button::handleEvent(Event& event) { //handle event function
         }
         if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left) { //If the left mouse button is released, check if the mouse is over the button and release it or toggle it
             Vector2f mousePosition = Vector2f(event.mouseButton.x, event.mouseButton.y);
-            if (button.getGlobalBounds().contains(mousePosition)) {
-                if (isToggle)
-                    toggle();
-                else
-                    release();
-            }
+            if (isToggle)
+                toggle();
+            else if(isPressed)
+                release();
         }
         if (event.type == Event::MouseMoved) { //If the mouse is moved, check if the mouse is over the button and hover it or unhover it
             Vector2f mousePosition = Vector2f(event.mouseMove.x, event.mouseMove.y);
@@ -2452,7 +2464,7 @@ EditorWindow::EditorWindow(const Font& font, const Vector2f& position, const Vec
 	window.setSize(size);
 	window.setFillColor(Color(50, 50, 50));
 	window.setOutlineColor(Color::Black);
-	window.setOutlineThickness(1);
+	window.setOutlineThickness(3);
 
     draggingArea.setPosition(position);
     draggingArea.setSize(Vector2f(size.x, 25));
@@ -3406,6 +3418,9 @@ void InspectorWindow::mouseOver() { //mouse over function (used to check if the 
     
 }
 
+
+
+
 void createObj() { //Create object function (it is called when the create object button is clicked)
     GameObject* ob = new GameObject();
     makeObj(*ob, Vector2f(400, 100), 100.f);
@@ -4224,11 +4239,176 @@ void Gizmo::setGizmoType(int type) { //set gizmo type function
 
 
 
+class GameFilesWindow : public EditorWindow { //Game files window class (derived from EditorWindow)
+private:
+    vector<Texture*> textures;
+    string currentDirectory;
+    vector<RectangleShape> icons;
+    void loadFiles();
+
+    float lastClickTime;
+    int selectedFile;
+
+    RectangleShape selectedBackground;
+public:
+    GameFilesWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& title);
+    void handleEvent(Event& event) override;
+	void draw(RenderWindow& window) const override;
+    string getCurrentDirectory() const;
+    void setCurrentDirectory(const string& directory);
+    void mouseOver() override {};
+    void makeDir();
+};
+void GameFilesWindow::loadFiles() { //load files function
+	icons.clear();
+    texts.clear();
+    textures.clear();
+	string path = currentDirectory;
+    Image img;
+    Text text;
+    for (const auto& entry : filesystem::directory_iterator(path)) {
+		string name = entry.path().filename().string();
+        if (name.find(".png") != string::npos || name.find(".psd") != string::npos || name.find(".jpg") != string::npos || name.find(".") == string::npos) {
+            if(name.find(".") != string::npos)
+                img.loadFromFile(path + name);
+            else
+                img.loadFromFile("Resources/Folder.png");
+            Texture* tex = new Texture();
+            tex->loadFromImage(img);
+            textures.push_back(tex);
+			RectangleShape icon(Vector2f(100, 100));
+			icon.setTexture(tex);
+            icon.setOutlineColor(Color::Black);
+            if (name.find(".") != string::npos)
+                icon.setOutlineThickness(1);
+			icons.push_back(icon);
+            text = Text(name, *Game::getFont(), 13);
+            texts.push_back(text);
+		}
+	}
+    int elementsPerRow = (size.x - 20) / 110;
+    for (int i = 0; i < icons.size(); i++) {
+		icons[i].setPosition(position.x + 10 + (i % elementsPerRow) * 110, position.y + 30 + (i / elementsPerRow) * 130);
+        texts[i].setPosition(position.x + 10 + (i % elementsPerRow) * 110 + icons[i].getSize().x / 2 - texts[i].getGlobalBounds().width / 2, position.y + 130 + (i / elementsPerRow) * 130);
+	}
+    text = Text(currentDirectory, *Game::getFont(), 15);
+    text.setPosition(position.x + 10, position.y + 5);
+    texts.push_back(text);
+    selectedFile = -1;
+    selectedBackground.setPosition(Vector2f(-1000, -1000));
+}
+GameFilesWindow::GameFilesWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& title) : EditorWindow(font, position, size, title) {
+    Button outButton(font, Vector2f(position.x + size.x - 30, position.y), Vector2f(30, 30), "<-");
+    outButton.setOnClick([]() {
+        GameFilesWindow* window = dynamic_cast<GameFilesWindow*>(Game::getGameFilesWindow());
+        if(window == nullptr)
+			return;
+        string path = window->getCurrentDirectory();
+        if (path != "GameFiles/") {
+			path = path.substr(0, path.size() - 1);
+			path = path.substr(0, path.find_last_of("/") + 1);
+			window->setCurrentDirectory(path);
+		}
+	});
+    buttons.push_back(outButton);
+
+    Button newFolderButton(font, Vector2f(position.x + size.x - 60, position.y), Vector2f(30, 30), "+");
+    newFolderButton.setOnClick([]() {
+        GameFilesWindow* window = dynamic_cast<GameFilesWindow*>(Game::getGameFilesWindow());
+        if (window == nullptr)
+            return;
+        window->makeDir();
+        }
+    );
+    buttons.push_back(newFolderButton);
+
+    currentDirectory = "GameFiles/";
+    lastClickTime = 0;
+    selectedFile = -1;
+
+    selectedBackground.setSize(Vector2f(110, 130));
+    selectedBackground.setFillColor(Color(22, 48, 114, 0)); //194 alpha when visible
+    selectedBackground.setOutlineColor(Color::Black);
+    selectedBackground.setOutlineThickness(1);
+
+    loadFiles();
+}
+void GameFilesWindow::handleEvent(Event& event) { //handle event function
+    if (event.type == Event::MouseButtonPressed) {
+        if (event.mouseButton.button == Mouse::Left) {
+            int index = -1;
+            for (int i = 0; i < icons.size(); i++) {
+                if (icons[i].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                    if (texts[i].getString().find(".") == string::npos) {
+                        if (GameTime::getInstance()->getTime() - lastClickTime < 0.5f && selectedFile == i) {
+                            currentDirectory += texts[i].getString() + "/";
+                            loadFiles();
+                            index = -1;
+                            break;
+                        }
+					}
+                    index = i;
+                    break;
+				}
+			}
+            selectedFile = index;
+            if (selectedFile != -1) {
+                selectedBackground.setPosition(icons[selectedFile].getPosition() - Vector2f(5, 5));
+				selectedBackground.setFillColor(Color(22, 48, 114, 194));
+            }
+            else {
+                selectedBackground.setPosition(Vector2f(-1000, -1000));
+				selectedBackground.setFillColor(Color(22, 48, 114, 0));
+			}
+            lastClickTime = GameTime::getInstance()->getTime();
+		}
+	}
+    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Delete) {
+        if (selectedFile != -1) {
+			string path = currentDirectory + texts[selectedFile].getString();
+            if (filesystem::is_directory(path)) {
+				filesystem::remove_all(path);
+			}
+            else {
+				filesystem::remove(path);
+			}
+			loadFiles();
+		}
+	}
+    EditorWindow::handleEvent(event);
+}
+string GameFilesWindow::getCurrentDirectory() const { //get current directory function
+	return currentDirectory;
+}
+void GameFilesWindow::setCurrentDirectory(const string& directory) { //set current directory function
+	currentDirectory = directory;
+	loadFiles();
+}
+void GameFilesWindow::draw(RenderWindow& window) const { //draw function
+	EditorWindow::draw(window);
+    for (int i = 0; i < icons.size(); i++) {
+		window.draw(icons[i]);
+	}
+    window.draw(selectedBackground);
+}
+void GameFilesWindow::makeDir() { //make directory function
+	string path = currentDirectory;
+	string name = "New Folder";
+    //Check if the folder already exists
+ 	int i = 1;
+ 	while (filesystem::exists(path + name)) {
+ 		name = "New Folder (" + to_string(i) + ")";
+ 		i++;
+ 	}
+ 	filesystem::create_directory(path + name);
+    loadFiles();
+ }
+
 
 int main()
 {
     //Setup
-    RenderWindow window(VideoMode(1280, 720), "PO Game Engine");
+    RenderWindow window(VideoMode(1920, 1080), "PO Game Engine");
     Game::setWindow(&window);
     Font font;
     font.loadFromFile("Resources/Roboto-Black.ttf");
@@ -4236,12 +4416,14 @@ int main()
     //window.setFramerateLimit(60);
     Scene scene;
     Game::setCurrentScene(&scene);
-    HierarchyWindow hierarchyWindow(font, Vector2f(0, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y), "Hierarchy");
-    InspectorWindow inspectorWindow(font, Vector2f(window.getSize().x * 0.75f, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y), "Inspector");
-    ColorPicker colorPicker(font, Vector2f(window.getSize().x * 0.25f, 0), Vector2f(window.getSize().x * 0.25f, window.getSize().y * 0.5f), "Color Picker");
+    HierarchyWindow hierarchyWindow(font, Vector2f(0, 0), Vector2f(250, window.getSize().y), "Hierarchy");
+    InspectorWindow inspectorWindow(font, Vector2f(window.getSize().x - 350, 0), Vector2f(350, window.getSize().y), "Inspector");
+    ColorPicker colorPicker(font, Vector2f(window.getSize().x * 0.25f, 0), Vector2f(320, 320), "Color Picker");
+    GameFilesWindow gameFilesWindow(font, Vector2f(250, window.getSize().y - 300), Vector2f(window.getSize().x - 600, 300), "Game Files");
     Game::setHierarchy(&hierarchyWindow);
     Game::setInspector(&inspectorWindow);
     Game::setColorPicker(&colorPicker);
+    Game::setGameFilesWindow(&gameFilesWindow);
     GameTime* time = GameTime::getInstance();
 
     bool save = false;
@@ -4322,12 +4504,14 @@ int main()
             if (Game::getDrawEditor()) {
                 colorPicker.handleEvent(event);
                 inspectorWindow.handleEvent(event);
+                gameFilesWindow.handleEvent(event);
                 hierarchyWindow.handleEvent(event); //Call last
 
 
                 if (scene.getSelectedObjectIndex() != -1) {
                     if (Keyboard::isKeyPressed(Keyboard::Delete)) {
                         deleteObj();
+                        colorPicker.setActive(false);
                     }
                 }
             }
@@ -4356,6 +4540,7 @@ int main()
             hierarchyWindow.update();
             inspectorWindow.update();
             colorPicker.update();
+            gameFilesWindow.update();
             gizmos.update();
         }
 
@@ -4365,6 +4550,7 @@ int main()
             hierarchyWindow.mouseOver();
             inspectorWindow.mouseOver();
             colorPicker.mouseOver();
+            gameFilesWindow.mouseOver();
         }
 
         //Update the scene
@@ -4384,6 +4570,7 @@ int main()
             hierarchyWindow.draw(window);
             inspectorWindow.draw(window);
             colorPicker.draw(window);
+            gameFilesWindow.draw(window);
             window.draw(fpsCounter);
         }
 
