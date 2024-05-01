@@ -166,6 +166,7 @@ public:
     static Vector2f normalize(const Vector2f& source);
     static Vector2f calculateNormal(const Vector2f& source);
     static Vector2f direction(const Vector2f& source, const Vector2f& target);
+    static Vector2f rotateVector(const Vector2f& source, float angle);
 };
 
 float Utility::magnitude(const Vector2f& source) //magnitude of a vector
@@ -192,6 +193,12 @@ Vector2f Utility::calculateNormal(const Vector2f& source) //calculate normal of 
 Vector2f Utility::direction(const Vector2f& source, const Vector2f& target) //direction from source to target
 {
     return normalize(Vector2f(target.x - source.x, target.y - source.y));
+}
+Vector2f Utility::rotateVector(const Vector2f& source, float angle) //rotate a vector
+{
+	float x = source.x * cos(angle) - source.y * sin(angle);
+	float y = source.x * sin(angle) + source.y * cos(angle);
+	return Vector2f(x, y);
 }
 
 class GameTime { //for delta time and time (singleton)
@@ -4071,6 +4078,8 @@ private:
     int type;
     bool dragging;
     Vector2f dragStart;
+
+    Vector2f initialScale;
     void reposition();
 public:
     Gizmo();
@@ -4127,6 +4136,8 @@ Gizmo::Gizmo() {
     rotationBox.setFillColor(Color(0, 0, 0, 0));
     rotationBox.setOutlineColor(Color::White);
     rotationBox.setOutlineThickness(2);
+
+    initialScale = Vector2f(0, 0);
 }
 void Gizmo::draw(RenderWindow& window) const { //draw function
     if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
@@ -4190,33 +4201,64 @@ void Gizmo::update() { //update function
                 Vector2f dragEnd = mousePos;
                 Vector2f drag = dragEnd - dragStart;
 
-                // Get the current object's rotation
-                float rotation = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getRotation();
+                float originalObjectAngle = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getRotation();
+                
+                bool shouldCorrect = false;
 
-                // Rotate the drag vector by the negative of the object's rotation
-                float rad = -rotation * 3.14159265f / 180.f;
-                Vector2f rotatedDrag(drag.x * cos(rad) - drag.y * sin(rad), drag.x * sin(rad) + drag.y * cos(rad));
+                //Rotate drag vector by the object's angle
+                float angle = originalObjectAngle;
 
-                // Get the current object's scale
-                Vector2f initialScale = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getScale();
+                if(angle < 0)
+					angle += 360.f;
 
-                float sideLength = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getLocalBounds().getSize().x;
+                if((angle >= 90.f && angle < 180.f) || (angle >= 270.f && angle < 360.f))
+                    shouldCorrect = true;
+
+                angle = fmod(angle, 90.f);
+
+                angle = -angle * 3.14159265f / 180.f;
+                float x = drag.x * cos(angle) - drag.y * sin(angle);
+                float y = drag.x * sin(angle) + drag.y * cos(angle);
+                drag = Vector2f(x, y);
+
+                Vector2f objectPos = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getPosition();
+                Vector2f dragStartRotated = dragStart - objectPos;
+
+                x = dragStartRotated.x * cos(angle) - dragStartRotated.y * sin(angle);
+                y = dragStartRotated.x * sin(angle) + dragStartRotated.y * cos(angle);
+                dragStartRotated = Vector2f(x, y) + objectPos;
+
+                
+                float sideLengthX = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getLocalBounds().getSize().x;
+                float sideLengthY = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getLocalBounds().getSize().y;
 
                 // Get the current object's position
-                Vector2f objectPos = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getPosition();
 
-                // Scale the object based on the distance
-                float scaleX = initialScale.x * (1.f + (rotatedDrag.x / sideLength));
-                float scaleY = initialScale.y * (1.f - (rotatedDrag.y / sideLength));
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(scaleX), 4);
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(scaleY), 5);
+                if (dragStartRotated.x < objectPos.x)
+                    drag.x = -drag.x;
+                if (initialScale.x < 0)
+                    drag.x = -drag.x;
+                if (dragStartRotated.y > objectPos.y)
+                    drag.y = -drag.y;
+                if (initialScale.y > 0)
+                    drag.y = -drag.y;
 
-                dragStart = dragEnd;
+                if (shouldCorrect) {
+                    drag = Vector2f(drag.y, drag.x);
+                    if((initialScale.x < 0 && initialScale.y > 0) || (initialScale.x > 0 && initialScale.y < 0))
+						drag = Vector2f(-drag.x, -drag.y);
+                }
+
+                float scX = (drag.x * 2 / (sideLengthX * initialScale.x) + 1) * initialScale.x;
+                float scY = (drag.y * 2 / (sideLengthY * initialScale.y) + 1) * initialScale.y;
+
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scX), 4);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scY), 5);
+
+                //dragStart = dragEnd;
 
                 // Move the scale box
-                scaleBox.move(drag);
-
-
+                //scaleBox.move(drag);
 
             }
         }
@@ -4231,6 +4273,8 @@ void Gizmo::update() { //update function
         }
         else if (type == 2 && Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getGlobalBounds().contains(mousePos)) {
             dragging = true;
+            initialScale = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getScale();
+            
             dragStart = mousePos;
         }
     }
@@ -4699,103 +4743,110 @@ int main()
 
     Gizmo gizmos;
 
-
-    while (window.isOpen()) //Game loop
-    {
-        //Calculate time and delta time
-        time->update();
-        EditorWindow::setClickedUI(false);
-
-        //Event handling
-        Event event;
-        while (window.pollEvent(event))
+    try {
+        while (window.isOpen()) //Game loop
         {
-            if (event.type == Event::Closed)
-                window.close();
+            //Calculate time and delta time
+            time->update();
+            EditorWindow::setClickedUI(false);
 
-            if (Game::getDrawEditor()) {
-                colorPicker.handleEvent(event);
-                inspectorWindow.handleEvent(event);
-                gameFilesWindow.handleEvent(event);
-                hierarchyWindow.handleEvent(event); //Call last
+            //Event handling
+            Event event;
+            while (window.pollEvent(event))
+            {
+                if (event.type == Event::Closed)
+                    window.close();
+
+                if (Game::getDrawEditor()) {
+                    colorPicker.handleEvent(event);
+                    inspectorWindow.handleEvent(event);
+                    gameFilesWindow.handleEvent(event);
+                    hierarchyWindow.handleEvent(event); //Call last
 
 
-                if (scene.getSelectedObjectIndex() != -1) {
-                    if (Keyboard::isKeyPressed(Keyboard::Delete)) {
-                        deleteObj();
-                        colorPicker.setActive(false);
+                    if (scene.getSelectedObjectIndex() != -1) {
+                        if (Keyboard::isKeyPressed(Keyboard::Delete)) {
+                            deleteObj();
+                            colorPicker.setActive(false);
+                        }
                     }
                 }
+                if (event.type == Event::KeyPressed) {
+                    if (event.key.code == Keyboard::F1)
+                        Game::setDrawEditor(!Game::getDrawEditor());
+                    else if (event.key.code == Keyboard::F2)
+                        Game::setIsPlaying(!Game::getIsPlaying());
+                    else if (event.key.code == Keyboard::W)
+                        gizmos.setGizmoType(0);
+                    else if (event.key.code == Keyboard::E)
+                        gizmos.setGizmoType(1);
+                    else if (event.key.code == Keyboard::R)
+                        gizmos.setGizmoType(2);
+                }
             }
-            if (event.type == Event::KeyPressed) {
-                if (event.key.code == Keyboard::F1)
-                    Game::setDrawEditor(!Game::getDrawEditor());
-                else if(event.key.code == Keyboard::F2)
-                    Game::setIsPlaying(!Game::getIsPlaying());
-                else if(event.key.code == Keyboard::W)
-                    gizmos.setGizmoType(0);
-                else if(event.key.code == Keyboard::E)
-                    gizmos.setGizmoType(1);
-                else if(event.key.code == Keyboard::R)
-                    gizmos.setGizmoType(2);
-			}
+
+            //Only update the fps counter 10 times per second
+            if (time->getTime() > nextSpace) {
+                nextSpace = time->getTime() + 0.1f;
+                fpsCounter.setString("FPS: " + floatToString(1.f / time->getDeltaTime()));
+            }
+
+            //Update the editor
+            if (Game::getDrawEditor()) {
+                hierarchyWindow.update();
+                inspectorWindow.update();
+                colorPicker.update();
+                gameFilesWindow.update();
+                gizmos.update();
+            }
+
+
+            //Select object
+            if (Mouse::isButtonPressed(Mouse::Left)) {
+                hierarchyWindow.mouseOver();
+                inspectorWindow.mouseOver();
+                colorPicker.mouseOver();
+                gameFilesWindow.mouseOver();
+            }
+
+            //Update the scene
+            if (Game::getIsPlaying())
+                scene.updateScene();
+
+            //Clear the window
+            window.clear();
+
+            //Draw the objects
+            Game::getCurrentScene()->drawScene(false, window);
+
+            //Draw the editor
+            if (Game::getDrawEditor()) {
+                gizmos.draw(window);
+                hierarchyWindow.setTitle("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
+                hierarchyWindow.draw(window);
+                inspectorWindow.draw(window);
+                colorPicker.draw(window);
+                gameFilesWindow.draw(window);
+                window.draw(fpsCounter);
+            }
+
+            window.display();
         }
 
-        //Only update the fps counter 10 times per second
-        if (time->getTime() > nextSpace) {
-            nextSpace = time->getTime() + 0.1f;
-            fpsCounter.setString("FPS: " + floatToString(1.f / time->getDeltaTime()));
+        //Save scene
+        if (save) {
+            Game::setIsPlaying(false);
+            ofstream out("Resources/Test.txt");
+            out << scene;
+            out.close();
         }
-
-        //Update the editor
-        if (Game::getDrawEditor()) {
-            hierarchyWindow.update();
-            inspectorWindow.update();
-            colorPicker.update();
-            gameFilesWindow.update();
-            gizmos.update();
-        }
-
-
-        //Select object
-        if (Mouse::isButtonPressed(Mouse::Left)) {
-            hierarchyWindow.mouseOver();
-            inspectorWindow.mouseOver();
-            colorPicker.mouseOver();
-            gameFilesWindow.mouseOver();
-        }
-
-        //Update the scene
-        if(Game::getIsPlaying())
-            scene.updateScene();
-
-        //Clear the window
-        window.clear();
-
-        //Draw the objects
-        Game::getCurrentScene()->drawScene(false, window);
-
-        //Draw the editor
-        if (Game::getDrawEditor()) {
-            gizmos.draw(window);
-            hierarchyWindow.setTitle("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
-            hierarchyWindow.draw(window);
-            inspectorWindow.draw(window);
-            colorPicker.draw(window);
-            gameFilesWindow.draw(window);
-            window.draw(fpsCounter);
-        }
-
-        window.display();
+    }
+    catch (...) {
+        cout<<"An error occurred"<<endl;
     }
 
-    //Save scene
-    if (save) {
-        Game::setIsPlaying(false);
-        ofstream out("Resources/Test.txt");
-        out << scene;
-        out.close();
-    }
+    if(folderIcon)
+		delete folderIcon;
 
     return 0;
 }
