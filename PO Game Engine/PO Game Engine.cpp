@@ -1292,23 +1292,27 @@ void Scene::modifySelectedCustom(string value, int index) { //modify a custom va
     	sceneObjects[selectedObjectIndex]->setScale(sceneObjects[selectedObjectIndex]->getScale().x, stof(value));
     	return;
     }
-    if (index == 6) { //Change velocity.x
-    	sceneObjects[selectedObjectIndex]->setVelocity(stof(value), sceneObjects[selectedObjectIndex]->getVelocity().y);
+    if (index == 6) { //Change color
+        sceneObjects[selectedObjectIndex]->setFillColor(stringToColor(value));
 		return;
     }
-    if (index == 7) { //Change velocity.y
-    	sceneObjects[selectedObjectIndex]->setVelocity(sceneObjects[selectedObjectIndex]->getVelocity().x, stof(value));
+    if (index == 7) { //Change zLayer
+        sceneObjects[selectedObjectIndex]->setZLayer(stoi(value));
     	return;
     }
     if (index == 8) { //Change mass
         sceneObjects[selectedObjectIndex]->setMass(stof(value));
 		return;
     }
-    if(index == 9){ //Change color
-        sceneObjects[selectedObjectIndex]->setFillColor(stringToColor(value));
+    if(index == 9){ //Change velocity.x
+        sceneObjects[selectedObjectIndex]->setVelocity(stof(value), sceneObjects[selectedObjectIndex]->getVelocity().y);
         return;
     }
-    int poz = 10;
+    if(index == 10){ //Change velocity.y
+    	sceneObjects[selectedObjectIndex]->setVelocity(sceneObjects[selectedObjectIndex]->getVelocity().x, stof(value));
+    	return;
+    }
+    int poz = 11;
     for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
         if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
 			sceneObjects[selectedObjectIndex]->setAttributeOnScripts(i, index - poz, value);
@@ -1332,14 +1336,16 @@ string Scene::getSelectedCustom(int index) const { //get a custom value of the s
         if (index == 5)
             return floatToString(sceneObjects[selectedObjectIndex]->getScale().y);
         if (index == 6)
-            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().x);
+            return ColorToString(sceneObjects[selectedObjectIndex]->getFillColor());
         if (index == 7)
-            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().y);
+            return floatToString(sceneObjects[selectedObjectIndex]->getZLayer());
         if (index == 8)
             return floatToString(sceneObjects[selectedObjectIndex]->getMass());
         if(index == 9)
-            return ColorToString(sceneObjects[selectedObjectIndex]->getFillColor());
-		int poz = 10;
+            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().x);
+        if(index == 10)
+            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().y);
+		int poz = 11;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
                 return sceneObjects[selectedObjectIndex]->getAttributeFromScripts(i, index - poz);
@@ -1355,24 +1361,26 @@ string Scene::getSelectedCustomName(int index) const { //get the name of a custo
 		if (index == 0)
 			return "Name";
 		if (index == 1)
-			return "Position.x";
+			return "Position";
 		if (index == 2)
-			return "Position.y";
+			return "Position";
 		if (index == 3)
 			return "Rotation";
 		if (index == 4)
-			return "Scale.x";
+			return "Scale";
 		if (index == 5)
-			return "Scale.y";
+			return "Scale";
 		if (index == 6)
-			return "Velocity.x";
+			return "Color";
 		if (index == 7)
-			return "Velocity.y";
+			return "ZLayer";
 		if (index == 8)
 			return "Mass";
 		if (index == 9)
-			return "Color";
-		int poz = 10;
+			return "Velocity";
+        if (index == 10)
+            return "Velocity";
+		int poz = 11;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
 			if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
 				return sceneObjects[selectedObjectIndex]->getAttributeNamesFromScripts(i, index-poz);
@@ -1382,28 +1390,31 @@ string Scene::getSelectedCustomName(int index) const { //get the name of a custo
 	return "";
 }
 int Scene::getSelectedCustomType(int index) const { //get the type of a custom value of the selected object
+    //0 - string, 1 - float, 2 - color, 3 - int, 4 - bool, 5 - Vector2f.x, 6 - Vector2f.y
     if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
 		if (index == 0)
 			return 0;
 		if (index == 1)
-			return 1;
+			return 5;
 		if (index == 2)
-			return 1;
+			return 6;
 		if (index == 3)
 			return 1;
 		if (index == 4)
-			return 1;
+			return 5;
 		if (index == 5)
-			return 1;
+			return 6;
 		if (index == 6)
-			return 1;
+			return 2;
 		if (index == 7)
-			return 1;
+			return 3;
 		if (index == 8)
 			return 1;
 		if (index == 9)
-			return 2;
-		int poz = 10;
+			return 5;
+        if (index == 10)
+            return 6;
+		int poz = 11;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
 			if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
 				return sceneObjects[selectedObjectIndex]->getAttributeTypeFromScripts(i, index - poz);
@@ -1453,14 +1464,18 @@ void Scene::startScene() { //start the scene
 	}
 }
 void Scene::drawScene(bool drawColliders, RenderWindow& window) const { //draw the scene
-    for (int i = 0; i < sceneObjects.size(); i++) {
-        if (sceneObjects[i]->getActive()) {
+    vector<GameObject*> sortedObjects = sceneObjects;
+    sort(sortedObjects.begin(), sortedObjects.end(), [](const GameObject* a, const GameObject* b) {
+		return a->getZLayer() < b->getZLayer();
+	});
+    for (int i = 0; i < sortedObjects.size(); i++) {
+        if (sortedObjects[i]->getActive()) {
             if (drawColliders) {
-                if (sceneObjects[i]->getColliderIsActive()) {
-                    window.draw(*sceneObjects[i]->getColliderShape());
+                if (sortedObjects[i]->getColliderIsActive()) {
+                    window.draw(*sortedObjects[i]->getColliderShape());
 				}
 			}
-			window.draw(*sceneObjects[i]);
+			window.draw(*sortedObjects[i]);
 		}
 	}
 }
@@ -1550,6 +1565,8 @@ private:
     static EditorWindow* inspector;
     static EditorWindow* colorPicker;
     static EditorWindow* gameFilesWindow;
+    static View* sceneView;
+    static View* guiView;
     static Gizmo* gizmo;
     static Texture* folderTexture;
     static bool isPlaying;
@@ -1581,6 +1598,12 @@ public:
 
     static bool getDrawEditor();
     static void setDrawEditor(bool drawEditor);
+
+    static View* getSceneView();
+    static void setSceneView(View* view);
+
+    static View* getGuiView();
+    static void setGuiView(View* view);
 
     static Gizmo* getGizmo();
     static void setGizmo(Gizmo* gizmo);
@@ -1642,6 +1665,20 @@ void Game::setGameFilesWindow(EditorWindow* gameFilesWindow) { //set the game fi
 }
 EditorWindow* Game::getGameFilesWindow() { //get the game files window
 	return Game::gameFilesWindow;
+}
+
+View* Game::getSceneView() { //get the scene view
+	return sceneView;
+}
+void Game::setSceneView(View* view) { //set the scene view
+	sceneView = view;
+}
+
+View* Game::getGuiView() { //get the gui view
+	return guiView;
+}
+void Game::setGuiView(View* view) { //set the gui view
+	guiView = view;
 }
 
 bool Game::getIsPlaying() { //get if the game is playing
@@ -1878,6 +1915,7 @@ void FollowMouseScript::start(GameObject& gameObject) { //start function (does n
 void FollowMouseScript::update(GameObject& gameObject) { //update function
     //Get the mouse position and make the object follow it
     Vector2f mousePosition = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+    mousePosition = Game::getWindow()->mapPixelToCoords(Vector2i(mousePosition.x, mousePosition.y), *Game::getSceneView());
     if (applySmoothness)
         mousePosition = gameObject.getPosition() + (-gameObject.getPosition() + mousePosition) * GameTime::getInstance()->getDeltaTime() * smoothnessSpeed;
     //cout << mousePosition.x<<" "<<mousePosition.y <<" "<< GameTime::getInstance()->getDeltaTime() << endl;
@@ -1941,6 +1979,8 @@ EditorWindow* Game::colorPicker = NULL;
 EditorWindow* Game::gameFilesWindow = NULL;
 Texture* Game::folderTexture = NULL;
 Gizmo* Game::gizmo = NULL;
+View* Game::sceneView = NULL;
+View* Game::guiView = NULL;
 
 void makeObj(GameObject& ob, const Vector2f& position, float sideLen) { //make a square object
     ob.setPointCount(4);
@@ -3176,6 +3216,7 @@ void HierarchyWindow::handleEvent(Event& event) { //handle event function
 				changeSelectedObject(newSelectedIndex);
 			}
             else{
+                mousePos = Game::getWindow()->mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), *Game::getSceneView());
                 int newSelectedIndex = -1;
                 //Loop through the objects in the scene and check if the mouse is over them
                 for (int i = 0; i < Game::getCurrentScene()->getObjectsCount(); i++) {
@@ -3231,17 +3272,30 @@ void HierarchyWindow::deleteText(int index) { //delete a text from the hierarchy
 
 
 void InspectorWindow::makeDefaultFields() {
-    for (int i = 0; i < 10; i++) {
+    int yLevel = 0;
+    for (int i = 0; i < 11; i++) {
+        int type = Game::getCurrentScene()->getSelectedCustomType(i);
         Text* tmp = new Text("Tmp", *Game::getFont(), 15);
         tmp->setString(Game::getCurrentScene()->getSelectedCustomName(i));
-    	tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 10 + i * 30);
-        addText(*tmp);
+    	tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 10 + yLevel * 30);
+        if(type != 6)
+            addText(*tmp);
 
-        if (Game::getCurrentScene()->getSelectedCustomType(i) == 0 || Game::getCurrentScene()->getSelectedCustomType(i) == 1) {
-			InputField* tmpField = new InputField(*Game::getFont(), Vector2f(position.x + tmp->getGlobalBounds().width + 20, position.y + title.getCharacterSize() + 10 + i * 30), Vector2f(100, 20), "0");
+        if (type == 0 || type == 1 || type == 3 || type == 5 || type == 6) {
+            if (type == 5) { //Add a label called X
+                tmp->setPosition(position.x + 20 + tmp->getGlobalBounds().width, position.y + title.getCharacterSize() + 10 + yLevel * 30);
+                tmp->setString("X");
+                addText(*tmp);
+            }
+            else if (type == 6) { //Add a label called Y
+                tmp->setPosition(inputFields[inputFields.size() - 1].getPosition().x + 110, position.y + title.getCharacterSize() + 10 + yLevel * 30);
+                tmp->setString("Y");
+                addText(*tmp);
+            }
+			InputField* tmpField = new InputField(*Game::getFont(), Vector2f(tmp->getPosition().x + tmp->getGlobalBounds().width + 10, tmp->getPosition().y), Vector2f(100, 20), "0");
 			tmpField->setOnChange(&Scene::modifySelectedCustom);
 			tmpField->setUpdateValue(&Scene::getSelectedCustom);
-            if(Game::getCurrentScene()->getSelectedCustomType(i) == 0)
+            if(type == 0)
 				tmpField->setOnlyNumbers(false);
 			else
 				tmpField->setOnlyNumbers(true);
@@ -3249,8 +3303,8 @@ void InspectorWindow::makeDefaultFields() {
 			addInputField(*tmpField);
 			delete tmpField;
 		}
-        else if (Game::getCurrentScene()->getSelectedCustomType(i) == 2) {
-			EditableColor* tmpColor = new EditableColor(Vector2f(position.x + tmp->getGlobalBounds().width + 20, position.y + title.getCharacterSize() + 10 + i * 30), Vector2f(100, 20), Color::White, &Scene::modifySelectedCustom, &Scene::getSelectedCustom, i);
+        else if (type == 2) {
+			EditableColor* tmpColor = new EditableColor(Vector2f(position.x + tmp->getGlobalBounds().width + 20, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(100, 20), Color::White, &Scene::modifySelectedCustom, &Scene::getSelectedCustom, i);
 			tmpColor->setCallIndex(i);
 			tmpColor->setOnChange(&Scene::modifySelectedCustom);
 			tmpColor->setUpdateValue(&Scene::getSelectedCustom);
@@ -3259,6 +3313,8 @@ void InspectorWindow::makeDefaultFields() {
 		}
 
 		delete tmp;
+        if(type != 5)
+            yLevel++;
     }
 }
 //Inspector window constructor (makes input fields for the position, rotation, scale, and velocity of the selected object, a button to delete the selected object, and a button to change if the selected object is movable) will need to be expanded upon
@@ -3285,18 +3341,21 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
 		const GameObject* selectedObject = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex());
         InputField* tmp = NULL;
         Text* tmpText = NULL;
-        int cnt = 10;
+        int cnt = 11;
+        float extraOffset = 15;
+        if(texts.size() > 0)
+			extraOffset += texts[texts.size() - 1].getCharacterSize() + texts[texts.size()-1].getPosition().y;
         for (int i = 0; i < selectedObject->getScriptsCount(); i++) {
             for (int j = 0; j < selectedObject->getAttributeCountFromScripts(i); j++) {
                 int type = selectedObject->getAttributeTypeFromScripts(i, j);
                 string name = selectedObject->getAttributeNamesFromScripts(i, j);
                 tmpText = new Text(name, *Game::getFont(), 15);
                 tmpText->setFillColor(Color::White);
-                tmpText->setPosition(Vector2f(position.x + 10, position.y + title.getCharacterSize() + 170 + 30 * cnt));
+                tmpText->setPosition(Vector2f(position.x + 10, extraOffset + 30 * (i * selectedObject->getScriptsCount() + j)));
                 addText(*tmpText);
-                if (type == 0 || type == 1) {
+                if (type == 0 || type == 1) { //Needs support for the rest of the types
                     tmp = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
-                    tmp->setPosition(Vector2f(position.x + tmpText->getGlobalBounds().width + 20, position.y + title.getCharacterSize() + 170 + 30 * cnt));
+                    tmp->setPosition(Vector2f(position.x + tmpText->getGlobalBounds().width + 20, extraOffset + 30 * (i * selectedObject->getScriptsCount() + j)));
                     tmp->setOnChange(&Scene::modifySelectedCustom);
                     tmp->setUpdateValue(&Scene::getSelectedCustom);
                     tmp->setCallIndex(cnt);
@@ -3309,7 +3368,7 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
                 else if (type == 2) {
 					EditableColor* tmpColor = new EditableColor(Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), Color::White, &Scene::modifySelectedCustom, &Scene::getSelectedCustom, cnt);
 					tmpColor->setCallIndex(cnt);
-                    tmpColor->setPosition(Vector2f(position.x + tmpText->getGlobalBounds().width + 20, position.y + title.getCharacterSize() + 170 + 30 * cnt));
+                    tmpColor->setPosition(Vector2f(position.x + tmpText->getGlobalBounds().width + 20, extraOffset + 30 * (i * selectedObject->getScriptsCount() + j)));
 					tmpColor->setOnChange(&Scene::modifySelectedCustom);
 					tmpColor->setUpdateValue(&Scene::getSelectedCustom);
 					colors.push_back(*tmpColor);
@@ -4078,6 +4137,7 @@ void Gizmo::update() { //update function
     //Check dragging logic to use events so the gizmo won't be called when the mouse is over UI
     if (Mouse::isButtonPressed(Mouse::Left) && Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
         Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
+        mousePos = Game::getWindow()->mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), *Game::getSceneView());
         if (dragging) {
             if (type == 0) {
                 //Move the selected object
@@ -4696,6 +4756,14 @@ int main()
     Gizmo gizmos;
     Game::setGizmo(&gizmos);
 
+    View sceneView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
+    View editorView = window.getDefaultView();
+
+    Game::setSceneView(&sceneView);
+    Game::setGuiView(&editorView);
+
+    Vector2f lastMousePos = Vector2f(0, 0);
+
     try {
         while (window.isOpen()) //Game loop
         {
@@ -4735,7 +4803,25 @@ int main()
                     else if (event.key.code == Keyboard::R)
                         gizmos.setGizmoType(2);
                 }
+
+                //If we are scrolling, zoom the scene
+                if (event.type == Event::MouseWheelScrolled) {
+					if (event.mouseWheelScroll.delta > 0)
+						sceneView.zoom(0.9f);
+					else
+						sceneView.zoom(1.1f);
+				}
             }
+
+            //If we are holding the right mouse button and moving the mouse, pan the scene
+            if (Mouse::isButtonPressed(Mouse::Right)) {
+                Vector2f mousePos = Vector2f(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
+                mousePos = window.mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), sceneView);
+                Vector2f lastMousePosCpy = lastMousePos;
+                lastMousePosCpy = window.mapPixelToCoords(Vector2i(lastMousePosCpy.x, lastMousePosCpy.y), sceneView);
+                sceneView.move(lastMousePosCpy - mousePos);
+            }
+            lastMousePos = Vector2f(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
 
             //Only update the fps counter 10 times per second
             if (time->getTime() > nextSpace) {
@@ -4771,19 +4857,23 @@ int main()
             window.clear();
 
             //Draw the objects
+            window.setView(sceneView);
             Game::getCurrentScene()->drawScene(false, window);
 
             //Draw the editor
             if (Game::getDrawEditor()) {
                 gizmos.draw(window);
+                window.setView(editorView);
                 hierarchyWindow.setTitle("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
                 hierarchyWindow.draw(window);
                 inspectorWindow.draw(window);
-                colorPicker.draw(window);
                 gameFilesWindow.draw(window);
                 topBarWindow.draw(window);
+                colorPicker.draw(window);
                 window.draw(fpsCounter);
             }
+
+            //lastMousePos = Vector2f(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
 
             window.display();
         }
