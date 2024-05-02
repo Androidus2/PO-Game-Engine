@@ -1539,6 +1539,7 @@ ostream& Scene::write(ostream& out) const { //write function
 Scene::~Scene() {} //destructor
 
 class EditorWindow;
+class Gizmo;
 
 class Game { //Game class (has static variables for the game)
 private:
@@ -1549,6 +1550,7 @@ private:
     static EditorWindow* inspector;
     static EditorWindow* colorPicker;
     static EditorWindow* gameFilesWindow;
+    static Gizmo* gizmo;
     static Texture* folderTexture;
     static bool isPlaying;
     static bool drawEditor;
@@ -1579,6 +1581,9 @@ public:
 
     static bool getDrawEditor();
     static void setDrawEditor(bool drawEditor);
+
+    static Gizmo* getGizmo();
+    static void setGizmo(Gizmo* gizmo);
 
     static Texture* getFolderTexture();
     static void setFolderTexture(Texture* texture);
@@ -1657,6 +1662,13 @@ bool Game::getDrawEditor() { //get if the editor is drawn
 }
 void Game::setDrawEditor(bool drawEditor) { //set if the editor is drawn
 	Game::drawEditor = drawEditor;
+}
+
+Gizmo* Game::getGizmo() { //get the gizmo
+	return gizmo;
+}
+void Game::setGizmo(Gizmo* gizmo) { //set the gizmo
+	Game::gizmo = gizmo;
 }
 
 Texture* Game::getFolderTexture() { //get the folder texture
@@ -1928,6 +1940,7 @@ bool Game::drawEditor = true;
 EditorWindow* Game::colorPicker = NULL;
 EditorWindow* Game::gameFilesWindow = NULL;
 Texture* Game::folderTexture = NULL;
+Gizmo* Game::gizmo = NULL;
 
 void makeObj(GameObject& ob, const Vector2f& position, float sideLen) { //make a square object
     ob.setPointCount(4);
@@ -2091,6 +2104,7 @@ void InputField::handleEvent(Event& event) { //handle event function
 
             if (event.key.control && event.key.code == Keyboard::V) {
                 string tmp = Clipboard::getString();
+                cout<<"The inputed string has "<<tmp.size()<<" characters\n";
                 str = "";
                 if (onlyNumbers) {
                     for (int i = 0; i < tmp.size(); i++) {
@@ -2108,8 +2122,8 @@ void InputField::handleEvent(Event& event) { //handle event function
                 else {
                     str = tmp;
                 }
-                cursorIndex = str.size();
                 str = processText();
+                cursorIndex = str.size();
                 if (onChange) (Game::getCurrentScene()->*onChange)(str, callIndex); //Call the onChange function
             }
             if (event.key.control && event.key.code == Keyboard::C) {
@@ -3249,95 +3263,6 @@ void InspectorWindow::makeDefaultFields() {
 }
 //Inspector window constructor (makes input fields for the position, rotation, scale, and velocity of the selected object, a button to delete the selected object, and a button to change if the selected object is movable) will need to be expanded upon
 InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText) {
-    /*Text* tmp = new Text("Position:", font, 15);
-    tmp->setFillColor(Color::White);
-
-    InputField* tmpField = new InputField(font, Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
-
-    //Position label
-    tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 10);
-    addText(*tmp);
-
-    //Position X input field
-    tmp->setString("X: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
-    addText(*tmp);
-    tmpField->setOnlyNumbers(true);
-    tmpField->setOnChange(&Scene::modifySelectedPositionX); //Select the modifySelectedPositionX function to be called when the text changes
-    tmpField->setUpdateValue(&Scene::getSelectedPositionX); //Select the getSelectedPositionX function to get the value of the selected object's position X
-    addInputField(*tmpField);
-
-    //Position Y input field
-    tmp->setString("Y: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
-    addText(*tmp);
-    tmpField->setOnlyNumbers(true);
-    tmpField->setOnChange(&Scene::modifySelectedPositionY); //Select the modifySelectedPositionY function to be called when the text changes
-    tmpField->setUpdateValue(&Scene::getSelectedPositionY); //Select the getSelectedPositionY function to get the value of the selected object's position Y
-    addInputField(*tmpField);
-
-    //Rotation label and input field
-    tmp->setString("Rotation: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
-    addText(*tmp);
-    tmpField->setOnlyNumbers(true);
-    tmpField->setOnChange(&Scene::modifySelectedRotation); //Select the modifySelectedRotation function to be called when the text changes
-    tmpField->setUpdateValue(&Scene::getSelectedRotation); //Select the getSelectedRotation function to get the value of the selected object's rotation
-    addInputField(*tmpField);
-
-    //Scale label
-    tmp->setString("Scale: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    addText(*tmp);
-
-    //Scale X input field
-    tmp->setString("X: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
-    addText(*tmp);
-    tmpField->setOnlyNumbers(true);
-    tmpField->setOnChange(&Scene::modifySelectedScaleX); //Select the modifySelectedScaleX function to be called when the text changes
-    tmpField->setUpdateValue(&Scene::getSelectedScaleX); //Select the getSelectedScaleX function to get the value of the selected object's scale X
-    addInputField(*tmpField);
-
-    //Scale Y input field
-    tmp->setString("Y: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
-    addText(*tmp);
-    tmpField->setOnlyNumbers(true);
-    tmpField->setOnChange(&Scene::modifySelectedScaleY); //Select the modifySelectedScaleY function to be called when the text changes
-    tmpField->setUpdateValue(&Scene::getSelectedScaleY); //Select the getSelectedScaleY function to get the value of the selected object's scale Y
-    addInputField(*tmpField);
-
-    //Velocity label
-    tmp->setString("Velocity: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    addText(*tmp);
-
-    //Velocity X input field
-    tmp->setString("X: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
-    addText(*tmp);
-    tmpField->setOnlyNumbers(true);
-    tmpField->setOnChange(&Scene::modifySelectedVelocityX); //Select the modifySelectedVelocityX function to be called when the text changes
-    tmpField->setUpdateValue(&Scene::getSelectedVelocityX); //Select the getSelectedVelocityX function to get the value of the selected object's velocity X
-    addInputField(*tmpField);
-
-    //Velocity Y input field
-    tmp->setString("Y: ");
-    tmp->setPosition(position.x + 10, tmp->getPosition().y + tmp->getCharacterSize() + 10);
-    tmpField->setPosition(Vector2f(position.x + 10 + tmp->getLocalBounds().getSize().x, tmp->getPosition().y));
-    addText(*tmp);
-    tmpField->setOnlyNumbers(true);
-    tmpField->setOnChange(&Scene::modifySelectedVelocityY); //Select the modifySelectedVelocityY function to be called when the text changes
-    tmpField->setUpdateValue(&Scene::getSelectedVelocityY); //Select the getSelectedVelocityY function to get the value of the selected object's velocity Y
-    addInputField(*tmpField);*/
-
     //Delete button
     Button* deleteButton = new Button(font, Vector2f(position.x + 10, position.y + size.y - 40), Vector2f(size.x - 20, 30), "Delete Object");
     deleteButton->setOnClick(deleteObj); //Select the deleteObj function to be called when the button is clicked
@@ -3350,9 +3275,6 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
     changeIsMoveableButton->setToggle(true); //Set the button to be a toggle button
     addButton(*changeIsMoveableButton);
     delete changeIsMoveableButton;
-
-    //delete tmp;
-    //delete tmpField;
 }
 void InspectorWindow::makeCustomFields() { //make custom fields function (used to add custom fields to the inspector window)
     deleteFields();
@@ -4505,26 +4427,6 @@ void GameFilesWindow::loadFiles() { //load files function
 		texts.push_back(Text(node->getChild(i)->getName(), *Game::getFont(), 13));
 		texts[i].setPosition(position.x + 10 + (i % 4) * 110 + icons[i].getSize().x / 2 - texts[i].getGlobalBounds().width / 2, position.y + 130 + (i / 4) * 130);
     }
-    /*for (const auto& entry : filesystem::directory_iterator(path)) {
-		string name = entry.path().filename().string();
-        if (name.find(".png") != string::npos || name.find(".psd") != string::npos || name.find(".jpg") != string::npos || name.find(".") == string::npos) {
-            if(name.find(".") != string::npos)
-                img.loadFromFile(path + name);
-            else
-                img.loadFromFile("Resources/Folder.png");
-            Texture* tex = new Texture();
-            tex->loadFromImage(img);
-            textures.push_back(tex);
-			RectangleShape icon(Vector2f(100, 100));
-			icon.setTexture(tex);
-            icon.setOutlineColor(Color::Black);
-            if (name.find(".") != string::npos)
-                icon.setOutlineThickness(1);
-			icons.push_back(icon);
-            text = Text(name, *Game::getFont(), 13);
-            texts.push_back(text);
-		}
-	}*/
     int elementsPerRow = (size.x - 20) / 110;
     for (int i = 0; i < icons.size(); i++) {
 		icons[i].setPosition(position.x + 10 + (i % elementsPerRow) * 110, position.y + 30 + (i / elementsPerRow) * 130);
@@ -4649,6 +4551,55 @@ void GameFilesWindow::makeDir() { //make directory function
  }
 
 
+
+class TopBarWindow : public EditorWindow { //Top bar window class (derived from EditorWindow)
+public:
+	TopBarWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& title);
+	void handleEvent(Event& event) override;
+    void mouseOver() override;
+	void draw(RenderWindow& window) const override;
+
+};
+TopBarWindow::TopBarWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& title) : EditorWindow(font, position, size, title) {
+	Button moveToolButton(font, Vector2f(position.x + 10, position.y + 10), Vector2f(30, 30), "M");
+    moveToolButton.setOnClick([]() {
+		Game::getGizmo()->setGizmoType(0);
+	});
+    buttons.push_back(moveToolButton);
+
+	Button rotateToolButton(font, Vector2f(position.x + 50, position.y + 10), Vector2f(30, 30), "R");
+    rotateToolButton.setOnClick([]() {
+		Game::getGizmo()->setGizmoType(1);
+	});
+	buttons.push_back(rotateToolButton);
+
+	Button scaleToolButton(font, Vector2f(position.x + 90, position.y + 10), Vector2f(30, 30), "S");
+    scaleToolButton.setOnClick([]() {
+		Game::getGizmo()->setGizmoType(2);
+	});
+	buttons.push_back(scaleToolButton);
+
+	Button playButton(font, Vector2f(position.x + size.x - 40, position.y + 10), Vector2f(30, 30), "P");
+    playButton.setOnClick([]() {
+		Game::setIsPlaying(!Game::getIsPlaying());
+	});
+    playButton.setToggle(true);
+    playButton.setDefaultColor(Color::Green);
+    playButton.setHoverColor(Color(150, 255, 150));
+    playButton.setPressedColor(Color::Red);
+	buttons.push_back(playButton);
+}
+void TopBarWindow::handleEvent(Event& event) { //handle event function
+	EditorWindow::handleEvent(event);
+}
+void TopBarWindow::mouseOver() { //mouse over function
+	//EditorWindow::mouseOver();
+}
+void TopBarWindow::draw(RenderWindow& window) const { //draw function
+	EditorWindow::draw(window);
+}
+
+
 int main()
 {
     //Setup
@@ -4675,6 +4626,7 @@ int main()
     InspectorWindow inspectorWindow(font, Vector2f(window.getSize().x - 350, 0), Vector2f(350, window.getSize().y), "Inspector");
     ColorPicker colorPicker(font, Vector2f(window.getSize().x * 0.25f, 0), Vector2f(320, 320), "Color Picker");
     GameFilesWindow gameFilesWindow(font, Vector2f(250, window.getSize().y - 300), Vector2f(window.getSize().x - 600, 300), "Game Files");
+    TopBarWindow topBarWindow(font, Vector2f(253, 0), Vector2f(window.getSize().x - 606, 50), "");
     Game::setHierarchy(&hierarchyWindow);
     Game::setInspector(&inspectorWindow);
     Game::setColorPicker(&colorPicker);
@@ -4742,6 +4694,7 @@ int main()
         scene.startScene();
 
     Gizmo gizmos;
+    Game::setGizmo(&gizmos);
 
     try {
         while (window.isOpen()) //Game loop
@@ -4758,6 +4711,7 @@ int main()
                     window.close();
 
                 if (Game::getDrawEditor()) {
+                    topBarWindow.handleEvent(event);
                     colorPicker.handleEvent(event);
                     inspectorWindow.handleEvent(event);
                     gameFilesWindow.handleEvent(event);
@@ -4774,8 +4728,6 @@ int main()
                 if (event.type == Event::KeyPressed) {
                     if (event.key.code == Keyboard::F1)
                         Game::setDrawEditor(!Game::getDrawEditor());
-                    else if (event.key.code == Keyboard::F2)
-                        Game::setIsPlaying(!Game::getIsPlaying());
                     else if (event.key.code == Keyboard::W)
                         gizmos.setGizmoType(0);
                     else if (event.key.code == Keyboard::E)
@@ -4793,6 +4745,7 @@ int main()
 
             //Update the editor
             if (Game::getDrawEditor()) {
+                topBarWindow.update();
                 hierarchyWindow.update();
                 inspectorWindow.update();
                 colorPicker.update();
@@ -4803,6 +4756,7 @@ int main()
 
             //Select object
             if (Mouse::isButtonPressed(Mouse::Left)) {
+                topBarWindow.mouseOver();
                 hierarchyWindow.mouseOver();
                 inspectorWindow.mouseOver();
                 colorPicker.mouseOver();
@@ -4827,6 +4781,7 @@ int main()
                 inspectorWindow.draw(window);
                 colorPicker.draw(window);
                 gameFilesWindow.draw(window);
+                topBarWindow.draw(window);
                 window.draw(fpsCounter);
             }
 
@@ -4841,6 +4796,9 @@ int main()
             out.close();
         }
     }
+    catch (exception& e) {
+		cout<<e.what()<<endl;
+	}
     catch (...) {
         cout<<"An error occurred"<<endl;
     }
