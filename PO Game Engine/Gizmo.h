@@ -1,0 +1,21 @@
+#pragma once
+#include <SFML/Graphics.hpp>
+
+
+class Gizmo {
+private:
+    sf::RectangleShape selectionBox;
+    sf::CircleShape rotationBox;
+    sf::RectangleShape scaleBox;
+    int type;
+    bool dragging;
+    sf::Vector2f dragStart;
+
+    sf::Vector2f initialScale;
+    void reposition();
+public:
+    Gizmo();
+    void draw(sf::RenderWindow& window) const;
+    void update();
+    void setGizmoType(int type);
+};

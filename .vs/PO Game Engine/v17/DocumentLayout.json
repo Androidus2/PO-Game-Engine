@@ -3,8 +3,24 @@
   "WorkspaceRootPath": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\PO Game Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\PO Game Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HierarchyWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\HierarchyWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,17 +30,69 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Game.h",
+              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.h",
+              "RelativeDocumentMoniker": "PO Game Engine\\Game.h",
+              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.h",
+              "RelativeToolTip": "PO Game Engine\\Game.h",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABoAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-03T19:34:03.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Game.cpp",
+              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.cpp",
+              "RelativeDocumentMoniker": "PO Game Engine\\Game.cpp",
+              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.cpp",
+              "RelativeToolTip": "PO Game Engine\\Game.cpp",
+              "ViewState": "AQIAACIAAAAAAAAAAAAIwFIAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T19:33:20.768Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Scene.cpp",
+              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.cpp",
+              "RelativeDocumentMoniker": "PO Game Engine\\Scene.cpp",
+              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.cpp",
+              "RelativeToolTip": "PO Game Engine\\Scene.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T19:22:57.539Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "HierarchyWindow.cpp",
+              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HierarchyWindow.cpp",
+              "RelativeDocumentMoniker": "PO Game Engine\\HierarchyWindow.cpp",
+              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HierarchyWindow.cpp",
+              "RelativeToolTip": "PO Game Engine\\HierarchyWindow.cpp",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAIwDwAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T19:13:02.027Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "PO Game Engine.cpp",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\PO Game Engine.cpp",
               "RelativeDocumentMoniker": "PO Game Engine\\PO Game Engine.cpp",
               "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\PO Game Engine.cpp",
               "RelativeToolTip": "PO Game Engine\\PO Game Engine.cpp",
-              "ViewState": "AQIAACsFAAAAAAAAAAAAALkFAABFAAAA",
+              "ViewState": "AQIAABsAAAAAAAAAAAAIwDcAAAA7AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-04-20T20:22:12.384Z",
               "EditorCaption": ""

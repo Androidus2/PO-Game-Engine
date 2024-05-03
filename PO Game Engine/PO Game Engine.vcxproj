@@ -134,7 +134,50 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColorPicker.cpp" />
+    <ClCompile Include="EditableColor.cpp" />
+    <ClCompile Include="EditorWindow.cpp" />
+    <ClCompile Include="FileNode.cpp" />
+    <ClCompile Include="FollowMouseScript.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameFilesWindow.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameTime.cpp" />
+    <ClCompile Include="Gizmo.cpp" />
+    <ClCompile Include="HierarchyWindow.cpp" />
+    <ClCompile Include="ImageField.cpp" />
+    <ClCompile Include="InputField.cpp" />
+    <ClCompile Include="InspectorWindow.cpp" />
     <ClCompile Include="PO Game Engine.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="TestScript.cpp" />
+    <ClCompile Include="TopBarWindow.cpp" />
+    <ClCompile Include="Utility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BehaviourScript.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColorPicker.h" />
+    <ClInclude Include="EditableColor.h" />
+    <ClInclude Include="EditorWindow.h" />
+    <ClInclude Include="FileNode.h" />
+    <ClInclude Include="FollowMouseScript.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameFilesWindow.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameTIme.h" />
+    <ClInclude Include="Gizmo.h" />
+    <ClInclude Include="HierarchyWindow.h" />
+    <ClInclude Include="ImageField.h" />
+    <ClInclude Include="InputField.h" />
+    <ClInclude Include="InspectorWindow.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="TestScript.h" />
+    <ClInclude Include="TopBarWindow.h" />
+    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
