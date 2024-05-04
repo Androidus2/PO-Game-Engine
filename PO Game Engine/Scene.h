@@ -53,6 +53,10 @@ public:
     std::string getSelectedCustomName(int index) const;
     int getSelectedCustomType(int index) const;
 
+    std::string getNameOfScriptOnSelectedObject(int scriptIndex) const;
+    void addScriptToSelectedObject(const std::string& scriptName);
+    void removeScriptFromSelectedObject(int scriptIndex);
+
     void changeSelectedIsMovable();
     void setTextureToSelectedObject(const sf::Texture* tex);
 

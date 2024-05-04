@@ -2,12 +2,16 @@
 #include "EditorWindow.h"
 #include "EditableColor.h"
 #include "ImageField.h"
+#include "CheckBox.h"
+#include "Dropdown.h"
 
 
 class InspectorWindow : public EditorWindow { //Inspector window class
 private:
+    Dropdown scriptAddDropdown;
     std::vector<EditableColor> colors;
     std::vector<ImageField> imageFields;
+    std::vector<CheckBox> checkBoxes;
     void makeDefaultFields();
 public:
     InspectorWindow(const sf::Font& font, const sf::Vector2f& position, const sf::Vector2f& size, const std::string& titleText = "");

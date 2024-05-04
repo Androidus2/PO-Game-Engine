@@ -40,3 +40,6 @@
 .vs/PO Game Engine/v17/ipch/AutoPCH/fc390a02e4cf4aa3/SCENE.ipch
 x64/Debug/PO Game Engine.pdb
 x64/Debug/PO Game Engine.pdb
+*.ipch
+*.ipch
+x64/Debug/PO Game Engine.pdb

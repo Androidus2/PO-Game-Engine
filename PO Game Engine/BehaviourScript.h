@@ -18,6 +18,8 @@ public:
     virtual std::string getAttributeName(int index) const = 0;
     virtual int getAttributeType(int index) const = 0;
 
+    virtual std::string getScriptName() const = 0;
+
     virtual std::string getAttribute(int index) const = 0;
     virtual void setAttribute(int index, std::string value) = 0;
 

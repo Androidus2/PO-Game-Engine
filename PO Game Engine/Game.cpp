@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "InspectorWindow.h"
 
 using namespace std;
 using namespace sf;

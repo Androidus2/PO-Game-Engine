@@ -3,6 +3,7 @@
 #include "SFML\System.hpp"
 
 class GameObject;
+class BehaviourScript;
 
 class Utility { //for vector calculations
 public:
@@ -36,3 +37,5 @@ void deleteObj();
 
 void addTextToHierarchy(const std::string& text);
 void removeTextFromHierarchy(int index);
+
+BehaviourScript* makeScriptFromString(const std::string& script);

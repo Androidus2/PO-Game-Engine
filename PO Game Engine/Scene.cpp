@@ -3,6 +3,8 @@
 #include "Utility.h"
 #include "Collider.h"
 #include "GameObject.h"
+#include "HierarchyWindow.h"
+#include "Game.h"
 
 using namespace std;
 using namespace sf;
@@ -198,7 +200,11 @@ void Scene::modifySelectedCustom(string value, int index) { //modify a custom va
     	sceneObjects[selectedObjectIndex]->changeTexture(value);
     	return;
     }
-    int poz = 12;
+    if (index == 12) { //Change isMovable
+        sceneObjects[selectedObjectIndex]->setIsMovable((value == "1" || value == "true"));
+    	return;
+    }
+    int poz = 13;
     for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
         if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
             sceneObjects[selectedObjectIndex]->setAttributeOnScripts(i, index - poz, value);
@@ -244,7 +250,9 @@ string Scene::getSelectedCustom(int index) const { //get a custom value of the s
 			}
             return ret;
         }
-        int poz = 12;
+        if (index == 12)
+            return to_string(sceneObjects[selectedObjectIndex]->getIsMovable());
+        int poz = 13;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
                 return sceneObjects[selectedObjectIndex]->getAttributeFromScripts(i, index - poz);
@@ -281,7 +289,9 @@ string Scene::getSelectedCustomName(int index) const { //get the name of a custo
             return "Velocity";
         if(index == 11)
             return "Texture";
-        int poz = 12;
+        if(index == 12)
+            return "IsMovable";
+        int poz = 13;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
                 return sceneObjects[selectedObjectIndex]->getAttributeNamesFromScripts(i, index - poz);
@@ -318,7 +328,9 @@ int Scene::getSelectedCustomType(int index) const {
             return 6;
         if (index == 11)
             return 7;
-        int poz = 12;
+        if (index == 12)
+            return 4;
+        int poz = 13;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
                 return sceneObjects[selectedObjectIndex]->getAttributeTypeFromScripts(i, index - poz);
@@ -326,6 +338,28 @@ int Scene::getSelectedCustomType(int index) const {
         }
     }
     return -1;
+}
+
+string Scene::getNameOfScriptOnSelectedObject(int scriptIndex) const { //get the name of a script on the selected object
+    if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
+		return sceneObjects[selectedObjectIndex]->getScriptName(scriptIndex);
+	}
+	return "";
+}
+void Scene::addScriptToSelectedObject(const string& scriptName) { //add a script to the selected object
+    if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
+        try {
+            BehaviourScript* script = makeScriptFromString(scriptName);
+            sceneObjects[selectedObjectIndex]->addScript(script);
+        }
+        catch (const exception& e) {
+			cout << e.what() << endl;
+		}
+    }
+}
+void Scene::removeScriptFromSelectedObject(int scriptIndex) { //remove a script from the selected object
+	if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0)
+		sceneObjects[selectedObjectIndex]->removeScript(scriptIndex);
 }
 
 void Scene::changeSelectedIsMovable() { //change if the selected object is movable
@@ -409,6 +443,12 @@ void Scene::endScene() { //end the scene
         setId(ids);
         delete sceneBeforePlaying;
         sceneBeforePlaying = NULL;
+        int sel = getSelectedObjectIndex();
+        HierarchyWindow* hierarchy = dynamic_cast<HierarchyWindow*>(Game::getHierarchy());
+        if (hierarchy) {
+            hierarchy->changeSelectedObject(-1);
+            hierarchy->changeSelectedObject(sel);
+        }
     }
 }
 

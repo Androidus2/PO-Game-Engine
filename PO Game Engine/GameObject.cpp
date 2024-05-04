@@ -110,7 +110,12 @@ void GameObject::addScript(BehaviourScript* script) { //add a script to the obje
         this->attachedScripts.push_back(script->clone());
 }
 int GameObject::scriptIndex(BehaviourScript* script) const { //get the index of a script
-    return -1; //Has to be implemented
+    //Loop and check if there is a script with the same name
+    for (int i = 0; i < attachedScripts.size(); i++) {
+		if (attachedScripts[i]->getScriptName() == script->getScriptName())
+			return i;
+	}
+	return -1;
 }
 void GameObject::removeScript(BehaviourScript* script) { //remove a script from the object
     removeScript(scriptIndex(script));
@@ -184,6 +189,12 @@ int GameObject::getAttributeCountFromScripts(int scriptIndex) const { //get attr
     if (scriptIndex < attachedScripts.size() && scriptIndex >= 0)
         return attachedScripts[scriptIndex]->getAttributeCount();
     return 0;
+}
+
+string GameObject::getScriptName(int scriptIndex) const { //get script name
+	if (scriptIndex < attachedScripts.size() && scriptIndex >= 0)
+		return attachedScripts[scriptIndex]->getScriptName();
+	return "";
 }
 
 void GameObject::setPosition(const Vector2f& position) { //set position

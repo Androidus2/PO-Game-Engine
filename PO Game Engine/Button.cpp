@@ -27,7 +27,7 @@ Button::Button(const Font& font, const Vector2f& position, const Vector2f& size,
     text.setCharacterSize(15);
     text.setFillColor(Color::White);
     text.setString(buttonText);
-    text.setPosition(position.x + size.x / 2 - text.getLocalBounds().getSize().x / 2, position.y + size.y / 2 - text.getLocalBounds().getSize().y / 2);
+    text.setPosition(position.x + size.x / 2 - text.getLocalBounds().getSize().x / 2, position.y + size.y / 2 - text.getCharacterSize() / 2);
 
     isPressed = false;
     isHovered = false;
@@ -160,10 +160,17 @@ string Button::getText() const { //get the text of the button
 }
 void Button::setPosition(const Vector2f& position) { //set the position of the button
     button.setPosition(position);
-    text.setPosition(position.x + button.getSize().x / 2 - text.getLocalBounds().getSize().x / 2, position.y + button.getSize().y / 2 - text.getCharacterSize());
+    text.setPosition(position.x + button.getSize().x / 2 - text.getLocalBounds().getSize().x / 2, position.y + button.getSize().y / 2 - text.getCharacterSize() / 2);
 }
 Vector2f Button::getPosition() const { //get the position of the button
     return button.getPosition();
+}
+void Button::setSize(const Vector2f& size) { //set the size of the button
+	button.setSize(size);
+	text.setPosition(button.getPosition().x + size.x / 2 - text.getLocalBounds().getSize().x / 2, button.getPosition().y + size.y / 2 - text.getCharacterSize() / 2);
+}
+Vector2f Button::getSize() const { //get the size of the button
+	return button.getSize();
 }
 void Button::setDefaultColor(const Color& color) { //set the default color of the button
     defaultColor = color;

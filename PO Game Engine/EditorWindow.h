@@ -57,6 +57,9 @@ public:
 
     bool isMouseOver() const;
 
+    void deleteButton(int index);
+    void deleteInputField(int index);
+
     static void setClickedUI(bool clickedUI);
     static bool getClickedUI();
 

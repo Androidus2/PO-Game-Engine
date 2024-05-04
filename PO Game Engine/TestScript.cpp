@@ -57,6 +57,9 @@ void TestScript::setAttribute(int index, string value) { //set attribute
 		pressedColor = stringToColor(value);
 	}
 }
+string TestScript::getScriptName() const { //get script name
+	return "TestScript";
+}
 int TestScript::getAttributeType(int index) const { //get attribute type
 	if (index == 0 || index == 1)
 		return 2;

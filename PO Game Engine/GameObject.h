@@ -60,6 +60,8 @@ public:
     std::string getAttributeNamesFromScripts(int scriptIndex, int attributeIndex) const;
     int getAttributeTypeFromScripts(int scriptIndex, int attributeIndex) const;
 
+    std::string getScriptName(int scriptIndex) const;
+
     int getAttributeCountFromScripts(int scriptIndex) const;
 
     void setPosition(const sf::Vector2f& position);

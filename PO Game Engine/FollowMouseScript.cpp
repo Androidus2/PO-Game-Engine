@@ -6,11 +6,6 @@
 using namespace std;
 using namespace sf;
 
-FollowMouseScript::FollowMouseScript() { //default constructor
-	applySmoothness = false;
-	smoothnessSpeed = 5.f;
-	attributeCount = 2;
-}
 FollowMouseScript::FollowMouseScript(bool applySmoothness, float smoothnessSpeed) { //constructor
 	this->applySmoothness = applySmoothness;
 	this->smoothnessSpeed = smoothnessSpeed;
@@ -49,15 +44,18 @@ string FollowMouseScript::getAttribute(int index) const { //get attribute
 }
 void FollowMouseScript::setAttribute(int index, string value) { //set attribute
 	if (index == 0) {
-		applySmoothness = value == "true";
+		applySmoothness = (value == "true" || value == "1");
 	}
 	if (index == 1) {
 		smoothnessSpeed = stof(value);
 	}
 }
+string FollowMouseScript::getScriptName() const { //get script name
+	return "FollowMouseScript";
+}
 int FollowMouseScript::getAttributeType(int index) const { //get attribute type
 	if (index == 0)
-		return 0; //Change to a bool later
+		return 4;
 	if (index == 1)
 		return 1;
 	return -1;

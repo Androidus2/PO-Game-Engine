@@ -42,6 +42,8 @@ public:
     std::string getText() const;
     void setPosition(const sf::Vector2f& position);
     sf::Vector2f getPosition() const;
+    void setSize(const sf::Vector2f& size);
+    sf::Vector2f getSize() const;
     void setDefaultColor(const sf::Color& color);
     sf::Color getDefaultColor() const;
     void setPressedColor(const sf::Color& color);

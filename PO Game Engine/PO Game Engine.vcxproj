@@ -135,8 +135,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CheckBox.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColorPicker.cpp" />
+    <ClCompile Include="Dropdown.cpp" />
     <ClCompile Include="EditableColor.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="FileNode.cpp" />
@@ -159,8 +161,10 @@
   <ItemGroup>
     <ClInclude Include="BehaviourScript.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CheckBox.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ColorPicker.h" />
+    <ClInclude Include="Dropdown.h" />
     <ClInclude Include="EditableColor.h" />
     <ClInclude Include="EditorWindow.h" />
     <ClInclude Include="FileNode.h" />

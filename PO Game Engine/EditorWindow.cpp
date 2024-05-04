@@ -120,6 +120,14 @@ void EditorWindow::deleteText(int index) { //delete a text from the window
 void EditorWindow::deleteFields() { //delete all the input fields from the window
 	inputFields.clear();
 }
+void EditorWindow::deleteButton(int index) { //delete a button from the window
+	if (index < buttons.size() && index >= 0)
+		buttons.erase(buttons.begin() + index);
+}
+void EditorWindow::deleteInputField(int index) { //delete an input field from the window
+	if (index < inputFields.size() && index >= 0)
+		inputFields.erase(inputFields.begin() + index);
+}
 int EditorWindow::getTextCount() const { //get the number of texts in the window
 	return texts.size();
 }

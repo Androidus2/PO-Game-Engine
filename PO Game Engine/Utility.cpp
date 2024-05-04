@@ -7,6 +7,9 @@
 #include "Game.h"
 #include "EditorWindow.h"
 
+#include "TestScript.h"
+#include "FollowMouseScript.h"
+
 using namespace std;
 using namespace sf;
 
@@ -253,4 +256,12 @@ void removeTextFromHierarchy(int index) { //Remove text from hierarchy function
 
 GameObject* makeObjFromString(const string& obj) { //Make object from string function (used to know which variant of GameObject to create when reading a scene from a file)
     return new GameObject();
+}
+
+BehaviourScript* makeScriptFromString(const string& script) { //Make script from string function (used to know which variant of BehaviourScript to create when reading a scene from a file)
+	if (script == "TestScript")
+		return new TestScript();
+	if (script == "FollowMouseScript")
+		return new FollowMouseScript();
+    throw runtime_error("Script not found");
 }

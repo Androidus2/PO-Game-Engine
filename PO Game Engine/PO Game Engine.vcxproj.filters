@@ -102,6 +102,12 @@
     <ClCompile Include="TopBarWindow.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="CheckBox.cpp">
+      <Filter>Source Files\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="Dropdown.cpp">
+      <Filter>Source Files\UIElements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestScript.h">
@@ -166,6 +172,12 @@
     </ClInclude>
     <ClInclude Include="TopBarWindow.h">
       <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckBox.h">
+      <Filter>Header Files\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Dropdown.h">
+      <Filter>Header Files\UIElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
