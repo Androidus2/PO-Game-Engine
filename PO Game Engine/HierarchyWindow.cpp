@@ -119,3 +119,6 @@ void HierarchyWindow::deleteText(int index) { //delete a text from the hierarchy
         repositionTexts();
     }
 }
+void HierarchyWindow::clearTexts() { //clear all texts from the hierarchy window
+	texts.clear();
+}

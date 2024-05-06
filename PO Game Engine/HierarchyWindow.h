@@ -13,4 +13,5 @@ public:
     void changeSelectedObject(int index);
     void addText(const sf::Text& text) override;
     void deleteText(int index) override;
+    void clearTexts();
 };

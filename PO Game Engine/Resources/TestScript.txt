@@ -1,0 +1,24 @@
+Scene -1 2
+GameObject
+Object0 1 0 0 0 100 100 0 1 1 255 255 255 255
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+FollowMouseScript
+1 69 GameObject
+Object1 1 0 0 0 300 300 45 1 1 0 255 0 255
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+TestScript
+00FFEFFF F6FF00FF 

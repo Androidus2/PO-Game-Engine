@@ -20,6 +20,7 @@ public:
 	void removeElement(int index);
 	void setCallback(const std::function<void(int)>& callback);
 	std::string getElementName(int index) const;
+	void setPosition(const sf::Vector2f& position);
 	void selectedElement(int index);
 	void setActive(bool isActive);
 	bool getActive() const;

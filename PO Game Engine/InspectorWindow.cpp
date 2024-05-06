@@ -8,7 +8,7 @@ using namespace sf;
 
 void InspectorWindow::makeDefaultFields() {
     int yLevel = 0;
-    for (int i = 0; i < 13; i++) {
+    for (int i = 0; i < 14; i++) {
         int type = Game::getCurrentScene()->getSelectedCustomType(i);
         Text* tmp = new Text("Tmp", *Game::getFont(), 15);
         tmp->setString(Game::getCurrentScene()->getSelectedCustomName(i));
@@ -28,13 +28,18 @@ void InspectorWindow::makeDefaultFields() {
                 addText(*tmp);
             }
             InputField* tmpField = new InputField(*Game::getFont(), Vector2f(tmp->getPosition().x + tmp->getGlobalBounds().width + 10, tmp->getPosition().y), Vector2f(100, 20), "0");
-            tmpField->setOnChange(&Scene::modifySelectedCustom);
-            tmpField->setUpdateValue(&Scene::getSelectedCustom);
+            /*tmpField->setOnChange(&Scene::modifySelectedCustom);
+            tmpField->setUpdateValue(&Scene::getSelectedCustom);*/
+            tmpField->setOnChange([i](string value) {
+				Game::getCurrentScene()->modifySelectedCustom(value, i);
+				});
+            tmpField->setUpdateValue([i]() {
+				return Game::getCurrentScene()->getSelectedCustom(i);
+				});
             if (type == 0)
                 tmpField->setOnlyNumbers(false);
             else
                 tmpField->setOnlyNumbers(true);
-            tmpField->setCallIndex(i);
             addInputField(*tmpField);
             delete tmpField;
         }
@@ -121,7 +126,7 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
         InputField* tmp = NULL;
         Text* tmpText = NULL;
         Button* tmpButton = NULL;
-        int cnt = 13;
+        int cnt = 14;
         float extraOffset = 15;
         for (int i = 0; i < selectedObject->getScriptsCount(); i++) {
             if (texts.size() > 0)
@@ -165,9 +170,14 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
                     }
                     tmp = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
                     tmp->setPosition(Vector2f(position.x + tmpText->getGlobalBounds().width + 20, tmpText->getPosition().y));
-                    tmp->setOnChange(&Scene::modifySelectedCustom);
-                    tmp->setUpdateValue(&Scene::getSelectedCustom);
-                    tmp->setCallIndex(cnt);
+                    /*tmp->setOnChange(&Scene::modifySelectedCustom);
+                    tmp->setUpdateValue(&Scene::getSelectedCustom);*/
+                    tmp->setOnChange([cnt](string value) {
+						Game::getCurrentScene()->modifySelectedCustom(value, cnt);
+						});
+                    tmp->setUpdateValue([cnt]() {
+                        return Game::getCurrentScene()->getSelectedCustom(cnt);
+                        });
                     if (type != 0)
                         tmp->setOnlyNumbers(true);
                     addInputField(*tmp);
@@ -220,6 +230,7 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
 }
 void InspectorWindow::update() { //update function
     EditorWindow::update();
+    scriptAddDropdown.update();
     if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
         for (int i = 0; i < colors.size(); i++) {
             colors[i].update();

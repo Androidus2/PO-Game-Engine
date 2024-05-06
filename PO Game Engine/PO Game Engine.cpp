@@ -70,17 +70,17 @@ int main()
         //window.setFramerateLimit(60);
 
         Image folderIconimg;
-        if(!folderIconimg.loadFromFile("Resources/Folder.png"))
-            cout<<"Failed to load image"<<endl;
+        if (!folderIconimg.loadFromFile("Resources/Folder.png"))
+            cout << "Failed to load image" << endl;
         Texture* folderIcon = new Texture();
-        if(!folderIcon->loadFromImage(folderIconimg))
-            cout<<"Failed to load texture"<<endl;
+        if (!folderIcon->loadFromImage(folderIconimg))
+            cout << "Failed to load texture" << endl;
         Game::setFolderTexture(folderIcon);
-        if(!Game::getFolderTexture())
-		    cout<<"Failed to set folder texture"<<endl;
+        if (!Game::getFolderTexture())
+            cout << "Failed to set folder texture" << endl;
 
-        Scene scene;
-        Game::setCurrentScene(&scene);
+        Scene* scene = new Scene();
+        Game::setCurrentScene(scene);
         HierarchyWindow hierarchyWindow(font, Vector2f(0, 0), Vector2f(250, window.getSize().y), "Hierarchy");
         InspectorWindow inspectorWindow(font, Vector2f(window.getSize().x - 350, 0), Vector2f(350, window.getSize().y), "Inspector");
         ColorPicker colorPicker(font, Vector2f(window.getSize().x * 0.25f, 0), Vector2f(320, 320), "Color Picker");
@@ -99,27 +99,29 @@ int main()
 
         float nextSpace = 0;
 
-        GameObject ob;
-        ob.setName("Object0");
-        makeObj(ob, Vector2f(100, 100), 100.f);
+        if (!load) {
+            GameObject ob;
+            ob.setName("Object0");
+            makeObj(ob, Vector2f(100, 100), 100.f);
 
-        BehaviourScript* script = new TestScript(Color::Magenta, Color::Cyan);
-        ob.addScript(script);
-        delete script;
+            BehaviourScript* script = new TestScript(Color::Magenta, Color::Cyan);
+            ob.addScript(script);
+            delete script;
 
-        script = new FollowMouseScript(true);
-        ob.addScript(script);
-        delete script;
+            script = new FollowMouseScript(true);
+            ob.addScript(script);
+            delete script;
 
-        scene.addObject(&ob);
+            Game::getCurrentScene()->addObject(&ob);
 
 
-        GameObject ob2;
-        ob2.setFillColor(Color::Green);
-        ob2.setName("Object1");
-        ob2.setPosition(Vector2f(300, 300));
-        ob2.setRotation(45);
-        scene.addObject(&ob2);
+            GameObject ob2;
+            ob2.setFillColor(Color::Green);
+            ob2.setName("Object1");
+            ob2.setPosition(Vector2f(300, 300));
+            ob2.setRotation(45);
+            Game::getCurrentScene()->addObject(&ob2);
+        }
 
         /*Player ob3;
         ob3.setName("Player1");
@@ -138,19 +140,20 @@ int main()
         ob4.setUpKey(Keyboard::Up);
         ob4.setShootKey(Keyboard::RControl);
         scene.addObject(&ob4);*/
-        if (load) {
-            ifstream in("Resources/Test.txt"); //Read scene
-            in >> scene;
-            in.close();
-        }
+        
+        //if (load) {
+        //    ifstream in("Resources/TestScript.txt"); //Read scene
+        //    in >> scene;
+        //    in.close();
+        //}
 
 
         Text fpsCounter("FPS: ", font, 15);
         fpsCounter.setFillColor(Color::White);
         fpsCounter.setPosition(10, 10);
 
-        if(Game::getIsPlaying())
-            scene.startScene();
+        //if(Game::getIsPlaying())
+        //    scene.startScene();
 
         Gizmo gizmos;
         Game::setGizmo(&gizmos);
@@ -178,19 +181,22 @@ int main()
                     window.close();
 
                 if (Game::getDrawEditor()) {
+                    if (Game::getCurrentScene()->getSelectedObjectIndex() != -1 && gameFilesWindow.getSelectedFile() == -1) {
+                        if (Keyboard::isKeyPressed(Keyboard::Delete)) {
+                            cout<<"We pressed delete and the selected file is: "<<gameFilesWindow.getSelectedFile()<<endl;
+                            deleteObj();
+                            colorPicker.setActive(false);
+                        }
+                    }
+
                     topBarWindow.handleEvent(event);
                     colorPicker.handleEvent(event);
                     inspectorWindow.handleEvent(event);
                     gameFilesWindow.handleEvent(event);
                     hierarchyWindow.handleEvent(event); //Call last
+                    gizmos.handleEvent(event);
 
 
-                    if (scene.getSelectedObjectIndex() != -1) {
-                        if (Keyboard::isKeyPressed(Keyboard::Delete)) {
-                            deleteObj();
-                            colorPicker.setActive(false);
-                        }
-                    }
                 }
                 if (event.type == Event::KeyPressed) {
                     if (event.key.code == Keyboard::F1)
@@ -250,7 +256,7 @@ int main()
 
             //Update the scene
             if (Game::getIsPlaying())
-                scene.updateScene();
+                Game::getCurrentScene()->updateScene();
 
             //Clear the window
             window.clear();
@@ -263,7 +269,7 @@ int main()
             if (Game::getDrawEditor()) {
                 gizmos.draw(window);
                 window.setView(editorView);
-                hierarchyWindow.setTitle("Hierarchy (" + to_string(scene.getObjectsCount()) + ")");
+                hierarchyWindow.setTitle("Hierarchy (" + to_string(Game::getCurrentScene()->getObjectsCount()) + ")");
                 hierarchyWindow.draw(window);
                 inspectorWindow.draw(window);
                 gameFilesWindow.draw(window);
@@ -280,8 +286,8 @@ int main()
         //Save scene
         if (save) {
             Game::setIsPlaying(false);
-            ofstream out("Resources/Test.txt");
-            out << scene;
+            ofstream out("Resources/TestScript.txt");
+            out << Game::getCurrentScene();
             out.close();
         }
 

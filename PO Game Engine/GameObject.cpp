@@ -22,19 +22,48 @@ istream& GameObject::pRead(istream& in) { //private read function
     setRotation(rotation);
     setScale(scale);
     setFillColor(Color(r, g, b, a));
+    in >> tag >> texturePath;
+    if (texturePath != "None")
+        changeTexture(texturePath);
     Collider::read(in);
+    //Read the scripts
+    removeAllScripts();
+    int scriptCount;
+    in >> scriptCount;
+    for (int i = 0; i < scriptCount; i++) {
+		string scriptName;
+		in >> scriptName;
+		BehaviourScript* script = makeScriptFromString(scriptName);
+        if (script) {
+			script->read(in);
+			addScript(script);
+		}
+	}
     return in;
 }
 ostream& GameObject::pWrite(ostream& out) const { //private write function
     out << name << " " << isActive << " " << zLayer << " " << velocity.x << " " << velocity.y << " ";
     out << getPosition().x << " " << getPosition().y << " " << getRotation() << " " << getScale().x << " " << getScale().y
         << " " << static_cast<int>(getFillColor().r) << " " << static_cast<int>(getFillColor().g) << " " << static_cast<int>(getFillColor().b) << " " << static_cast<int>(getFillColor().a) << '\n';
+    out << tag << " ";
+    if(texturePath.size() > 3)
+        out << texturePath << '\n';
+    else
+        out << "None" << '\n';
     Collider::write(out);
+    //Write the scripts
+    out << attachedScripts.size() << '\n';
+    for (int i = 0; i < attachedScripts.size(); i++) {
+		out << attachedScripts[i]->getScriptName() << '\n';
+		attachedScripts[i]->write(out);
+	}
     return out;
 }
 
 GameObject::GameObject() : Collider(), ConvexShape(), id(idCounter++) { //default constructor
     this->name = "Object";
+    this->tag = "Default";
+    this->texturePath = "None";
     this->isActive = true;
     this->zLayer = 0;
     this->velocity = Vector2f();
@@ -43,6 +72,8 @@ GameObject::GameObject() : Collider(), ConvexShape(), id(idCounter++) { //defaul
 GameObject::GameObject(const GameObject& gameObject) : Collider(gameObject), ConvexShape(gameObject), id(gameObject.id) { //copy constructor
     //cout<<"Copy constructor called on "<<gameObject.name<<endl;
     this->name = gameObject.name;
+    this->tag = gameObject.tag;
+    this->texturePath = gameObject.texturePath;
     this->isActive = gameObject.isActive;
     this->zLayer = gameObject.zLayer;
     this->velocity = gameObject.velocity;
@@ -55,6 +86,8 @@ GameObject& GameObject::operator=(const GameObject& gameObject) { //assignment o
     Collider::operator=(gameObject);
     ConvexShape::operator=(gameObject);
     this->name = gameObject.name;
+    this->tag = gameObject.tag;
+    this->texturePath = gameObject.texturePath;
     this->isActive = gameObject.isActive;
     this->zLayer = gameObject.zLayer;
     this->velocity = gameObject.velocity;
@@ -74,6 +107,13 @@ string GameObject::getName() const { //get name
 }
 void GameObject::setName(string name) { //set name
     this->name = name;
+}
+
+string GameObject::getTag() const { //get tag
+	return this->tag;
+}
+void GameObject::setTag(string tag) { //set tag
+	this->tag = tag;
 }
 
 bool GameObject::getActive() const { //get if the object is active

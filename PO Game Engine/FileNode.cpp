@@ -39,6 +39,14 @@ void FileNode::setName(const string& name) { //set name function
 	this->name = name;
 }
 string FileNode::getPath() const { //get path function
+	if (name == "\\") {
+		//Return the path of the grandparent
+		if (parent != nullptr && parent->getParent() != nullptr)
+			return parent->getParent()->getPath();
+		else
+			throw exception("We have a \\ folder in the root!");
+	}
+
 	string path = "";
 	const FileNode* tmp = this;
 	while (tmp != nullptr) {

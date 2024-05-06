@@ -26,7 +26,7 @@ ImageField::ImageField(const Vector2f& position, const Vector2f& size, const str
 	deleteButton.setTextColor(Color::White);
 	//Make a lambda function to delete the image path
 	deleteButton.setOnClick([this]() {
-		this->setImagePath("");
+		this->setImagePath("None");
 		});
 
 	this->imagePath = imagePath;
@@ -40,7 +40,7 @@ ImageField::ImageField(const ImageField& imageField) {
 	this->imageName = imageField.imageName;
 	this->deleteButton = imageField.deleteButton;
 	this->deleteButton.setOnClick([this]() {
-		this->setImagePath("");
+		this->setImagePath("None");
 		});
 	this->imagePath = imageField.imagePath;
 	this->isSelected = imageField.isSelected;
@@ -55,7 +55,7 @@ ImageField& ImageField::operator=(const ImageField& imageField) {
 	this->imageName = imageField.imageName;
 	this->deleteButton = imageField.deleteButton;
 	this->deleteButton.setOnClick([this]() {
-		this->setImagePath("");
+		this->setImagePath("None");
 		});
 	this->imagePath = imageField.imagePath;
 	this->isSelected = imageField.isSelected;

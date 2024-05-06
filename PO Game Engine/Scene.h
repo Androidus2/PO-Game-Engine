@@ -9,6 +9,7 @@
 class Scene { //Scene class
 private:
     std::string sceneName;
+    std::string scenePath;
     std::vector<GameObject*> sceneObjects; //Objects in the scene
     std::vector<sf::Vector2f> lastPositions;
     int sceneId;
@@ -80,6 +81,10 @@ public:
 
     std::istream& read(std::istream& in);
     std::ostream& write(std::ostream& out) const;
+
+    void setScenePath(const std::string& path);
+
+    void saveScene();
 
     ~Scene();
 };

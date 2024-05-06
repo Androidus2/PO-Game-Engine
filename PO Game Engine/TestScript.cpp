@@ -72,6 +72,16 @@ string TestScript::getAttributeName(int index) const { //get attribute name
 		return "Pressed Color";
 	return "";
 }
+void TestScript::read(istream& stream) { //read function
+	string a, b;
+	stream >> a >> b;
+	defaultColor = stringToColor(a);
+	pressedColor = stringToColor(b);
+}
+void TestScript::write(ostream& stream) { //write function
+	stream << ColorToString(defaultColor) << " ";
+	stream << ColorToString(pressedColor) << " ";
+}
 TestScript::~TestScript() { //destructor
 	cout << "Destructor called" << endl;
 }

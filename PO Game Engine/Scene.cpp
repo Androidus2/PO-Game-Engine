@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "Scene.h"
 #include "Utility.h"
 #include "Collider.h"
@@ -21,6 +22,7 @@ Scene::Scene() : sceneId(sceneIdCounter++) { //default constructor
     buildIndex = -1;
     selectedObjectIndex = -1;
     sceneBeforePlaying = NULL;
+    scenePath = "GameFiles";
 }
 Scene::Scene(const Scene& scene) : sceneId(scene.sceneId) { //copy constructor
     sceneName = scene.sceneName;
@@ -28,6 +30,7 @@ Scene::Scene(const Scene& scene) : sceneId(scene.sceneId) { //copy constructor
     buildIndex = scene.buildIndex;
     selectedObjectIndex = -1;
     sceneBeforePlaying = NULL;
+    scenePath = scene.scenePath;
 }
 Scene::Scene(const Scene& scene, int id) : sceneId(id) { //copy constructor with sceneId
     sceneName = scene.sceneName;
@@ -35,6 +38,7 @@ Scene::Scene(const Scene& scene, int id) : sceneId(id) { //copy constructor with
     buildIndex = scene.buildIndex;
     selectedObjectIndex = -1;
     sceneBeforePlaying = NULL;
+    scenePath = scene.scenePath;
 }
 Scene& Scene::operator=(const Scene& scene) { //assignment operator
     if (this == &scene)
@@ -42,6 +46,7 @@ Scene& Scene::operator=(const Scene& scene) { //assignment operator
     sceneName = scene.sceneName;
     setObjects(scene.sceneObjects);
     buildIndex = scene.buildIndex;
+    scenePath = scene.scenePath;
     return *this;
 }
 
@@ -156,55 +161,60 @@ void Scene::modifySelectedCustom(string value, int index) { //modify a custom va
         sceneObjects[selectedObjectIndex]->setName(value);
         return;
     }
-    if (index == 1) { //Change position.x
+    if (index == 1) {
+        //Change tag
+        sceneObjects[selectedObjectIndex]->setTag(value);
+        return;
+    }
+    if (index == 2) { //Change position.x
         sceneObjects[selectedObjectIndex]->setPosition(stof(value), sceneObjects[selectedObjectIndex]->getPosition().y);
         return;
     }
-    if (index == 2) { //Change position.y
+    if (index == 3) { //Change position.y
         sceneObjects[selectedObjectIndex]->setPosition(sceneObjects[selectedObjectIndex]->getPosition().x, stof(value));
         return;
     }
-    if (index == 3) { //Change rotation
+    if (index == 4) { //Change rotation
         sceneObjects[selectedObjectIndex]->setRotation(stof(value));
         return;
     }
-    if (index == 4) { //Change scale.x
+    if (index == 5) { //Change scale.x
         sceneObjects[selectedObjectIndex]->setScale(stof(value), sceneObjects[selectedObjectIndex]->getScale().y);
         return;
     }
-    if (index == 5) { //Change scale.y
+    if (index == 6) { //Change scale.y
         sceneObjects[selectedObjectIndex]->setScale(sceneObjects[selectedObjectIndex]->getScale().x, stof(value));
         return;
     }
-    if (index == 6) { //Change color
+    if (index == 7) { //Change color
         sceneObjects[selectedObjectIndex]->setFillColor(stringToColor(value));
         return;
     }
-    if (index == 7) { //Change zLayer
+    if (index == 8) { //Change zLayer
         sceneObjects[selectedObjectIndex]->setZLayer(stoi(value));
         return;
     }
-    if (index == 8) { //Change mass
+    if (index == 9) { //Change mass
         sceneObjects[selectedObjectIndex]->setMass(stof(value));
         return;
     }
-    if (index == 9) { //Change velocity.x
+    if (index == 10) { //Change velocity.x
         sceneObjects[selectedObjectIndex]->setVelocity(stof(value), sceneObjects[selectedObjectIndex]->getVelocity().y);
         return;
     }
-    if (index == 10) { //Change velocity.y
+    if (index == 11) { //Change velocity.y
         sceneObjects[selectedObjectIndex]->setVelocity(sceneObjects[selectedObjectIndex]->getVelocity().x, stof(value));
         return;
     }
-    if (index == 11) { //Change texture path
+    if (index == 12) { //Change texture path
     	sceneObjects[selectedObjectIndex]->changeTexture(value);
     	return;
     }
-    if (index == 12) { //Change isMovable
+    if (index == 13) { //Change isMovable
         sceneObjects[selectedObjectIndex]->setIsMovable((value == "1" || value == "true"));
     	return;
     }
-    int poz = 13;
+    int poz = 14;
     for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
         if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
             sceneObjects[selectedObjectIndex]->setAttributeOnScripts(i, index - poz, value);
@@ -217,27 +227,29 @@ string Scene::getSelectedCustom(int index) const { //get a custom value of the s
     if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
         if (index == 0)
             return sceneObjects[selectedObjectIndex]->getName();
-        if (index == 1)
-            return floatToString(sceneObjects[selectedObjectIndex]->getPosition().x);
+        if(index == 1)
+            return sceneObjects[selectedObjectIndex]->getTag();
         if (index == 2)
-            return floatToString(sceneObjects[selectedObjectIndex]->getPosition().y);
+            return floatToString(sceneObjects[selectedObjectIndex]->getPosition().x);
         if (index == 3)
-            return floatToString(sceneObjects[selectedObjectIndex]->getRotation());
+            return floatToString(sceneObjects[selectedObjectIndex]->getPosition().y);
         if (index == 4)
-            return floatToString(sceneObjects[selectedObjectIndex]->getScale().x);
+            return floatToString(sceneObjects[selectedObjectIndex]->getRotation());
         if (index == 5)
-            return floatToString(sceneObjects[selectedObjectIndex]->getScale().y);
+            return floatToString(sceneObjects[selectedObjectIndex]->getScale().x);
         if (index == 6)
-            return ColorToString(sceneObjects[selectedObjectIndex]->getFillColor());
+            return floatToString(sceneObjects[selectedObjectIndex]->getScale().y);
         if (index == 7)
-            return floatToString(sceneObjects[selectedObjectIndex]->getZLayer());
+            return ColorToString(sceneObjects[selectedObjectIndex]->getFillColor());
         if (index == 8)
-            return floatToString(sceneObjects[selectedObjectIndex]->getMass());
+            return floatToString(sceneObjects[selectedObjectIndex]->getZLayer());
         if (index == 9)
-            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().x);
+            return floatToString(sceneObjects[selectedObjectIndex]->getMass());
         if (index == 10)
+            return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().x);
+        if (index == 11)
             return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().y);
-        if (index == 11) {
+        if (index == 12) {
             string ret = sceneObjects[selectedObjectIndex]->getTexturePath();
             if (ret == "")
 				return "None";
@@ -250,9 +262,9 @@ string Scene::getSelectedCustom(int index) const { //get a custom value of the s
 			}
             return ret;
         }
-        if (index == 12)
+        if (index == 13)
             return to_string(sceneObjects[selectedObjectIndex]->getIsMovable());
-        int poz = 13;
+        int poz = 14;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
                 return sceneObjects[selectedObjectIndex]->getAttributeFromScripts(i, index - poz);
@@ -267,31 +279,33 @@ string Scene::getSelectedCustomName(int index) const { //get the name of a custo
     if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
         if (index == 0)
             return "Name";
-        if (index == 1)
-            return "Position";
+        if(index == 1)
+            return "Tag";
         if (index == 2)
             return "Position";
         if (index == 3)
-            return "Rotation";
+            return "Position";
         if (index == 4)
-            return "Scale";
+            return "Rotation";
         if (index == 5)
             return "Scale";
         if (index == 6)
-            return "Color";
+            return "Scale";
         if (index == 7)
-            return "ZLayer";
+            return "Color";
         if (index == 8)
-            return "Mass";
+            return "ZLayer";
         if (index == 9)
-            return "Velocity";
+            return "Mass";
         if (index == 10)
             return "Velocity";
-        if(index == 11)
+        if (index == 11)
+            return "Velocity";
+        if (index == 12)
             return "Texture";
-        if(index == 12)
+        if (index == 13)
             return "IsMovable";
-        int poz = 13;
+        int poz = 14;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
                 return sceneObjects[selectedObjectIndex]->getAttributeNamesFromScripts(i, index - poz);
@@ -307,30 +321,32 @@ int Scene::getSelectedCustomType(int index) const {
         if (index == 0)
             return 0;
         if (index == 1)
-            return 5;
+            return 0;
         if (index == 2)
-            return 6;
+            return 5;
         if (index == 3)
-            return 1;
+            return 6;
         if (index == 4)
-            return 5;
-        if (index == 5)
-            return 6;
-        if (index == 6)
-            return 2;
-        if (index == 7)
-            return 3;
-        if (index == 8)
             return 1;
-        if (index == 9)
+        if (index == 5)
             return 5;
-        if (index == 10)
+        if (index == 6)
             return 6;
+        if (index == 7)
+            return 2;
+        if (index == 8)
+            return 3;
+        if (index == 9)
+            return 1;
+        if (index == 10)
+            return 5;
         if (index == 11)
-            return 7;
+            return 6;
         if (index == 12)
+            return 7;
+        if (index == 13)
             return 4;
-        int poz = 13;
+        int poz = 14;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
                 return sceneObjects[selectedObjectIndex]->getAttributeTypeFromScripts(i, index - poz);
@@ -485,6 +501,7 @@ istream& Scene::read(istream& in) { //read function
         tmp = makeObjFromString(type);
         in >> *tmp;
         addObject(tmp);
+        delete tmp;
     }
     return in;
 }
@@ -493,6 +510,16 @@ ostream& Scene::write(ostream& out) const { //write function
     for (int i = 0; i < getObjectsCount(); i++)
         out << *sceneObjects[i];
     return out;
+}
+
+void Scene::setScenePath(const string& path) { //set the path of the scene
+	scenePath = path;
+}
+
+void Scene::saveScene() { //save the scene to its path
+	ofstream out(scenePath + "/" + sceneName + ".poscene");
+	out << *this;
+	out.close();
 }
 
 Scene::~Scene() {} //destructor

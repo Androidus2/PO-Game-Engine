@@ -26,5 +26,8 @@ public:
     int getAttributeType(int index) const;
     std::string getAttributeName(int index) const;
 
+    void read(std::istream& stream);
+    void write(std::ostream& stream);
+
     ~TestScript();
 };

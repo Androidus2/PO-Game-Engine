@@ -14,9 +14,9 @@ private:
     int cursorIndex;
     bool onlyNumbers;
     std::string str;
-    int callIndex;
-    std::function<void(Scene*, std::string, int)> onChange; // std::function to replace function pointer
-    std::function<std::string(Scene*, int)> updateValue; // std::function to replace function pointer
+    std::function<void(std::string)> onChange;
+    std::function<std::string()> updateValue;
+    std::function<void(std::string)> finishEdit;
 
 public:
     InputField(const sf::Font& font, const sf::Vector2f& position, const sf::Vector2f& size, const std::string& defaultText = "");
@@ -35,8 +35,8 @@ public:
     bool getOnlyNumbers() const;
     void checkMouseClick();
     void changeBackground();
-    void setOnChange(std::function<void(Scene*, std::string, int)> onChange);
-    void setUpdateValue(std::function<std::string(Scene*, int)> updateValue);
-    void setCallIndex(int index);
+    void setOnChange(std::function<void(std::string)> onChange);
+    void setUpdateValue(std::function<std::string()> updateValue);
+    void setFinishEdit(std::function<void(std::string)> finishEdit);
     std::string processText();
 };

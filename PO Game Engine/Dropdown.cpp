@@ -29,7 +29,10 @@ void Dropdown::update() { //update function
 }
 void Dropdown::handleEvent(Event& event) { //handle event function
 	for (int i = 0; i < buttons.size(); i++) {
-		buttons[i].handleEvent(event);
+		if (isActive)
+			buttons[i].handleEvent(event);
+		else
+			buttons[i].release();
 	}
 	if (event.type == Event::MouseButtonPressed) {
 		isActive = false;
@@ -57,6 +60,16 @@ string Dropdown::getElementName(int index) const { //get element name function
 	if (index >= 0 && index < buttons.size())
 		return buttons[index].getText();
 	return "";
+}
+void Dropdown::setPosition(const Vector2f& position) { //set position function
+	background.setPosition(position);
+	if(buttons.size() <= 0)
+		return;
+	float ySize = background.getSize().y / buttons.size();
+	for (int i = 0; i < buttons.size(); i++) {
+		buttons[i].setPosition(Vector2f(background.getPosition().x, background.getPosition().y + ySize * i));
+		buttons[i].setSize(Vector2f(background.getSize().x, ySize));
+	}
 }
 void Dropdown::selectedElement(int index) { //selected element function
 	if (callback)

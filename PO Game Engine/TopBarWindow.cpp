@@ -34,6 +34,13 @@ TopBarWindow::TopBarWindow(const Font& font, const Vector2f& position, const Vec
 	playButton.setHoverColor(Color(150, 255, 150));
 	playButton.setPressedColor(Color::Red);
 	buttons.push_back(playButton);
+
+	Button saveButton(font, Vector2f(position.x + size.x - 150, position.y + 10), Vector2f(50, 30), "Save");
+	saveButton.setOnClick([]() {
+		if(Game::getCurrentScene() != nullptr && Game::getCurrentScene()->getName() != "" && !Game::getIsPlaying())
+			Game::getCurrentScene()->saveScene();
+		});
+	buttons.push_back(saveButton);
 }
 void TopBarWindow::handleEvent(Event& event) { //handle event function
 	EditorWindow::handleEvent(event);

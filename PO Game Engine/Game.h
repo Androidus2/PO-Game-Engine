@@ -64,4 +64,6 @@ public:
 
     static sf::Texture* getFolderTexture();
     static void setFolderTexture(sf::Texture* texture);
+
+    static void loadScene(const std::string& scenePath);
 };

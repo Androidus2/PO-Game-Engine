@@ -1,6 +1,7 @@
 #include "Gizmo.h"
 #include "Game.h"
 #include "Utility.h"
+#include "EditorWindow.h"
 
 using namespace std;
 using namespace sf;
@@ -71,6 +72,24 @@ void Gizmo::draw(RenderWindow& window) const { //draw function
         }
     }
 }
+void Gizmo::handleEvent(Event& event) { //handle event function
+    if (event.type == Event::MouseButtonPressed && !EditorWindow::getClickedUI()) {
+        if (event.mouseButton.button == Mouse::Left) {
+            int ind = Game::getCurrentScene()->getSelectedObjectIndex();
+            if (ind != -1) {
+                Vector2f mousePos = Vector2f(event.mouseButton.x, event.mouseButton.y);
+                mousePos = Game::getWindow()->mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), *Game::getSceneView());
+                if (Game::getCurrentScene()->getObjectByIndex(ind)->getGlobalBounds().contains(mousePos)) {
+                    dragging = true;
+                    dragStart = mousePos;
+                    if (type == 2) {
+                        initialScale = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getScale();
+                    }
+                }
+            }
+		}
+	}
+}
 void Gizmo::update() { //update function
     //Check dragging logic to use events so the gizmo won't be called when the mouse is over UI
     if (Mouse::isButtonPressed(Mouse::Left) && Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
@@ -107,7 +126,7 @@ void Gizmo::update() { //update function
                 float newAngle = currentRotation + deltaAngle;
 
                 // Set the new rotation
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(newAngle), 3);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(newAngle), 4);
 
                 // Rotate the rotation box
                 rotationBox.setRotation(newAngle);
@@ -183,7 +202,7 @@ void Gizmo::update() { //update function
             }
         }
         //If we are not dragging, check if the cursor is over the selected object and if it is start dragging
-        else if (type == 0 && Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getGlobalBounds().contains(mousePos)) {
+        /*else if (type == 0 && Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getGlobalBounds().contains(mousePos)) {
             dragging = true;
             dragStart = mousePos;
         }
@@ -196,7 +215,7 @@ void Gizmo::update() { //update function
             initialScale = Game::getCurrentScene()->getObjectByIndex(Game::getCurrentScene()->getSelectedObjectIndex())->getScale();
 
             dragStart = mousePos;
-        }
+        }*/
     }
     else
         dragging = false;

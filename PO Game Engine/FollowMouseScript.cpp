@@ -10,6 +10,7 @@ FollowMouseScript::FollowMouseScript(bool applySmoothness, float smoothnessSpeed
 	this->applySmoothness = applySmoothness;
 	this->smoothnessSpeed = smoothnessSpeed;
 	attributeCount = 2;
+	cout<<"Created FollowMouseScript" << endl;
 }
 FollowMouseScript* FollowMouseScript::clone() const { //clone function
 	return new FollowMouseScript(*this);
@@ -66,6 +67,17 @@ string FollowMouseScript::getAttributeName(int index) const { //get attribute na
 	if (index == 1)
 		return "Smoothness Speed";
 	return "";
+}
+void FollowMouseScript::read(istream& stream) { //read function
+	//Read the applySmoothness and smoothnessSpeed variables from the file
+	stream >> applySmoothness;
+	stream >> smoothnessSpeed;
+	cout<<"Read the values: " << applySmoothness << " " << smoothnessSpeed << endl;
+}
+void FollowMouseScript::write(ostream& stream) { //write function
+	//Write the applySmoothness and smoothnessSpeed variables to the file
+	stream << applySmoothness << " ";
+	stream << smoothnessSpeed << " ";
 }
 FollowMouseScript::~FollowMouseScript() { //destructor (does nothing)
 

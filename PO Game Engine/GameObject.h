@@ -10,6 +10,7 @@ class BehaviourScript;
 class GameObject : public Collider, public sf::ConvexShape { //GameObject class
 protected:
     std::string name;
+    std::string tag;
     std::string texturePath;
     bool isActive;
     int zLayer;
@@ -28,6 +29,9 @@ public:
 
     std::string getName() const;
     void setName(std::string name);
+
+    std::string getTag() const;
+    void setTag(std::string tag);
 
     bool getActive() const;
     void setActive(bool isActive);

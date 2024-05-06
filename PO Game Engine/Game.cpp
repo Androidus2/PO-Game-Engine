@@ -1,5 +1,7 @@
+#include <fstream>
 #include "Game.h"
 #include "InspectorWindow.h"
+#include "HierarchyWindow.h"
 
 using namespace std;
 using namespace sf;
@@ -104,4 +106,18 @@ Texture* Game::getFolderTexture() { //get the folder texture
 }
 void Game::setFolderTexture(Texture* texture) { //set the folder texture
 	folderTexture = texture;
+}
+
+void Game::loadScene(const string& scenePath) { //load the scene
+	if (currentScene) {
+		delete currentScene;
+	}
+	dynamic_cast<HierarchyWindow*>(hierarchy)->clearTexts();
+	currentScene = new Scene();
+	ifstream file(scenePath);
+	currentScene->read(file);
+	currentScene->setSelectedObjectIndex(-1);
+	file.close();
+	string pathWithoutFile = scenePath.substr(0, scenePath.find_last_of('/') + 1);
+	currentScene->setScenePath(pathWithoutFile);
 }

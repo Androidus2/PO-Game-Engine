@@ -16,6 +16,7 @@ private:
 public:
     Gizmo();
     void draw(sf::RenderWindow& window) const;
+    void handleEvent(sf::Event& event);
     void update();
     void setGizmoType(int type);
 };

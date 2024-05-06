@@ -23,5 +23,8 @@ public:
     virtual std::string getAttribute(int index) const = 0;
     virtual void setAttribute(int index, std::string value) = 0;
 
+    virtual void read(std::istream& stream) = 0;
+    virtual void write(std::ostream& stream) = 0;
+
     virtual ~BehaviourScript() {}
 };

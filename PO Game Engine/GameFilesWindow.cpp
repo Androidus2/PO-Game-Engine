@@ -3,6 +3,7 @@
 #include "GameTime.h"
 #include "InspectorWindow.h"
 #include <filesystem>
+#include <fstream>
 
 using namespace std;
 using namespace sf;
@@ -16,6 +17,13 @@ Texture* GameFilesWindow::makeTexture(const string& path) { //make texture funct
     return tex;
 }
 void GameFilesWindow::makeTree(FileNode* node) { //make tree function
+    //Make a fake directory in the tree which links to the parent directory
+    if (node->getName() != "GameFiles" && node->childIndex("\\") == -1) {
+		FileNode* tmp = new FileNode("\\", true);
+		tmp->setIcon(Game::getFolderTexture());
+		node->addChild(tmp);
+	}
+
     string path = node->getPath();
     for (const auto& entry : filesystem::directory_iterator(path)) {
         string name = entry.path().filename().string();
@@ -33,6 +41,11 @@ void GameFilesWindow::makeTree(FileNode* node) { //make tree function
             tmp->setIcon(makeTexture(path + "/" + name));
             node->addChild(tmp);
         }
+        else if (node->childIndex(name) == -1 && (name.find(".poscene") != string::npos)) {
+            FileNode* tmp = new FileNode(name, false);
+            tmp->setIcon(makeTexture("Resources/Sans.png"));
+            node->addChild(tmp);
+        }
     }
     //If a file is in the tree but doesn't exist, remove it
     int n = node->getChildCount();
@@ -44,12 +57,13 @@ void GameFilesWindow::makeTree(FileNode* node) { //make tree function
                 exists = true;
             }
         }
-        if (!exists) {
+        if (!exists && name != "\\") {
+            cout<<"WE deleted " << name << endl;
             node->removeChild(i);
             i--;
             n--;
         }
-        else if (name.find(".") == string::npos) {
+        else if (name.find(".") == string::npos && name != "\\") {
             makeTree(node->getChild(i));
         }
     }
@@ -107,34 +121,14 @@ void GameFilesWindow::loadFiles() { //load files function
     selectedFile = -1;
     selectedBackground.setPosition(Vector2f(-1000, -1000));
 }
-GameFilesWindow::GameFilesWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& title) : EditorWindow(font, position, size, title) {
-    Button outButton(font, Vector2f(position.x + size.x - 30, position.y), Vector2f(30, 30), "<-");
-    outButton.setOnClick([]() {
-        GameFilesWindow* window = dynamic_cast<GameFilesWindow*>(Game::getGameFilesWindow());
-        if (window == nullptr)
-            return;
-        string path = window->getCurrentDirectory();
-        if (path != "GameFiles/") {
-            path = path.substr(0, path.size() - 1);
-            path = path.substr(0, path.find_last_of("/") + 1);
-            window->setCurrentDirectory(path);
-        }
-        });
-    buttons.push_back(outButton);
-
-    Button newFolderButton(font, Vector2f(position.x + size.x - 60, position.y), Vector2f(30, 30), "+");
-    newFolderButton.setOnClick([]() {
-        GameFilesWindow* window = dynamic_cast<GameFilesWindow*>(Game::getGameFilesWindow());
-        if (window == nullptr)
-            return;
-        window->makeDir();
-        }
-    );
-    buttons.push_back(newFolderButton);
-
+GameFilesWindow::GameFilesWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& title) : EditorWindow(font, position, size, title), dropdown(font, Vector2f(position.x + size.x - 90, position.y), Vector2f(100, 100)) {
     currentDirectory = "GameFiles/";
     lastClickTime = 0;
     selectedFile = -1;
+    isDragging = false;
+
+    dragVisual.setSize(Vector2f(10, 10));
+    dragVisual.setFillColor(Color::Red);
 
     selectedBackground.setSize(Vector2f(110, 130));
     selectedBackground.setFillColor(Color(22, 48, 114, 0)); //194 alpha when visible
@@ -144,20 +138,78 @@ GameFilesWindow::GameFilesWindow(const Font& font, const Vector2f& position, con
     root = new FileNode("GameFiles", true);
     //makeTree(root);
 
+    dropdown.setActive(false);
+    dropdown.addElement("New Folder");
+    dropdown.addElement("New Scene");
+    dropdown.setCallback([this](int index) {
+        if (index == 0) {
+            makeDir();
+        }
+        else if (index == 1) {
+            makeScene();
+        }
+        });
+
+    copyPath = "None";
+
+    InputField* input = new InputField(font, Vector2f(position.x + 10, position.y + 5), Vector2f(100, 20), "Rename");
+    /*input->setOnChange([this](const string& text) {
+		renameFile(text);
+		});*/
+    /*input->setUpdateValue([this]() {
+        if (selectedFile != -1) {
+			return string(texts[selectedFile].getString());
+		}
+		return string("");
+		});*/
+    input->setFinishEdit([this](const string& text) {
+		renameFile(text);
+        inputFields[0].setPosition(Vector2f(-1000, -1000));
+		});
+    input->setPosition(Vector2f(-1000, -1000));
+    addInputField(*input);
+    delete input;
+
+
     loadFiles();
 }
 void GameFilesWindow::handleEvent(Event& event) { //handle event function
+    dropdown.handleEvent(event);
     if (event.type == Event::MouseButtonPressed) {
         if (event.mouseButton.button == Mouse::Left) {
+            if (selectedFile != -1) {
+                if (texts[selectedFile].getString() != "\\") {
+                    //Check if the mouse is over the text of the selectedFile and if it is, position the inputfield there and select it
+                    if (texts[selectedFile].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                        inputFields[0].setPosition(Vector2f(icons[selectedFile].getPosition().x, texts[selectedFile].getPosition().y - 5));
+                        inputFields[0].setText(texts[selectedFile].getString());
+                        inputFields[0].select();
+                    }
+                    else {
+                        inputFields[0].deselect();
+                    }
+                }
+            }
+
+            isDragging = true;
             int index = -1;
             for (int i = 0; i < icons.size(); i++) {
-                if (icons[i].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
-                    if (texts[i].getString().find(".") == string::npos) {
-                        if (GameTime::getInstance()->getTime() - lastClickTime < 0.5f && selectedFile == i) {
-                            currentDirectory += texts[i].getString() + "/";
+                if (icons[i].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) || texts[i].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                    if (GameTime::getInstance()->getTime() - lastClickTime < 0.5f && selectedFile == i) {
+                        if (texts[i].getString().find(".") == string::npos) {
+                            if(texts[i].getString() != "\\")
+                                currentDirectory += texts[i].getString() + "/"; 
+                            else {//Go up a directory
+                                currentDirectory = currentDirectory.substr(0, currentDirectory.size() - 1);
+                                currentDirectory = currentDirectory.substr(0, currentDirectory.find_last_of("/") + 1);
+                            }
                             loadFiles();
                             index = -1;
+                            inputFields[0].deselect();
                             break;
+                        }
+                        else if (texts[i].getString().find(".poscene") != string::npos) {
+                            Game::loadScene(currentDirectory + texts[i].getString());
                         }
                     }
                     index = i;
@@ -168,7 +220,8 @@ void GameFilesWindow::handleEvent(Event& event) { //handle event function
             if (selectedFile != -1) {
                 selectedBackground.setPosition(icons[selectedFile].getPosition() - Vector2f(5, 5));
                 selectedBackground.setFillColor(Color(22, 48, 114, 194));
-                if (texts[selectedFile].getString().find(".") != string::npos) {
+                string name = texts[selectedFile].getString();
+                if (name.find(".png") != string::npos || name.find(".jpg") != string::npos || name.find(".psd") != string::npos) {
                     InspectorWindow* inspector = dynamic_cast<InspectorWindow*>(Game::getInspector());
                     if(inspector)
 						inspector->changeImage(currentDirectory + texts[selectedFile].getString());
@@ -185,20 +238,82 @@ void GameFilesWindow::handleEvent(Event& event) { //handle event function
             }
             lastClickTime = GameTime::getInstance()->getTime();
         }
+        if (event.mouseButton.button == Mouse::Right) {
+            if (isMouseOver()) {
+                //Deselect the selected file
+                selectedFile = -1;
+                selectedBackground.setPosition(Vector2f(-1000, -1000));
+                selectedBackground.setFillColor(Color(22, 48, 114, 0));
+
+                //Show the dropdown
+				dropdown.setActive(true);
+                dropdown.setPosition(Vector2f(event.mouseButton.x, event.mouseButton.y));
+			}
+		}
     }
+    if (event.type == Event::MouseButtonReleased) {
+        if (event.mouseButton.button == Mouse::Left) {
+			isDragging = false;
+            //Check if the mouse is over the window
+            if (isMouseOver()) {
+				//Check if the mouse is over an icon
+                for (int i = 0; i < icons.size(); i++) {
+                    if (icons[i].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                        if (selectedFile != -1 && selectedFile != i) {
+							string newPath = currentDirectory + texts[i].getString();
+                            if (texts[i].getString() == "\\") {
+                                newPath = currentDirectory.substr(0, currentDirectory.size() - 1);
+								newPath = newPath.substr(0, newPath.find_last_of("/") + 1);
+                            }
+                            //Convert path to filesystem::path
+                            filesystem::path p = newPath;
+
+                            string oldPath = currentDirectory + texts[selectedFile].getString();
+                            filesystem::path oldP = oldPath;
+                            //Check if we are moving a file to a directory and if the file already exists
+                            if (filesystem::is_directory(p) && !filesystem::exists(p / oldP.filename())) {
+                                filesystem::rename(oldP, p / oldP.filename());
+							}
+							loadFiles();
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
     if (event.type == Event::KeyPressed && event.key.code == Keyboard::Delete) {
         if (selectedFile != -1) {
-            string path = currentDirectory + texts[selectedFile].getString();
-            if (filesystem::is_directory(path)) {
-                filesystem::remove_all(path);
+            if (texts[selectedFile].getString() != "\\") {
+                string path = currentDirectory + texts[selectedFile].getString();
+                if (filesystem::is_directory(path)) {
+                    filesystem::remove_all(path);
+                }
+                else {
+                    filesystem::remove(path);
+                }
+                loadFiles();
             }
-            else {
-                filesystem::remove(path);
-            }
-            loadFiles();
+        }
+    }
+    if (event.type == Event::KeyPressed && event.key.code == Keyboard::C) {
+        if (Keyboard::isKeyPressed(Keyboard::LControl)) {
+			copy();
+		}
+	}
+    if (event.type == Event::KeyPressed && event.key.code == Keyboard::V) {
+        if (Keyboard::isKeyPressed(Keyboard::LControl)) {
+            paste();
         }
     }
     EditorWindow::handleEvent(event);
+}
+void GameFilesWindow::update() { //update function
+    if (isDragging) {
+		dragVisual.setPosition(Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y));
+	}
+	EditorWindow::update();
+    dropdown.update();
 }
 string GameFilesWindow::getCurrentDirectory() const { //get current directory function
     return currentDirectory;
@@ -208,11 +323,24 @@ void GameFilesWindow::setCurrentDirectory(const string& directory) { //set curre
     loadFiles();
 }
 void GameFilesWindow::draw(RenderWindow& window) const { //draw function
-    EditorWindow::draw(window);
+    if(!isActive)
+		return;
+    //EditorWindow::draw(window);
+    window.draw(this->window);
+    if (isDragglable)
+        window.draw(draggingArea);
+    window.draw(title);
     for (int i = 0; i < icons.size(); i++) {
         window.draw(icons[i]);
     }
     window.draw(selectedBackground);
+    for (int i = 0; i < texts.size(); i++) {
+		window.draw(texts[i]);
+	}
+    inputFields[0].draw(window);
+    dropdown.draw(window);
+    if(isDragging && selectedFile != -1)
+		window.draw(dragVisual);
 }
 void GameFilesWindow::makeDir() { //make directory function
     string path = currentDirectory;
@@ -225,6 +353,25 @@ void GameFilesWindow::makeDir() { //make directory function
     }
     filesystem::create_directory(path + name);
     loadFiles();
+}
+void GameFilesWindow::makeScene() { //make scene function
+	string path = currentDirectory;
+	string name = "New Scene";
+	//Check if the scene already exists
+    int i = 1;
+    while (filesystem::exists(path + name + ".poscene")) {
+     	name = "New Scene (" + to_string(i) + ")";
+     	i++;
+    }
+    ofstream file(path + name + ".poscene");
+    file << "Scene" << endl;
+    file << -1 << endl;
+    file << 0 << endl;
+    file.close();
+    loadFiles();
+}
+int GameFilesWindow::getSelectedFile() const { //get selected file function
+	return selectedFile;
 }
 Texture* GameFilesWindow::getTextureFromPath(const string& path) {
     //Go through the tree and find the node that represents the path
@@ -255,4 +402,69 @@ Texture* GameFilesWindow::getTextureFromPath(const string& path) {
 		}
 	}
 	return nullptr;
+}
+void GameFilesWindow::copy() { //copy function
+    if (selectedFile != -1) {
+		copyPath = currentDirectory + texts[selectedFile].getString();
+	}
+}
+void GameFilesWindow::paste() { //paste function
+    //Check if the copied path is valid
+    if (copyPath != "None" && filesystem::exists(copyPath)) {
+        string fileName = copyPath.substr(copyPath.find_last_of("/") + 1);
+        if(fileName == "\\")
+            return;
+        string newPath = currentDirectory + fileName;
+        //Check if the file already exists
+        int i = 1;
+        while (filesystem::exists(newPath)) {
+            if (filesystem::is_directory(newPath)) {
+				newPath = currentDirectory + fileName + " (" + to_string(i) + ")";
+			}
+            else {
+				newPath = currentDirectory + fileName.substr(0, fileName.find_last_of(".")) + " (" + to_string(i) + ")" + fileName.substr(fileName.find_last_of("."));
+			}
+			i++;
+		}
+        filesystem::copy(copyPath, newPath);
+        loadFiles();
+	}
+    else
+        copyPath = "None";
+}
+void GameFilesWindow::renameFile(const string& newName) { //rename function
+    if (selectedFile != -1) {
+		string path = currentDirectory + texts[selectedFile].getString();
+        string ext = "";
+        if (path.find(".") != string::npos)
+			ext = path.substr(path.find_last_of("."));
+        string newNameWithExt = newName;
+        if (newName == "" || newName == "\\")
+            newNameWithExt = "New Folder";
+        //If the new name has an extension, remove it
+        if (newNameWithExt.find(".") != string::npos)
+            newNameWithExt = newNameWithExt.substr(0, newNameWithExt.find_last_of("."));
+
+        cout<<"The new name is " << newNameWithExt << endl;
+        cout<<"The extension is " << ext << endl;
+
+        //Check if the file already exists
+        string tmp = newNameWithExt;
+        int i = 1;
+        while (filesystem::exists(currentDirectory + tmp + ext)) {
+			tmp = newNameWithExt + " (" + to_string(i) + ")";
+			i++;
+		}
+        newNameWithExt = tmp;
+
+        cout << "After the while loop\n";
+        cout<<"The new name is " << newNameWithExt << endl;
+        cout<<"The extension is " << ext << endl;
+
+        //Add the extension to the new name
+        newNameWithExt += ext;
+		string newPath = currentDirectory + newNameWithExt;
+		filesystem::rename(path, newPath);
+		loadFiles();
+	}
 }

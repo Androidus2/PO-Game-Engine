@@ -25,7 +25,7 @@ InputField::InputField(const Font& font, const Vector2f& position, const Vector2
     str = defaultText;
     onChange = NULL;
     updateValue = NULL;
-    callIndex = 0;
+    finishEdit = NULL;
 }
 void InputField::draw(RenderWindow& window) const { //draw function
     window.draw(field);
@@ -44,7 +44,7 @@ void InputField::update() { //update function
         }
     }
     else {
-        if (updateValue) str = updateValue(Game::getCurrentScene(), callIndex);
+        if (updateValue) str = updateValue();
         text.setString(str);
     }
 }
@@ -101,7 +101,7 @@ void InputField::handleEvent(Event& event) { //handle event function
                     cursorIndex++;
                 }
             }
-            if (onChange) onChange(Game::getCurrentScene(), processText(), callIndex); //Call the onChange function
+            if (onChange) onChange(processText()); //Call the onChange function
         }
         if (event.type == Event::KeyPressed) { //Handle arrow keys and copy-paste
             if (event.key.code == Keyboard::Left) {
@@ -137,7 +137,7 @@ void InputField::handleEvent(Event& event) { //handle event function
                 }
                 str = processText();
                 cursorIndex = str.size();
-                if (onChange) onChange(Game::getCurrentScene(), processText(), callIndex); //Call the onChange function
+                if (onChange) onChange(processText()); //Call the onChange function
             }
             if (event.key.control && event.key.code == Keyboard::C) {
                 Clipboard::setString(str);
@@ -159,11 +159,12 @@ void InputField::select() { //select function
     cursorIndex = str.size();
 }
 void InputField::deselect() { //deselect function
-    isSelected = false;
 
     str = processText();
 
     text.setString(str);
+    if (finishEdit && isSelected) finishEdit(str); //Call the finishEdit function
+    isSelected = false;
 }
 bool InputField::getSelected() const { //get if the input field is selected
     return isSelected;
@@ -217,14 +218,14 @@ void InputField::changeBackground() { //change the background of the input field
         field.setFillColor(Color(150, 150, 150));
     }
 }
-void InputField::setOnChange(function<void(Scene*, string, int)> onChange) { //set the onChange function
+void InputField::setOnChange(function<void(string)> onChange) { //set the onChange function
     this->onChange = onChange;
 }
-void InputField::setUpdateValue(function<string(Scene*, int)> updateValue) { //set the updateValue function
+void InputField::setUpdateValue(function<string()> updateValue) { //set the updateValue function
     this->updateValue = updateValue;
 }
-void InputField::setCallIndex(int index) { //set the call index
-    callIndex = index;
+void InputField::setFinishEdit(function<void(string)> finishEdit) { //set the finishEdit function
+	this->finishEdit = finishEdit;
 }
 string InputField::processText() { //process the text of the input field
     string ret = str;
