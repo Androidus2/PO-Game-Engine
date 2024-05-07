@@ -29,6 +29,8 @@ istream& Collider::pRead(istream& in) { //"private" read function, means it only
             in >> x >> y;
             tmp->setPoint(i, Vector2f(x, y));
         }
+        if(colliderShape != NULL)
+            delete colliderShape;
         this->colliderShape = tmp;
     }
     return in;
@@ -50,6 +52,9 @@ ostream& Collider::pWrite(ostream& out) const { //"private" write function, mean
 
 Collider::Collider() { //default constructor
     colliderShape = new CircleShape(50.f);
+    colliderShape->setFillColor(Color::Transparent);
+    colliderShape->setOutlineColor(Color(16, 56, 0, 255));
+    colliderShape->setOutlineThickness(2.f);
     colliderOffset = Vector2f();
     colliderRotation = 0.f;
     colliderScale = Vector2f(1.f, 1.f);
@@ -75,6 +80,10 @@ Collider::Collider(const Vector2f& colliderOffset, float colliderRotation, const
         this->colliderShape = new CircleShape(static_cast<CircleShape&>(*colliderShape));
     else
         this->colliderShape = new ConvexShape(static_cast<ConvexShape&>(*colliderShape));
+
+    colliderShape->setFillColor(Color::Transparent);
+    colliderShape->setOutlineColor(Color(16, 56, 0, 255));
+    colliderShape->setOutlineThickness(2.f);
 
     this->colliderShape->move(this->colliderOffset);
     this->colliderShape->rotate(this->colliderRotation);
@@ -102,6 +111,10 @@ Collider::Collider(const Collider& collider) { //copy constructor
         colliderShape = new CircleShape(static_cast<CircleShape&>(*collider.colliderShape));
     else
         colliderShape = new ConvexShape(static_cast<ConvexShape&>(*collider.colliderShape));
+
+    colliderShape->setFillColor(Color::Transparent);
+    colliderShape->setOutlineColor(Color(16, 56, 0, 255));
+    colliderShape->setOutlineThickness(2.f);
 
     colliderShape->move(colliderOffset);
     colliderShape->rotate(colliderRotation);
@@ -133,6 +146,10 @@ Collider& Collider::operator=(const Collider& collider) { //assignment operator
     else
         colliderShape = new ConvexShape(static_cast<ConvexShape&>(*collider.colliderShape));
 
+    colliderShape->setFillColor(Color::Transparent);
+    colliderShape->setOutlineColor(Color(16, 56, 0, 255));
+    colliderShape->setOutlineThickness(2.f);
+
     colliderShape->move(colliderOffset);
     colliderShape->rotate(colliderRotation);
     colliderShape->scale(colliderScale);
@@ -160,6 +177,9 @@ void Collider::fixShape(Vector2f& position, float& rotation, Vector2f& scale) { 
     this->colliderShape->setScale(scale);
     this->colliderShape->setOrigin(this->colliderShape->getLocalBounds().getSize() / 2.f);
     this->colliderShape->setPosition(position);
+    colliderShape->setFillColor(Color::Transparent);
+    colliderShape->setOutlineColor(Color(16, 56, 0, 255));
+    colliderShape->setOutlineThickness(2.f);
 }
 
 Vector2f Collider::getColliderOffset() const { //get offset

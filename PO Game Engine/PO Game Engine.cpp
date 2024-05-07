@@ -37,7 +37,6 @@ using namespace std;
 //Initializes the static variables
 int Scene::sceneIdCounter = 0;
 int GameObject::idCounter = 500;
-GameTime* GameTime::instance = NULL;
 RenderWindow* Game::window = NULL;
 Scene* Game::currentScene = NULL;
 EditorWindow* Game::hierarchy = NULL;

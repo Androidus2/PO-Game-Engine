@@ -73,6 +73,14 @@ public:
     void move(const sf::Vector2f& position);
     void move(float x, float y);
 
+    void setRotation(float angle);
+    void rotate(float angle);
+
+    void setScale(const sf::Vector2f& factors);
+    void setScale(float x, float y);
+    void scale(const sf::Vector2f& factors);
+    void scale(float x, float y);
+
     void changeId();
 
     void changeTexture(const std::string& texturePath);

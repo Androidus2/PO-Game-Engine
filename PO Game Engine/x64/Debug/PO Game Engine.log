@@ -1,66 +1,164 @@
-﻿  Gizmo.cpp
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,84): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,84): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,84): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,84): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,84): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,63): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,63): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,63): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,63): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(80,63): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:         and
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:             T=int
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,93): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:         and
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:             T=int
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(81,81): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:             T=int
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:         and
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,118): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:             T=int
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:         and
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(96,76): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:         and
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:             T=int
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,85): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:         with
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:             T=float
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:         ]
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:         and
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:         [
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:             T=int
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Gizmo.cpp(97,73): warning C4244:         ]
+﻿  PO Game Engine.cpp
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(83,93): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,116): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(84,75): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,116): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(86,80): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(87,87): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,127): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,107): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,76): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:             T=unsigned int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(160,52): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,102): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(222,72): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,81): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(223,69): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,102): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(225,83): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,93): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:             T=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:         and
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp(228,63): warning C4244:         ]
   PO Game Engine.vcxproj -> D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\x64\Debug\PO Game Engine.exe

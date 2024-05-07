@@ -5,11 +5,14 @@ private:
     sf::Clock clock;
     float deltaTime;
     float time;
-    static GameTime* instance;
-public:
     GameTime();
+public:
+    GameTime(const GameTime& gameTime) = delete;
+    GameTime& operator=(const GameTime& gameTime) = delete;
+    void reset();
     void update();
     float getDeltaTime() const;
     float getTime() const;
     static GameTime* getInstance();
+    ~GameTime();
 };

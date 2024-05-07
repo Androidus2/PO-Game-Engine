@@ -8,8 +8,55 @@ using namespace sf;
 
 void InspectorWindow::makeDefaultFields() {
     int yLevel = 0;
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < 22; i++) {
         int type = Game::getCurrentScene()->getSelectedCustomType(i);
+
+        if (i == 12) {
+            //Make a label for the collider
+            Text* tmp = new Text("Tmp", *Game::getFont(), 20);
+            tmp->setString("Collider");
+            tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 10 + yLevel * 30);
+            addText(*tmp);
+            delete tmp;
+            yLevel++;
+        }
+
+        if (i == 13) {
+            Text* tmp = new Text("Tmp", *Game::getFont(), 15);
+            tmp->setString("Collider Shape");
+            tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 10 + yLevel * 30);
+            addText(*tmp);
+            delete tmp;
+            yLevel++;
+
+            Button* tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Square");
+            tmpButton->setOnClick([]() {
+                Game::getCurrentScene()->changeSelectedColliderType(0);
+				});
+            addButton(*tmpButton);
+
+            tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 90, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Circle");
+            tmpButton->setOnClick([]() {
+                Game::getCurrentScene()->changeSelectedColliderType(1);
+                });
+            addButton(*tmpButton);
+
+            tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 170, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Triangle");
+            tmpButton->setOnClick([]() {
+				Game::getCurrentScene()->changeSelectedColliderType(2);
+				});
+            addButton(*tmpButton);
+
+            tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 250, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Hexagon");
+            tmpButton->setOnClick([]() {
+                Game::getCurrentScene()->changeSelectedColliderType(3);
+                });
+            addButton(*tmpButton);
+
+            delete tmpButton;
+            yLevel++;
+        }
+
         Text* tmp = new Text("Tmp", *Game::getFont(), 15);
         tmp->setString(Game::getCurrentScene()->getSelectedCustomName(i));
         tmp->setPosition(position.x + 10, position.y + title.getCharacterSize() + 10 + yLevel * 30);
@@ -126,7 +173,7 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
         InputField* tmp = NULL;
         Text* tmpText = NULL;
         Button* tmpButton = NULL;
-        int cnt = 14;
+        int cnt = 22;
         float extraOffset = 15;
         for (int i = 0; i < selectedObject->getScriptsCount(); i++) {
             if (texts.size() > 0)

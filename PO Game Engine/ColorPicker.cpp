@@ -245,6 +245,7 @@ void ColorPicker::mouseOver() { //mouse over function (used to check if the mous
         accuratePosition(relativeX, relativeY, 255, 255);
         colorsCursor.setPosition(255 - relativeX + colorsDisplay[255].position.x, 255 - relativeY + colorsDisplay[255 * 256 - 1].position.y);
         selectedColor = colorsDisplay[relativeY * 256 + relativeX].color;
+        selectedColor.a = alphaBarDisplay[alphaBarOffset.y * 20 + alphaBarOffset.x].color.a;
         colorsOffset = Vector2f(relativeX, relativeY);
     }
     else if (selected == 1) {
@@ -258,6 +259,7 @@ void ColorPicker::mouseOver() { //mouse over function (used to check if the mous
         int relativeY2 = 255 - (colorsCursor.getPosition().y - colorsDisplay[255 * 256 - 1].position.y);
         accuratePosition(relativeX, relativeY2, 255, 255);
         selectedColor = colorsDisplay[relativeY2 * 256 + relativeX].color;
+        selectedColor.a = alphaBarDisplay[alphaBarOffset.y * 20 + alphaBarOffset.x].color.a;
     }
     else if (selected == 2) {
         int relativeX = mousePos.x - alphaBarDisplay[0].position.x;

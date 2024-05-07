@@ -54,6 +54,8 @@ public:
     std::string getSelectedCustomName(int index) const;
     int getSelectedCustomType(int index) const;
 
+    void changeSelectedColliderType(int type);
+
     std::string getNameOfScriptOnSelectedObject(int scriptIndex) const;
     void addScriptToSelectedObject(const std::string& scriptName);
     void removeScriptFromSelectedObject(int scriptIndex);

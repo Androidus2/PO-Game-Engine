@@ -194,27 +194,64 @@ void Scene::modifySelectedCustom(string value, int index) { //modify a custom va
         sceneObjects[selectedObjectIndex]->setZLayer(stoi(value));
         return;
     }
-    if (index == 9) { //Change mass
-        sceneObjects[selectedObjectIndex]->setMass(stof(value));
-        return;
-    }
-    if (index == 10) { //Change velocity.x
+    if (index == 9) { //Change velocity.x
         sceneObjects[selectedObjectIndex]->setVelocity(stof(value), sceneObjects[selectedObjectIndex]->getVelocity().y);
         return;
     }
-    if (index == 11) { //Change velocity.y
+    if (index == 10) { //Change velocity.y
         sceneObjects[selectedObjectIndex]->setVelocity(sceneObjects[selectedObjectIndex]->getVelocity().x, stof(value));
         return;
     }
-    if (index == 12) { //Change texture path
+    if (index == 11) { //Change texture path
     	sceneObjects[selectedObjectIndex]->changeTexture(value);
     	return;
     }
-    if (index == 13) { //Change isMovable
+    if (index == 12) { //Change colliderIsActive
+    	sceneObjects[selectedObjectIndex]->setColliderIsActive((value == "1" || value == "true"));
+    	return;
+    }
+    if (index == 13) { //Change colliderIsTrigger
+    	sceneObjects[selectedObjectIndex]->setColliderIsTrigger((value == "1" || value == "true"));
+    	return;
+    }
+    if (index == 14) { //Change isMovable
         sceneObjects[selectedObjectIndex]->setIsMovable((value == "1" || value == "true"));
     	return;
     }
-    int poz = 14;
+    if (index == 15) { //Change mass
+    	sceneObjects[selectedObjectIndex]->setMass(stof(value));
+    	return;
+    }
+    if (index == 16) { //Change colliderOffset.x
+    	sceneObjects[selectedObjectIndex]->setColliderOffset(Vector2f(stof(value), sceneObjects[selectedObjectIndex]->getColliderOffset().y));
+        sceneObjects[selectedObjectIndex]->updateTransform(*sceneObjects[selectedObjectIndex]);
+        return;
+    }
+    if (index == 17) { //Change colliderOffset.y
+    	sceneObjects[selectedObjectIndex]->setColliderOffset(Vector2f(sceneObjects[selectedObjectIndex]->getColliderOffset().x, stof(value)));
+        sceneObjects[selectedObjectIndex]->updateTransform(*sceneObjects[selectedObjectIndex]);
+        return;
+    }
+    if (index == 18) { //Change colliderRotation
+    	sceneObjects[selectedObjectIndex]->setColliderRotation(stof(value));
+        sceneObjects[selectedObjectIndex]->updateTransform(*sceneObjects[selectedObjectIndex]);
+    	return;
+    }
+    if (index == 19) { //Change colliderScale.x
+    	sceneObjects[selectedObjectIndex]->setColliderScale(Vector2f(stof(value), sceneObjects[selectedObjectIndex]->getColliderScale().y));
+        sceneObjects[selectedObjectIndex]->updateTransform(*sceneObjects[selectedObjectIndex]);
+        return;
+    }
+    if (index == 20) { //Change colliderScale.y
+    	sceneObjects[selectedObjectIndex]->setColliderScale(Vector2f(sceneObjects[selectedObjectIndex]->getColliderScale().x, stof(value)));
+        sceneObjects[selectedObjectIndex]->updateTransform(*sceneObjects[selectedObjectIndex]);
+        return;
+    }
+    if (index == 21) { //Change useGravity
+    	sceneObjects[selectedObjectIndex]->setUseGravity((value == "1" || value == "true"));
+    	return;
+    }
+    int poz = 22;
     for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
         if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
             sceneObjects[selectedObjectIndex]->setAttributeOnScripts(i, index - poz, value);
@@ -244,12 +281,10 @@ string Scene::getSelectedCustom(int index) const { //get a custom value of the s
         if (index == 8)
             return floatToString(sceneObjects[selectedObjectIndex]->getZLayer());
         if (index == 9)
-            return floatToString(sceneObjects[selectedObjectIndex]->getMass());
-        if (index == 10)
             return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().x);
-        if (index == 11)
+        if (index == 10)
             return floatToString(sceneObjects[selectedObjectIndex]->getVelocity().y);
-        if (index == 12) {
+        if (index == 11) {
             string ret = sceneObjects[selectedObjectIndex]->getTexturePath();
             if (ret == "")
 				return "None";
@@ -262,9 +297,27 @@ string Scene::getSelectedCustom(int index) const { //get a custom value of the s
 			}
             return ret;
         }
+        if (index == 12)
+            return to_string(sceneObjects[selectedObjectIndex]->getColliderIsActive());
         if (index == 13)
+            return to_string(sceneObjects[selectedObjectIndex]->getColliderIsTrigger());
+        if (index == 14)
             return to_string(sceneObjects[selectedObjectIndex]->getIsMovable());
-        int poz = 14;
+        if (index == 15)
+            return floatToString(sceneObjects[selectedObjectIndex]->getMass());
+        if (index == 16)
+            return floatToString(sceneObjects[selectedObjectIndex]->getColliderOffset().x);
+        if (index == 17)
+            return floatToString(sceneObjects[selectedObjectIndex]->getColliderOffset().y);
+        if (index == 18)
+            return floatToString(sceneObjects[selectedObjectIndex]->getColliderRotation());
+        if (index == 19)
+            return floatToString(sceneObjects[selectedObjectIndex]->getColliderScale().x);
+        if (index == 20)
+            return floatToString(sceneObjects[selectedObjectIndex]->getColliderScale().y);
+        if (index == 21)
+            return to_string(sceneObjects[selectedObjectIndex]->getUseGravity());
+        int poz = 22;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i)) {
                 return sceneObjects[selectedObjectIndex]->getAttributeFromScripts(i, index - poz);
@@ -296,16 +349,32 @@ string Scene::getSelectedCustomName(int index) const { //get the name of a custo
         if (index == 8)
             return "ZLayer";
         if (index == 9)
-            return "Mass";
+            return "Velocity";
         if (index == 10)
             return "Velocity";
         if (index == 11)
-            return "Velocity";
-        if (index == 12)
             return "Texture";
+        if (index == 12)
+            return "ColliderActive";
         if (index == 13)
+            return "IsTrigger";
+        if (index == 14)
             return "IsMovable";
-        int poz = 14;
+        if (index == 15)
+            return "Mass";
+        if (index == 16)
+            return "ColliderOffset";
+        if (index == 17)
+            return "ColliderOffset";
+        if (index == 18)
+            return "ColliderRotation";
+        if (index == 19)
+            return "ColliderScale";
+        if (index == 20)
+            return "ColliderScale";
+        if (index == 21)
+            return "UseGravity";
+        int poz = 22;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
                 return sceneObjects[selectedObjectIndex]->getAttributeNamesFromScripts(i, index - poz);
@@ -337,16 +406,32 @@ int Scene::getSelectedCustomType(int index) const {
         if (index == 8)
             return 3;
         if (index == 9)
-            return 1;
-        if (index == 10)
             return 5;
-        if (index == 11)
+        if (index == 10)
             return 6;
-        if (index == 12)
+        if (index == 11)
             return 7;
+        if (index == 12)
+            return 4;
         if (index == 13)
             return 4;
-        int poz = 14;
+        if (index == 14)
+            return 4;
+        if (index == 15)
+            return 1;
+        if (index == 16)
+            return 5;
+        if (index == 17)
+            return 6;
+        if (index == 18)
+            return 1;
+        if (index == 19)
+            return 5;
+        if (index == 20)
+            return 6;
+        if (index == 21)
+            return 4;
+        int poz = 22;
         for (int i = 0; i < sceneObjects[selectedObjectIndex]->getScriptsCount(); i++) {
             if (index >= poz && index < poz + sceneObjects[selectedObjectIndex]->getAttributeCountFromScripts(i))
                 return sceneObjects[selectedObjectIndex]->getAttributeTypeFromScripts(i, index - poz);
@@ -354,6 +439,19 @@ int Scene::getSelectedCustomType(int index) const {
         }
     }
     return -1;
+}
+
+void Scene::changeSelectedColliderType(int type) { //change the collider type of the selected object
+    if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
+		if (type == 0)
+			sceneObjects[selectedObjectIndex]->makeSquareCollider(100);
+		if (type == 1)
+			sceneObjects[selectedObjectIndex]->makeCircleCollider(50);
+		if (type == 2)
+			sceneObjects[selectedObjectIndex]->makeTriangleCollider(100);
+		if (type == 3)
+			sceneObjects[selectedObjectIndex]->makeHexagonCollider(50);
+	}
 }
 
 string Scene::getNameOfScriptOnSelectedObject(int scriptIndex) const { //get the name of a script on the selected object
@@ -424,7 +522,7 @@ void Scene::drawScene(bool drawColliders, RenderWindow& window) const { //draw t
         });
     for (int i = 0; i < sortedObjects.size(); i++) {
         if (sortedObjects[i]->getActive()) {
-            if (drawColliders) {
+            if (drawColliders || (selectedObjectIndex != -1 && sortedObjects[i]->getId() == sceneObjects[selectedObjectIndex]->getId())) {
                 if (sortedObjects[i]->getColliderIsActive()) {
                     window.draw(*sortedObjects[i]->getColliderShape());
                 }
@@ -490,7 +588,8 @@ void Scene::setSelectedObjectIndex(int index) { //set the index of the selected 
 }
 
 istream& Scene::read(istream& in) { //read function
-    in >> sceneName >> buildIndex;
+    getline(in, sceneName);
+    in >> buildIndex;
     int objectsCount;
     in >> objectsCount;
     clearObjects();
@@ -506,7 +605,7 @@ istream& Scene::read(istream& in) { //read function
     return in;
 }
 ostream& Scene::write(ostream& out) const { //write function
-    out << sceneName << " " << buildIndex << " " << getObjectsCount() << endl;
+    out << sceneName << "\n" << buildIndex << " " << getObjectsCount() << endl;
     for (int i = 0; i < getObjectsCount(); i++)
         out << *sceneObjects[i];
     return out;

@@ -17,12 +17,16 @@ istream& GameObject::pRead(istream& in) { //private read function
     float rotation;
     Vector2f scale;
     int r, g, b, a;
-    in >> name >> isActive >> zLayer >> velocity.x >> velocity.y >> position.x >> position.y >> rotation >> scale.x >> scale.y >> r >> g >> b >> a;
+    in.get(); // Ignore the newline character
+    getline(in, name); // Read the name
+    in >> isActive >> zLayer >> velocity.x >> velocity.y >> position.x >> position.y >> rotation >> scale.x >> scale.y >> r >> g >> b >> a;
     setPosition(position);
     setRotation(rotation);
     setScale(scale);
     setFillColor(Color(r, g, b, a));
-    in >> tag >> texturePath;
+    in.get(); // Ignore the newline character
+    getline(in, tag);
+    getline(in, texturePath);
     if (texturePath != "None")
         changeTexture(texturePath);
     Collider::read(in);
@@ -42,10 +46,10 @@ istream& GameObject::pRead(istream& in) { //private read function
     return in;
 }
 ostream& GameObject::pWrite(ostream& out) const { //private write function
-    out << name << " " << isActive << " " << zLayer << " " << velocity.x << " " << velocity.y << " ";
+    out << name << "\n" << isActive << " " << zLayer << " " << velocity.x << " " << velocity.y << " ";
     out << getPosition().x << " " << getPosition().y << " " << getRotation() << " " << getScale().x << " " << getScale().y
         << " " << static_cast<int>(getFillColor().r) << " " << static_cast<int>(getFillColor().g) << " " << static_cast<int>(getFillColor().b) << " " << static_cast<int>(getFillColor().a) << '\n';
-    out << tag << " ";
+    out << tag << "\n";
     if(texturePath.size() > 3)
         out << texturePath << '\n';
     else
@@ -187,8 +191,10 @@ void GameObject::updateScripts() { //update all scripts (called every frame), al
     float dt = GameTime::getInstance()->getDeltaTime();
     move(velocity * dt);
     if (useGravity) {
-        move(dt * dt * Vector2f(0, 9.81f * 10) / 2.f);
-        velocity += dt * Vector2f(0, 9.81f * 10);
+        move(dt * dt * Vector2f(0, 9.81f * 100) / 2.f);
+        velocity += dt * Vector2f(0, 9.81f * 10 * mass);
+        if(velocity.y > 1000 * mass)
+			velocity.y = 1000 * mass;
     }
     for (int i = 0; i < attachedScripts.size(); i++)
         attachedScripts[i]->update(*this);
@@ -252,6 +258,32 @@ void GameObject::move(const Vector2f& position) { //move the object
 void GameObject::move(float x, float y) { //move the object
     ConvexShape::move(x, y);
     Collider::updateTransform(*this);
+}
+
+void GameObject::setRotation(float angle) { //set rotation
+	ConvexShape::setRotation(angle);
+	Collider::updateTransform(*this);
+}
+void GameObject::rotate(float angle) { //rotate the object
+	ConvexShape::rotate(angle);
+	Collider::updateTransform(*this);
+}
+
+void GameObject::setScale(const Vector2f& factors) { //set scale
+	ConvexShape::setScale(factors);
+	Collider::updateTransform(*this);
+}
+void GameObject::setScale(float x, float y) { //set scale
+	ConvexShape::setScale(x, y);
+	Collider::updateTransform(*this);
+}
+void GameObject::scale(const Vector2f& factors) { //scale the object
+	ConvexShape::scale(factors);
+	Collider::updateTransform(*this);
+}
+void GameObject::scale(float x, float y) { //scale the object
+	ConvexShape::scale(x, y);
+	Collider::updateTransform(*this);
 }
 
 void GameObject::changeId() { //change the id of the object
@@ -420,7 +452,7 @@ void Collider::handleAllCollisions(const vector<GameObject*>& objects, const vec
     for (int iteration = 0; iteration < iterations; iteration++) {
         for (int i = 0; i < objects.size(); i++) {
             for (int j = i + 1; j < objects.size(); j++) {
-                if (objects[i]->getGlobalBounds().intersects(objects[j]->getGlobalBounds()))
+                if (objects[i]->getColliderShape()->getGlobalBounds().intersects(objects[j]->getColliderShape()->getGlobalBounds()))
                     collision(*objects[i], *objects[j]);
             }
         }

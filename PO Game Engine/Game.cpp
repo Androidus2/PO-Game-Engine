@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "InspectorWindow.h"
 #include "HierarchyWindow.h"
+#include "GameTime.h"
 
 using namespace std;
 using namespace sf;
@@ -75,6 +76,7 @@ bool Game::getIsPlaying() { //get if the game is playing
 }
 void Game::setIsPlaying(bool isPlaying) { //set if the game is playing
 	Game::isPlaying = isPlaying;
+	GameTime::getInstance()->reset();
 	if (isPlaying && currentScene) {
 		currentScene->startScene();
 		sceneViewPositionBeforePlaying = sceneView->getCenter();
@@ -109,6 +111,9 @@ void Game::setFolderTexture(Texture* texture) { //set the folder texture
 }
 
 void Game::loadScene(const string& scenePath) { //load the scene
+	if (isPlaying) {
+		return;
+	}
 	if (currentScene) {
 		delete currentScene;
 	}
