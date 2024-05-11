@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML\System.hpp"
+#include "DebugMacro.h"
 class GameTime { //for delta time and time (singleton)
 private:
     sf::Clock clock;

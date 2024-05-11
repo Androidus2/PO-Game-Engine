@@ -85,6 +85,7 @@ void Scene::clearObjects() { //clear all objects in the scene
         delete sceneObjects[i];
         if (sceneId == getSelectedSceneId())
             removeTextFromHierarchy(i);
+        sceneObjects[i] = NULL;
     }
     sceneObjects.clear();
     clearLastPositions();
@@ -465,6 +466,7 @@ void Scene::addScriptToSelectedObject(const string& scriptName) { //add a script
         try {
             BehaviourScript* script = makeScriptFromString(scriptName);
             sceneObjects[selectedObjectIndex]->addScript(script);
+            delete script;
         }
         catch (const exception& e) {
 			cout << e.what() << endl;
@@ -542,21 +544,35 @@ void Scene::updateScene() { //update the scene
         addLastPosition(sceneObjects[i]->getPosition()); //Last positions are used to reset the velocity of objects when they collide (to prevent them from going through each other)
 }
 void Scene::endScene() { //end the scene
+    //cout<<"End scene\n";
     for (int i = 0; i < sceneObjects.size(); i++) {
         if (sceneObjects[i]->getActive())
             sceneObjects[i]->destroyScripts();
     }
+    //cout<<"Ended the scripts\n";
+    clearObjects();
+    //cout<<"Deleted the objects\n";
     if (sceneBeforePlaying) {
         int ids = getId();
-        for (int i = 0; i < sceneObjects.size(); i++)
+        while (Game::getHierarchy()->getTextCount() > 0)
             removeTextFromHierarchy(0);
-        sceneObjects = sceneBeforePlaying->sceneObjects;
+        //cout<<"Removed the texts\n";
+        //sceneObjects = sceneBeforePlaying->sceneObjects;
+        setObjects(sceneBeforePlaying->sceneObjects);
         lastPositions = sceneBeforePlaying->lastPositions;
-        for (int i = 0; i < sceneObjects.size(); i++)
+        /*cout<<"Restored the objects\n"<<sceneObjects.size()<<'\n';
+        cout << "Before loop: " << Game::getHierarchy()->getTextCount() << '\n';
+        for (int i = 0; i < sceneObjects.size(); i++) {
             addTextToHierarchy(sceneObjects[i]->getName());
+            cout<<"Added the text " << i << " of " << sceneObjects.size() << "\n";
+        }
+        cout<<"After loop: " << Game::getHierarchy()->getTextCount() << '\n';*/
+            //addTextToHierarchy("Nume");
+        //cout<<"Added the texts\n";
         setId(ids);
         delete sceneBeforePlaying;
         sceneBeforePlaying = NULL;
+        //cout<<"Deleted the sceneBeforePlaying\n";
         int sel = getSelectedObjectIndex();
         HierarchyWindow* hierarchy = dynamic_cast<HierarchyWindow*>(Game::getHierarchy());
         if (hierarchy) {
@@ -621,4 +637,8 @@ void Scene::saveScene() { //save the scene to its path
 	out.close();
 }
 
-Scene::~Scene() {} //destructor
+Scene::~Scene() {
+    clearObjects();
+	if (sceneBeforePlaying)
+		delete sceneBeforePlaying;
+} //destructor

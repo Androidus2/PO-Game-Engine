@@ -1,4 +1,5 @@
 #include "CheckBox.h"
+#include "Game.h"
 
 using namespace std;
 using namespace sf;
@@ -16,9 +17,12 @@ void CheckBox::draw(RenderWindow& window) const { //draw the checkbox
 	window.draw(box);
 }
 void CheckBox::handleEvent(Event& event) { //handle the event
+	if (Game::getBlockClick())
+		return;
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 		Vector2f mousePos = Vector2f(event.mouseButton.x, event.mouseButton.y);
 		if (box.getGlobalBounds().contains(mousePos)) {
+			Game::setBlockClick(true);
 			isChecked = !isChecked;
 			if (isChecked)
 				box.setFillColor(Color::Green);

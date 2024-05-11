@@ -8,7 +8,15 @@
 using namespace std;
 using namespace sf;
 
-
+void GameFilesWindow::updateElementsWithVerticalOffset(float old) { //update the elements with the vertical offset
+	float delta = verticalOffset - old;
+	for (int i = 0; i < icons.size(); i++)
+		icons[i].setPosition(icons[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < texts.size() - 1; i++)
+		texts[i].setPosition(texts[i].getPosition() + Vector2f(0, delta));
+    inputFields[0].setPosition(inputFields[0].getPosition() + Vector2f(0, delta));
+    selectedBackground.setPosition(selectedBackground.getPosition() + Vector2f(0, delta));
+}
 Texture* GameFilesWindow::makeTexture(const string& path) { //make texture function
     Image img;
     img.loadFromFile(path);
@@ -107,7 +115,7 @@ void GameFilesWindow::loadFiles() { //load files function
         icons[i].setOutlineColor(Color::Black);
         icons[i].setOutlineThickness(1);
         icons[i].setPosition(position.x + 10 + (i % 4) * 110, position.y + 30 + (i / 4) * 130);
-        texts.push_back(Text(node->getChild(i)->getName(), *Game::getFont(), 13));
+        addText(Text(node->getChild(i)->getName(), *Game::getFont(), 13));
         texts[i].setPosition(position.x + 10 + (i % 4) * 110 + icons[i].getSize().x / 2 - texts[i].getGlobalBounds().width / 2, position.y + 130 + (i / 4) * 130);
     }
     int elementsPerRow = (size.x - 20) / 110;
@@ -117,7 +125,8 @@ void GameFilesWindow::loadFiles() { //load files function
     }
     text = Text(currentDirectory, *Game::getFont(), 15);
     text.setPosition(position.x + 10, position.y + 5);
-    texts.push_back(text);
+    addText(text);
+    updateElementsWithVerticalOffset(0);
     selectedFile = -1;
     selectedBackground.setPosition(Vector2f(-1000, -1000));
 }
@@ -170,13 +179,14 @@ GameFilesWindow::GameFilesWindow(const Font& font, const Vector2f& position, con
     addInputField(*input);
     delete input;
 
+    bottomBar.setSize(Vector2f(0, 0));
 
     loadFiles();
 }
 void GameFilesWindow::handleEvent(Event& event) { //handle event function
     dropdown.handleEvent(event);
-    if (event.type == Event::MouseButtonPressed) {
-        if (event.mouseButton.button == Mouse::Left) {
+    if (event.type == Event::MouseButtonPressed && isMouseOver()) {
+        if (event.mouseButton.button == Mouse::Left && !Game::getBlockClick()) {
             if (selectedFile != -1) {
                 if (texts[selectedFile].getString() != "\\") {
                     //Check if the mouse is over the text of the selectedFile and if it is, position the inputfield there and select it
@@ -203,6 +213,7 @@ void GameFilesWindow::handleEvent(Event& event) { //handle event function
                                 currentDirectory = currentDirectory.substr(0, currentDirectory.size() - 1);
                                 currentDirectory = currentDirectory.substr(0, currentDirectory.find_last_of("/") + 1);
                             }
+                            verticalOffset = 0;
                             loadFiles();
                             index = -1;
                             inputFields[0].deselect();
@@ -319,6 +330,7 @@ string GameFilesWindow::getCurrentDirectory() const { //get current directory fu
     return currentDirectory;
 }
 void GameFilesWindow::setCurrentDirectory(const string& directory) { //set current directory function
+    verticalOffset = 0;
     currentDirectory = directory;
     loadFiles();
 }
@@ -329,14 +341,16 @@ void GameFilesWindow::draw(RenderWindow& window) const { //draw function
     window.draw(this->window);
     if (isDragglable)
         window.draw(draggingArea);
-    window.draw(title);
     for (int i = 0; i < icons.size(); i++) {
         window.draw(icons[i]);
     }
     window.draw(selectedBackground);
-    for (int i = 0; i < texts.size(); i++) {
+    for (int i = 0; i < texts.size() - 1; i++) {
 		window.draw(texts[i]);
 	}
+    window.draw(topBar);
+    window.draw(texts[texts.size() - 1]);
+    window.draw(title);
     inputFields[0].draw(window);
     dropdown.draw(window);
     if(isDragging && selectedFile != -1)
@@ -467,4 +481,7 @@ void GameFilesWindow::renameFile(const string& newName) { //rename function
 		filesystem::rename(path, newPath);
 		loadFiles();
 	}
+}
+GameFilesWindow::~GameFilesWindow() { //destructor
+	delete root;
 }

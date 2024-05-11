@@ -13,6 +13,7 @@ private:
     std::vector<ImageField> imageFields;
     std::vector<CheckBox> checkBoxes;
     void makeDefaultFields();
+    void updateElementsWithVerticalOffset(float old) override;
 public:
     InspectorWindow(const sf::Font& font, const sf::Vector2f& position, const sf::Vector2f& size, const std::string& titleText = "");
     void makeCustomFields();

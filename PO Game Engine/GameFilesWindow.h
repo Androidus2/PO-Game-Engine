@@ -30,6 +30,7 @@ private:
     void loadFiles();
     void makeTree(FileNode* node);
     sf::Texture* makeTexture(const std::string& path);
+    void updateElementsWithVerticalOffset(float old) override;
 public:
     GameFilesWindow(const sf::Font& font, const sf::Vector2f& position, const sf::Vector2f& size, const std::string& title);
     void handleEvent(sf::Event& event) override;
@@ -45,4 +46,5 @@ public:
     void copy();
     void paste();
     void renameFile(const std::string& newName);
+    ~GameFilesWindow();
 };

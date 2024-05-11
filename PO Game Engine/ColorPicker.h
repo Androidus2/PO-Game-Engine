@@ -3,6 +3,7 @@
 #include "EditorWindow.h"
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
+#include "DebugMacro.h"
 
 
 class ColorPicker : public EditorWindow {

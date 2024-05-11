@@ -3,6 +3,7 @@
 #include <functional>
 #include "SFML\System.hpp"
 #include "SFML\Graphics.hpp"
+#include "DebugMacro.h"
 
 
 

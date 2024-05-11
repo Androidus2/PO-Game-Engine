@@ -5,6 +5,15 @@ using namespace std;
 using namespace sf;
 
 
+void EditorWindow::updateElementsWithVerticalOffset(float old) { //update the elements with the vertical offset
+	float delta = verticalOffset - old;
+	for (int i = 0; i < buttons.size(); i++)
+		buttons[i].setPosition(buttons[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < inputFields.size(); i++)
+		inputFields[i].setPosition(inputFields[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < texts.size(); i++)
+		texts[i].setPosition(texts[i].getPosition() + Vector2f(0, delta));
+}
 EditorWindow::EditorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) { //constructor
 	window.setPosition(position);
 	window.setSize(size);
@@ -31,6 +40,20 @@ EditorWindow::EditorWindow(const Font& font, const Vector2f& position, const Vec
 	isDragglable = false;
 	isDragging = false;
 	dragOffset = Vector2f(0, 0);
+	verticalOffset = 0;
+	maxVerticalOffset = 0;
+
+	topBar.setPosition(position);
+	topBar.setSize(Vector2f(size.x, 25));
+	topBar.setFillColor(Color(100, 100, 100));
+	topBar.setOutlineColor(Color::Black);
+	topBar.setOutlineThickness(1);
+
+	bottomBar.setPosition(position.x, position.y + size.y - 50);
+	bottomBar.setSize(Vector2f(size.x, 50));
+	bottomBar.setFillColor(Color(100, 100, 100));
+	bottomBar.setOutlineColor(Color::Black);
+	bottomBar.setOutlineThickness(1);
 }
 void EditorWindow::draw(RenderWindow& window) const { //draw function
 	if (!isActive)
@@ -38,17 +61,20 @@ void EditorWindow::draw(RenderWindow& window) const { //draw function
 	window.draw(this->window);
 	if (isDragglable)
 		window.draw(draggingArea);
-	window.draw(title);
 	for (int i = 0; i < texts.size(); i++)
 		window.draw(texts[i]);
 	for (int i = 0; i < buttons.size(); i++)
 		buttons[i].draw(window);
 	for (int i = 0; i < inputFields.size(); i++)
 		inputFields[i].draw(window);
+	window.draw(topBar);
+	window.draw(bottomBar);
+	window.draw(title);
 }
 void EditorWindow::update() { //update function
 	if (!isActive)
 		return;
+
 	for (int i = 0; i < buttons.size(); i++)
 		buttons[i].update();
 	for (int i = 0; i < inputFields.size(); i++) {
@@ -66,6 +92,21 @@ void EditorWindow::handleEvent(Event& event) { //handle event function
 		Vector2f mousePosition = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
 		if (window.getGlobalBounds().contains(mousePosition))
 			clickedUI = true;
+	}
+
+	//Check to see if we are scrolling and update the vertical offset
+	if (event.type == Event::MouseWheelScrolled) {
+		if (window.getGlobalBounds().contains(Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y))) {
+			float old = verticalOffset;
+			verticalOffset += event.mouseWheelScroll.delta * 30;
+
+			if(verticalOffset > 0)
+				verticalOffset = 0;
+			if(verticalOffset < -maxVerticalOffset)
+				verticalOffset = -maxVerticalOffset;
+
+			updateElementsWithVerticalOffset(old);
+		}
 	}
 
 	drag(event);
@@ -108,6 +149,16 @@ void EditorWindow::addInputField(const InputField& inputField) { //add an input 
 }
 void EditorWindow::addText(const Text& text) { //add a text to the window
 	texts.push_back(text);
+	//Loop through all the texts and find max vertical offset
+	maxVerticalOffset = 0;
+	for (int i = 0; i < texts.size(); i++) {
+		if (texts[i].getPosition().y + texts[i].getCharacterSize() + 10 - bottomBar.getPosition().y - verticalOffset > maxVerticalOffset)
+			maxVerticalOffset = texts[i].getPosition().y + texts[i].getCharacterSize() + 10 - bottomBar.getPosition().y - verticalOffset;
+	}
+	if (verticalOffset > 0)
+		verticalOffset = 0;
+	if (verticalOffset < -maxVerticalOffset)
+		verticalOffset = -maxVerticalOffset;
 }
 void EditorWindow::changeText(int index, const string& text) { //change the text of a text in the window
 	if (index < texts.size() && index >= 0)
@@ -116,6 +167,11 @@ void EditorWindow::changeText(int index, const string& text) { //change the text
 void EditorWindow::deleteText(int index) { //delete a text from the window
 	if (index < texts.size() && index >= 0)
 		texts.erase(texts.begin() + index);
+	//Loop through all the texts and find max vertical offset
+	for (int i = 0; i < texts.size(); i++) {
+		if (texts[i].getPosition().y + texts[i].getCharacterSize() + 50 - Game::getWindow()->getSize().y - verticalOffset > maxVerticalOffset)
+			maxVerticalOffset = texts[i].getPosition().y + texts[i].getCharacterSize() + 50 - Game::getWindow()->getSize().y - verticalOffset;
+	}
 }
 void EditorWindow::deleteFields() { //delete all the input fields from the window
 	inputFields.clear();

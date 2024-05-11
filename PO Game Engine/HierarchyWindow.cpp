@@ -9,9 +9,14 @@ using namespace sf;
 
 void HierarchyWindow::repositionTexts() { //reposition the texts in the hierarchy window
     if (texts.size() > 0)
-        texts[0].setPosition(window.getPosition().x + 10, window.getPosition().y + title.getCharacterSize() + 10);
+        texts[0].setPosition(window.getPosition().x + 10, window.getPosition().y + title.getCharacterSize() + 10 + verticalOffset);
     for (int i = 1; i < texts.size(); i++)
         texts[i].setPosition(window.getPosition().x + 10, texts[i - 1].getPosition().y + texts[i - 1].getCharacterSize() + 10);
+}
+void HierarchyWindow::updateElementsWithVerticalOffset(float old) { //update the elements with the vertical offset
+	float delta = verticalOffset - old;
+    for (int i = 0; i < texts.size(); i++)
+		texts[i].setPosition(texts[i].getPosition() + Vector2f(0, delta));
 }
 //Hierarchy window constructor (makes a button to create objects and adds texts for the objects in the hierarchy)
 HierarchyWindow::HierarchyWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText) {
@@ -31,6 +36,17 @@ HierarchyWindow::HierarchyWindow(const Font& font, const Vector2f& position, con
     delete tmp;
 
     Game::setHierarchy(this);
+}
+void HierarchyWindow::draw(RenderWindow& window) const { //draw function
+	if (!isActive)
+		return;
+	window.draw(this->window);
+	for (int i = 0; i < texts.size(); i++)
+		window.draw(texts[i]);
+    window.draw(topBar);
+    window.draw(bottomBar);
+	buttons[0].draw(window);
+	window.draw(title);
 }
 void HierarchyWindow::update() { //update the texts in the hierarchy window
     EditorWindow::update();
@@ -111,14 +127,29 @@ void HierarchyWindow::changeSelectedObject(int newSelectedIndex) {
 }
 void HierarchyWindow::addText(const Text& text) { //add a text to the hierarchy window
     texts.push_back(text);
+    texts[texts.size()-1].move(0, verticalOffset);
     repositionTexts();
+    for (int i = 0; i < texts.size(); i++) {
+        if (texts[i].getPosition().y + texts[i].getCharacterSize() + 10 - bottomBar.getPosition().y - verticalOffset > maxVerticalOffset)
+            maxVerticalOffset = texts[i].getPosition().y + texts[i].getCharacterSize() + 10 - bottomBar.getPosition().y - verticalOffset;
+    }
 }
 void HierarchyWindow::deleteText(int index) { //delete a text from the hierarchy window
     if (index < texts.size() && index >= 0) {
         texts.erase(texts.begin() + index);
         repositionTexts();
+        maxVerticalOffset = 0;
+        for (int i = 0; i < texts.size(); i++) {
+            if (texts[i].getPosition().y + texts[i].getCharacterSize() + 10 - bottomBar.getPosition().y - verticalOffset > maxVerticalOffset)
+                maxVerticalOffset = texts[i].getPosition().y + texts[i].getCharacterSize() + 10 - bottomBar.getPosition().y - verticalOffset;
+        }
+        if(verticalOffset < -maxVerticalOffset)
+			verticalOffset = -maxVerticalOffset;
+        repositionTexts();
     }
 }
 void HierarchyWindow::clearTexts() { //clear all texts from the hierarchy window
 	texts.clear();
+    maxVerticalOffset = 0;
+    verticalOffset = 0;
 }

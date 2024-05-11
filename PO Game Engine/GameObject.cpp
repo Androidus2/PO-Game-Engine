@@ -41,6 +41,7 @@ istream& GameObject::pRead(istream& in) { //private read function
         if (script) {
 			script->read(in);
 			addScript(script);
+            delete script;
 		}
 	}
     return in;
@@ -72,6 +73,7 @@ GameObject::GameObject() : Collider(), ConvexShape(), id(idCounter++) { //defaul
     this->zLayer = 0;
     this->velocity = Vector2f();
     makeObj(*this, getPosition(), 100.f);
+    updateTransform(*this);
 }
 GameObject::GameObject(const GameObject& gameObject) : Collider(gameObject), ConvexShape(gameObject), id(gameObject.id) { //copy constructor
     //cout<<"Copy constructor called on "<<gameObject.name<<endl;
@@ -83,6 +85,7 @@ GameObject::GameObject(const GameObject& gameObject) : Collider(gameObject), Con
     this->velocity = gameObject.velocity;
     for (int i = 0; i < gameObject.attachedScripts.size(); i++)
         this->attachedScripts.push_back(gameObject.attachedScripts[i]->clone());
+    updateTransform(*this);
 }
 GameObject& GameObject::operator=(const GameObject& gameObject) { //assignment operator
     if (this == &gameObject)
@@ -99,6 +102,8 @@ GameObject& GameObject::operator=(const GameObject& gameObject) { //assignment o
     removeAllScripts();
     for (int i = 0; i < gameObject.attachedScripts.size(); i++)
         this->attachedScripts.push_back(gameObject.attachedScripts[i]->clone());
+
+    updateTransform(*this);
 
     return *this;
 }
@@ -150,7 +155,7 @@ void GameObject::setVelocity(float x, float y) { //set velocity
 }
 
 void GameObject::addScript(BehaviourScript* script) { //add a script to the object
-    if (scriptIndex(script) == -1)
+    if (scriptIndex(script) == -1 || true)
         this->attachedScripts.push_back(script->clone());
 }
 int GameObject::scriptIndex(BehaviourScript* script) const { //get the index of a script

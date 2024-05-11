@@ -44,7 +44,8 @@ void EditableColor::update() { //update function
 void EditableColor::handleEvent(Event& event) { //handle event function
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 		Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-		if (colorBox.getGlobalBounds().contains(mousePos)) {
+		if (colorBox.getGlobalBounds().contains(mousePos) && !Game::getBlockClick()) {
+			Game::setBlockClick(true);
 			isSelected = true;
 			ColorPicker* colorPicker = dynamic_cast<ColorPicker*>(Game::getColorPicker());
 			if (colorPicker) {

@@ -179,5 +179,8 @@
     <ClInclude Include="Dropdown.h">
       <Filter>Header Files\UIElements</Filter>
     </ClInclude>
+    <ClInclude Include="DebugMacro.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

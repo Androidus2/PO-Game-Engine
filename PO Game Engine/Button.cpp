@@ -1,4 +1,5 @@
 #include "Button.h"
+#include "Game.h"
 
 using namespace std;
 using namespace sf;
@@ -88,10 +89,11 @@ void Button::update() { //update function(Changes the color of the button based 
         button.setFillColor(Color(50, 50, 50));
 }
 void Button::handleEvent(Event& event) { //handle event function
-    if (isActive) { //If the button is active, handle events
+    if (isActive && !Game::getBlockClick()) { //If the button is active, handle events
         if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) { //If the left mouse button is pressed, check if the mouse is over the button and press it or toggle it
             Vector2f mousePosition = Vector2f(event.mouseButton.x, event.mouseButton.y);
             if (button.getGlobalBounds().contains(mousePosition) && !isPressed && !isToggle) {
+                Game::setBlockClick(true);
                 press();
             }
         }

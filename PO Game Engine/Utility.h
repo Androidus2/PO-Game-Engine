@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "SFML\System.hpp"
+#include "DebugMacro.h"
 
 class GameObject;
 class BehaviourScript;

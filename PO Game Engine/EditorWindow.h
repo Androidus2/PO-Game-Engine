@@ -5,6 +5,7 @@
 #include "SFML/Graphics.hpp"
 #include "Button.h"
 #include "InputField.h"
+#include "DebugMacro.h"
 
 
 
@@ -23,7 +24,15 @@ protected:
     bool isDragging;
     sf::Vector2f dragOffset;
 
+    sf::RectangleShape topBar;
+    sf::RectangleShape bottomBar;
+
+    float verticalOffset; //Used for scrolling
+    float maxVerticalOffset; //Used for scrolling
+
     static bool clickedUI;
+
+    virtual void updateElementsWithVerticalOffset(float old);
 public:
     EditorWindow(const sf::Font& font, const sf::Vector2f& position, const sf::Vector2f& size, const std::string& titleText = "");
 

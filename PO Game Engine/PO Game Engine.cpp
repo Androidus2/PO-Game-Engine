@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -29,6 +33,8 @@
 #include "FileNode.h"
 #include "GameFilesWindow.h"
 #include "TopBarWindow.h"
+#include "DebugMacro.h"
+
 
 
 using namespace sf;
@@ -53,12 +59,14 @@ View* Game::guiView = NULL;
 bool EditorWindow::clickedUI = false;
 Vector2f Game::sceneViewPositionBeforePlaying = Vector2f(0, 0);
 Vector2f Game::sceneViewZoomBeforePlaying = Vector2f(1, 1);
-
+bool Game::blockClick = false;
 
 
 
 int main()
 {
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
     try {
         //Setup
         RenderWindow window(VideoMode(1920, 1080), "PO Game Engine");
@@ -122,30 +130,6 @@ int main()
             Game::getCurrentScene()->addObject(&ob2);
         }
 
-        /*Player ob3;
-        ob3.setName("Player1");
-        ob3.setPosition(Vector2f(500, 500));
-        ob3.setFillColor(Color::Blue);
-        scene.addObject(&ob3);
-
-
-        Player ob4;
-        ob4.setFillColor(Color::Yellow);
-        ob4.setName("Player2");
-        ob4.setPosition(Vector2f(700, 700));
-        ob4.setDownKey(Keyboard::Down);
-        ob4.setLeftKey(Keyboard::Left);
-        ob4.setRightKey(Keyboard::Right);
-        ob4.setUpKey(Keyboard::Up);
-        ob4.setShootKey(Keyboard::RControl);
-        scene.addObject(&ob4);*/
-        
-        //if (load) {
-        //    ifstream in("Resources/TestScript.txt"); //Read scene
-        //    in >> scene;
-        //    in.close();
-        //}
-
 
         Text fpsCounter("FPS: ", font, 15);
         fpsCounter.setFillColor(Color::White);
@@ -171,6 +155,7 @@ int main()
             //Calculate time and delta time
             time->update();
             EditorWindow::setClickedUI(false);
+            Game::setBlockClick(false);
 
             //Event handling
             Event event;
@@ -209,7 +194,7 @@ int main()
                 }
 
                 //If we are scrolling, zoom the scene
-                if (event.type == Event::MouseWheelScrolled) {
+                if (event.type == Event::MouseWheelScrolled && !inspectorWindow.isMouseOver() && !hierarchyWindow.isMouseOver() && !gameFilesWindow.isMouseOver()) {
 					if (event.mouseWheelScroll.delta > 0)
 						sceneView.zoom(0.9f);
 					else
@@ -218,7 +203,7 @@ int main()
             }
 
             //If we are holding the right mouse button and moving the mouse, pan the scene
-            if (Mouse::isButtonPressed(Mouse::Right)) {
+            if (Mouse::isButtonPressed(Mouse::Right) && !inspectorWindow.isMouseOver() && !hierarchyWindow.isMouseOver() && !gameFilesWindow.isMouseOver()) {
                 Vector2f mousePos = Vector2f(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
                 mousePos = window.mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), sceneView);
                 Vector2f lastMousePosCpy = lastMousePos;
@@ -282,16 +267,27 @@ int main()
             window.display();
         }
 
-        //Save scene
-        if (save) {
-            Game::setIsPlaying(false);
-            ofstream out("Resources/TestScript.txt");
-            out << Game::getCurrentScene();
-            out.close();
-        }
-
+        //Cleaning up
         if (folderIcon)
             delete folderIcon;
+        if (Game::getCurrentScene())
+            delete Game::getCurrentScene();
+        if (Game::getHierarchy())
+            Game::setHierarchy(NULL);
+        if (Game::getInspector())
+            Game::setInspector(NULL);
+        if (Game::getColorPicker())
+            Game::setColorPicker(NULL);
+        if (Game::getGameFilesWindow())
+            Game::setGameFilesWindow(NULL);
+        if (Game::getGizmo())
+            Game::setGizmo(NULL);
+        if (Game::getSceneView())
+            Game::setSceneView(NULL);
+        if (Game::getGuiView())
+            Game::setGuiView(NULL);
+        if (Game::getFont())
+            Game::setFont(NULL);
     }
     catch (exception& e) {
 		cout<<e.what()<<endl;
@@ -299,6 +295,12 @@ int main()
     catch (...) {
         cout<<"An error occurred"<<endl;
     }
+
+    //A "memory leak" can happen when an exception is thrown and the program exits before the memory is deallocated
+
+    
+    //A memory leak to test if the tool works (it does)
+    //int* a = new int[1005];
 
     return 0;
 }

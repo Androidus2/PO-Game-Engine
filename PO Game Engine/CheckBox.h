@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 #include "SFML\Graphics.hpp"
+#include "DebugMacro.h"
 
 class CheckBox {
 private:

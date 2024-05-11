@@ -5,7 +5,21 @@
 using namespace std;
 using namespace sf;
 
-
+void InspectorWindow::updateElementsWithVerticalOffset(float old) {
+    float delta = verticalOffset - old;
+	for (int i = 2; i < buttons.size(); i++)
+		buttons[i].setPosition(buttons[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < inputFields.size(); i++)
+		inputFields[i].setPosition(inputFields[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < texts.size(); i++)
+		texts[i].setPosition(texts[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < colors.size(); i++)
+		colors[i].setPosition(colors[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < imageFields.size(); i++)
+		imageFields[i].setPosition(imageFields[i].getPosition() + Vector2f(0, delta));
+	for (int i = 0; i < checkBoxes.size(); i++)
+		checkBoxes[i].setPosition(checkBoxes[i].getPosition() + Vector2f(0, delta));
+}
 void InspectorWindow::makeDefaultFields() {
     int yLevel = 0;
     for (int i = 0; i < 22; i++) {
@@ -34,18 +48,21 @@ void InspectorWindow::makeDefaultFields() {
                 Game::getCurrentScene()->changeSelectedColliderType(0);
 				});
             addButton(*tmpButton);
+            delete tmpButton;
 
             tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 90, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Circle");
             tmpButton->setOnClick([]() {
                 Game::getCurrentScene()->changeSelectedColliderType(1);
                 });
             addButton(*tmpButton);
+            delete tmpButton;
 
             tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 170, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Triangle");
             tmpButton->setOnClick([]() {
 				Game::getCurrentScene()->changeSelectedColliderType(2);
 				});
             addButton(*tmpButton);
+            delete tmpButton;
 
             tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 250, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Hexagon");
             tmpButton->setOnClick([]() {
@@ -149,6 +166,9 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
     addButton(*addScriptButton);
     delete addScriptButton;
 
+    bottomBar.setSize(Vector2f(size.x, 100));
+    bottomBar.setPosition(Vector2f(position.x, position.y + size.y - 100));
+
     //Change isMoveable button
     //Button* changeIsMoveableButton = new Button(font, Vector2f(position.x + 10, position.y + size.y - 80), Vector2f(size.x - 20, 30), "Change Moveable");
     //changeIsMoveableButton->setOnClick(changeSelectedIsMovable); //Select the changeSelectedIsMovable function to be called when the button is clicked
@@ -162,6 +182,7 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
     texts.clear();
     imageFields.clear();
     checkBoxes.clear();
+    maxVerticalOffset = 0;
     //Remove all the buttons except for the first 2
     for (int i = 2; i < buttons.size(); i++) {
         buttons.erase(buttons.begin() + i);
@@ -315,7 +336,10 @@ void InspectorWindow::draw(RenderWindow& window) const { //draw function
     if (!isActive)
         return;
     if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) { //If an object is selected, draw the inspector window
-        EditorWindow::draw(window);
+        //EditorWindow::draw(window);
+        window.draw(this->window);
+        for (int i = 0; i < texts.size(); i++)
+            window.draw(texts[i]);
         for (int i = 0; i < colors.size(); i++) {
             colors[i].draw(window);
         }
@@ -325,9 +349,19 @@ void InspectorWindow::draw(RenderWindow& window) const { //draw function
         for (int i = 0; i < checkBoxes.size(); i++) {
 			checkBoxes[i].draw(window);
 		}
+        for(int i = 0; i < inputFields.size(); i++)
+			inputFields[i].draw(window);
+        for (int i = 2; i < buttons.size(); i++)
+			buttons[i].draw(window);
+        window.draw(topBar);
+        window.draw(bottomBar);
+        buttons[0].draw(window);
+        buttons[1].draw(window);
         scriptAddDropdown.draw(window);
+        window.draw(title);
     }
     else {
+        window.draw(topBar);
         window.draw(this->window);
         window.draw(title);
     }

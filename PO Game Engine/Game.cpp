@@ -126,3 +126,43 @@ void Game::loadScene(const string& scenePath) { //load the scene
 	string pathWithoutFile = scenePath.substr(0, scenePath.find_last_of('/') + 1);
 	currentScene->setScenePath(pathWithoutFile);
 }
+
+bool Game::getBlockClick() { //get if the click is blocked
+	return blockClick;
+}
+void Game::setBlockClick(bool blockClick) { //set if the click is blocked
+	Game::blockClick = blockClick;
+}
+
+void Game::clearGame() { //clear the game
+	if (currentScene) {
+		delete currentScene;
+	}
+	if (hierarchy) {
+		delete hierarchy;
+	}
+	if (inspector) {
+		delete inspector;
+	}
+	if (colorPicker) {
+		delete colorPicker;
+	}
+	if (gameFilesWindow) {
+		delete gameFilesWindow;
+	}
+	if (gizmo) {
+		delete gizmo;
+	}
+	if (folderTexture) {
+		delete folderTexture;
+	}
+	if (font) {
+		delete font;
+	}
+	if (sceneView) {
+		delete sceneView;
+	}
+	if (guiView) {
+		delete guiView;
+	}
+}

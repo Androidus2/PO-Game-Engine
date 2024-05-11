@@ -170,6 +170,7 @@ void Collider::cleanShape(Vector2f& position, float& rotation, Vector2f& scale) 
         rotation = this->colliderShape->getRotation();
         scale = this->colliderShape->getScale();
         delete this->colliderShape;
+        this->colliderShape = NULL;
     }
 }
 void Collider::fixShape(Vector2f& position, float& rotation, Vector2f& scale) { //A function used to "fix" the shape after a new one has been assigned
@@ -351,6 +352,7 @@ ostream& Collider::write(ostream& out) const { //"public" write function
 }
 
 Collider::~Collider() { //destructor
+    cout << "Destroying collider\n";
     if (colliderShape != NULL)
         delete colliderShape;
 }

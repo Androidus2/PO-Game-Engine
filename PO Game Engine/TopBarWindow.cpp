@@ -41,6 +41,9 @@ TopBarWindow::TopBarWindow(const Font& font, const Vector2f& position, const Vec
 			Game::getCurrentScene()->saveScene();
 		});
 	buttons.push_back(saveButton);
+
+	topBar.setSize(Vector2f(0, 0));
+	bottomBar.setSize(Vector2f(0, 0));
 }
 void TopBarWindow::handleEvent(Event& event) { //handle event function
 	EditorWindow::handleEvent(event);

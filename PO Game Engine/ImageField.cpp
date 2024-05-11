@@ -85,9 +85,11 @@ void ImageField::update() { //update function
 void ImageField::handleEvent(Event& event) { //handle event function
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Game::getInspector()->isMouseOver()) {
 		Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-		if (imageField.getGlobalBounds().contains(mousePos))
+		if (imageField.getGlobalBounds().contains(mousePos) && !Game::getBlockClick()) {
 			isSelected = true;
-		else
+			Game::setBlockClick(true);
+		}
+		else if(isSelected)
 			isSelected = false;
 	}
 	deleteButton.handleEvent(event);

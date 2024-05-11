@@ -202,7 +202,8 @@ bool InputField::getOnlyNumbers() const { //get if only numbers are allowed
 }
 void InputField::checkMouseClick() { //check if the input field is clicked, and select it if it is
     Vector2f mousePosition = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-    if (field.getGlobalBounds().contains(mousePosition)) {
+    if (field.getGlobalBounds().contains(mousePosition) && !Game::getBlockClick()) {
+        Game::setBlockClick(true);
         if (!isSelected)
             select();
     }

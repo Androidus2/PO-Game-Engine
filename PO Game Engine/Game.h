@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML\Graphics.hpp"
 #include "Scene.h"
+#include "DebugMacro.h"
 
 
 
@@ -22,6 +23,7 @@ private:
     static sf::Texture* folderTexture;
     static bool isPlaying;
     static bool drawEditor;
+    static bool blockClick;
 
     static sf::Vector2f sceneViewPositionBeforePlaying;
     static sf::Vector2f sceneViewZoomBeforePlaying;
@@ -66,4 +68,9 @@ public:
     static void setFolderTexture(sf::Texture* texture);
 
     static void loadScene(const std::string& scenePath);
+
+    static bool getBlockClick();
+    static void setBlockClick(bool blockClick);
+
+    static void clearGame();
 };
