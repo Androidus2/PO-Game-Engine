@@ -42,6 +42,18 @@ TopBarWindow::TopBarWindow(const Font& font, const Vector2f& position, const Vec
 		});
 	buttons.push_back(saveButton);
 
+	Button sceneViewButton(font, Vector2f(position.x + size.x - 270, position.y + 10), Vector2f(100, 30), "Scene View");
+	sceneViewButton.setOnClick([]() {
+		Game::setIsOverGameWindow(false);
+		});
+	buttons.push_back(sceneViewButton);
+
+	Button gameViewButton(font, Vector2f(position.x + size.x - 390, position.y + 10), Vector2f(100, 30), "Game View");
+	gameViewButton.setOnClick([]() {
+		Game::setIsOverGameWindow(true);
+		});
+	buttons.push_back(gameViewButton);
+
 	topBar.setSize(Vector2f(0, 0));
 	bottomBar.setSize(Vector2f(0, 0));
 }

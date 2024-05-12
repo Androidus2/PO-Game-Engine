@@ -73,7 +73,7 @@ void Gizmo::draw(RenderWindow& window) const { //draw function
     }
 }
 void Gizmo::handleEvent(Event& event) { //handle event function
-    if (event.type == Event::MouseButtonPressed && !EditorWindow::getClickedUI()) {
+    if (event.type == Event::MouseButtonPressed && !EditorWindow::getClickedUI() && !Game::getIsOverGameWindow()) {
         if (event.mouseButton.button == Mouse::Left) {
             int ind = Game::getCurrentScene()->getSelectedObjectIndex();
             if (ind != -1) {
@@ -92,7 +92,7 @@ void Gizmo::handleEvent(Event& event) { //handle event function
 }
 void Gizmo::update() { //update function
     //Check dragging logic to use events so the gizmo won't be called when the mouse is over UI
-    if (Mouse::isButtonPressed(Mouse::Left) && Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
+    if (Mouse::isButtonPressed(Mouse::Left) && Game::getCurrentScene()->getSelectedObjectIndex() != -1 && !Game::getIsOverGameWindow()) {
         Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
         mousePos = Game::getWindow()->mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), *Game::getSceneView());
         if (dragging) {
@@ -191,8 +191,8 @@ void Gizmo::update() { //update function
                 float scX = (drag.x * 2 / (sideLengthX * initialScale.x) + 1) * initialScale.x;
                 float scY = (drag.y * 2 / (sideLengthY * initialScale.y) + 1) * initialScale.y;
 
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(scX), 4);
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(scY), 5);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scX), 5);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scY), 6);
 
                 //dragStart = dragEnd;
 

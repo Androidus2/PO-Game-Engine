@@ -20,6 +20,9 @@ private:
 
     Scene* sceneBeforePlaying;
 
+    sf::Vector2f sceneViewPositionBeforePlaying;
+    sf::Vector2f sceneViewZoomBeforePlaying;
+
     void addLastPosition(const sf::Vector2f& position);
     void eraseLastPosition(int index);
     void clearLastPositions();

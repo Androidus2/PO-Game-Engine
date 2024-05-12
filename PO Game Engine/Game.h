@@ -19,14 +19,14 @@ private:
     static EditorWindow* gameFilesWindow;
     static sf::View* sceneView;
     static sf::View* guiView;
+    static sf::View* gameView;
     static Gizmo* gizmo;
     static sf::Texture* folderTexture;
     static bool isPlaying;
     static bool drawEditor;
     static bool blockClick;
 
-    static sf::Vector2f sceneViewPositionBeforePlaying;
-    static sf::Vector2f sceneViewZoomBeforePlaying;
+    static bool isOverGameWindow;
 public:
     static void setFont(sf::Font* font);
     static sf::Font* getFont();
@@ -60,6 +60,12 @@ public:
 
     static sf::View* getGuiView();
     static void setGuiView(sf::View* view);
+
+    static sf::View* getGameView();
+    static void setGameView(sf::View* view);
+
+    static bool getIsOverGameWindow();
+    static void setIsOverGameWindow(bool isOverGameWindow);
 
     static Gizmo* getGizmo();
     static void setGizmo(Gizmo* gizmo);

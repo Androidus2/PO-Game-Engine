@@ -68,7 +68,7 @@ void HierarchyWindow::handleEvent(Event& event) { //handle event function
                 }
                 changeSelectedObject(newSelectedIndex);
             }
-            else {
+            else if(!Game::getIsOverGameWindow()){
                 mousePos = Game::getWindow()->mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), *Game::getSceneView());
                 int newSelectedIndex = -1;
                 //Loop through the objects in the scene and check if the mouse is over them

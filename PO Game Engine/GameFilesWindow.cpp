@@ -378,8 +378,10 @@ void GameFilesWindow::makeScene() { //make scene function
      	i++;
     }
     ofstream file(path + name + ".poscene");
-    file << "Scene" << endl;
+    file << name << endl;
     file << -1 << endl;
+    file << 960 << ' ' << 540 << ' ';
+    file << 1920 << ' ' << 1080 << endl;
     file << 0 << endl;
     file.close();
     loadFiles();

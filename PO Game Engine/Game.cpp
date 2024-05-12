@@ -71,6 +71,20 @@ void Game::setGuiView(View* view) { //set the gui view
 	guiView = view;
 }
 
+View* Game::getGameView() { //get the game view
+	return gameView;
+}
+void Game::setGameView(View* view) { //set the game view
+	gameView = view;
+}
+
+bool Game::getIsOverGameWindow() { //get if the mouse is over the game window
+	return isOverGameWindow;
+}
+void Game::setIsOverGameWindow(bool isOverGameWindow) { //set if the mouse is over the game window
+	Game::isOverGameWindow = isOverGameWindow;
+}
+
 bool Game::getIsPlaying() { //get if the game is playing
 	return isPlaying;
 }
@@ -78,14 +92,16 @@ void Game::setIsPlaying(bool isPlaying) { //set if the game is playing
 	Game::isPlaying = isPlaying;
 	GameTime::getInstance()->reset();
 	if (isPlaying && currentScene) {
+		isOverGameWindow = true;
 		currentScene->startScene();
-		sceneViewPositionBeforePlaying = sceneView->getCenter();
-		sceneViewZoomBeforePlaying = sceneView->getSize();
+		/*sceneViewPositionBeforePlaying = sceneView->getCenter();
+		sceneViewZoomBeforePlaying = sceneView->getSize();*/
 	}
 	else if (!isPlaying && currentScene) {
+		isOverGameWindow = false;
 		currentScene->endScene();
-		sceneView->setCenter(sceneViewPositionBeforePlaying);
-		sceneView->setSize(sceneViewZoomBeforePlaying);
+		/*sceneView->setCenter(sceneViewPositionBeforePlaying);
+		sceneView->setSize(sceneViewZoomBeforePlaying);*/
 	}
 }
 
@@ -125,6 +141,9 @@ void Game::loadScene(const string& scenePath) { //load the scene
 	file.close();
 	string pathWithoutFile = scenePath.substr(0, scenePath.find_last_of('/') + 1);
 	currentScene->setScenePath(pathWithoutFile);
+	string sceneName = scenePath.substr(scenePath.find_last_of('/') + 1);
+	sceneName = sceneName.substr(0, sceneName.find_last_of('.'));
+	currentScene->setName(sceneName);
 }
 
 bool Game::getBlockClick() { //get if the click is blocked
@@ -139,30 +158,30 @@ void Game::clearGame() { //clear the game
 		delete currentScene;
 	}
 	if (hierarchy) {
-		delete hierarchy;
+		hierarchy = nullptr;
 	}
 	if (inspector) {
-		delete inspector;
+		inspector = nullptr;
 	}
 	if (colorPicker) {
-		delete colorPicker;
+		colorPicker = nullptr;
 	}
 	if (gameFilesWindow) {
-		delete gameFilesWindow;
+		gameFilesWindow = nullptr;
 	}
 	if (gizmo) {
-		delete gizmo;
+		gizmo = nullptr;
 	}
 	if (folderTexture) {
 		delete folderTexture;
 	}
 	if (font) {
-		delete font;
+		font = nullptr;
 	}
 	if (sceneView) {
-		delete sceneView;
+		sceneView = nullptr;
 	}
 	if (guiView) {
-		delete guiView;
+		guiView = nullptr;
 	}
 }

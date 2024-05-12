@@ -23,6 +23,8 @@ Scene::Scene() : sceneId(sceneIdCounter++) { //default constructor
     selectedObjectIndex = -1;
     sceneBeforePlaying = NULL;
     scenePath = "GameFiles";
+    sceneViewPositionBeforePlaying = Vector2f(0, 0);
+    sceneViewZoomBeforePlaying = Vector2f(1, 1);
 }
 Scene::Scene(const Scene& scene) : sceneId(scene.sceneId) { //copy constructor
     sceneName = scene.sceneName;
@@ -31,6 +33,8 @@ Scene::Scene(const Scene& scene) : sceneId(scene.sceneId) { //copy constructor
     selectedObjectIndex = -1;
     sceneBeforePlaying = NULL;
     scenePath = scene.scenePath;
+    sceneViewPositionBeforePlaying = scene.sceneViewPositionBeforePlaying;
+    sceneViewZoomBeforePlaying = scene.sceneViewZoomBeforePlaying;
 }
 Scene::Scene(const Scene& scene, int id) : sceneId(id) { //copy constructor with sceneId
     sceneName = scene.sceneName;
@@ -39,6 +43,8 @@ Scene::Scene(const Scene& scene, int id) : sceneId(id) { //copy constructor with
     selectedObjectIndex = -1;
     sceneBeforePlaying = NULL;
     scenePath = scene.scenePath;
+    sceneViewPositionBeforePlaying = scene.sceneViewPositionBeforePlaying;
+    sceneViewZoomBeforePlaying = scene.sceneViewZoomBeforePlaying;
 }
 Scene& Scene::operator=(const Scene& scene) { //assignment operator
     if (this == &scene)
@@ -47,6 +53,8 @@ Scene& Scene::operator=(const Scene& scene) { //assignment operator
     setObjects(scene.sceneObjects);
     buildIndex = scene.buildIndex;
     scenePath = scene.scenePath;
+    sceneViewPositionBeforePlaying = scene.sceneViewPositionBeforePlaying;
+    sceneViewZoomBeforePlaying = scene.sceneViewZoomBeforePlaying;
     return *this;
 }
 
@@ -511,6 +519,8 @@ void Scene::clearLastPositions() { //clear all last positions
 void Scene::startScene() { //start the scene
     if (sceneBeforePlaying)
         delete sceneBeforePlaying;
+    sceneViewPositionBeforePlaying = Game::getSceneView()->getCenter();
+    sceneViewZoomBeforePlaying = Game::getSceneView()->getSize();
     sceneBeforePlaying = new Scene(*this, -500);
     for (int i = 0; i < sceneObjects.size(); i++) {
         if (sceneObjects[i]->getActive())
@@ -560,6 +570,10 @@ void Scene::endScene() { //end the scene
         //sceneObjects = sceneBeforePlaying->sceneObjects;
         setObjects(sceneBeforePlaying->sceneObjects);
         lastPositions = sceneBeforePlaying->lastPositions;
+        sceneViewPositionBeforePlaying = sceneBeforePlaying->sceneViewPositionBeforePlaying;
+        sceneViewZoomBeforePlaying = sceneBeforePlaying->sceneViewZoomBeforePlaying;
+        Game::getSceneView()->setCenter(sceneViewPositionBeforePlaying);
+        Game::getSceneView()->setSize(sceneViewZoomBeforePlaying);
         /*cout<<"Restored the objects\n"<<sceneObjects.size()<<'\n';
         cout << "Before loop: " << Game::getHierarchy()->getTextCount() << '\n';
         for (int i = 0; i < sceneObjects.size(); i++) {
@@ -606,6 +620,10 @@ void Scene::setSelectedObjectIndex(int index) { //set the index of the selected 
 istream& Scene::read(istream& in) { //read function
     getline(in, sceneName);
     in >> buildIndex;
+    in>> sceneViewPositionBeforePlaying.x >> sceneViewPositionBeforePlaying.y >> sceneViewZoomBeforePlaying.x >> sceneViewZoomBeforePlaying.y;
+    Game::getSceneView()->setCenter(sceneViewPositionBeforePlaying);
+    Game::getSceneView()->setSize(sceneViewZoomBeforePlaying);
+    //cout<<"Values read" << sceneViewPositionBeforePlaying.x << " " << sceneViewPositionBeforePlaying.y << " " << sceneViewZoomBeforePlaying.x << " " << sceneViewZoomBeforePlaying.y << endl;
     int objectsCount;
     in >> objectsCount;
     clearObjects();
@@ -621,7 +639,9 @@ istream& Scene::read(istream& in) { //read function
     return in;
 }
 ostream& Scene::write(ostream& out) const { //write function
-    out << sceneName << "\n" << buildIndex << " " << getObjectsCount() << endl;
+    out << sceneName << "\n" << buildIndex << endl;
+    out << Game::getSceneView()->getCenter().x << " " << Game::getSceneView()->getCenter().y << " " << Game::getSceneView()->getSize().x << " " << Game::getSceneView()->getSize().y << endl;
+    out<< getObjectsCount() << endl;
     for (int i = 0; i < getObjectsCount(); i++)
         out << *sceneObjects[i];
     return out;

@@ -20,8 +20,10 @@ void FollowMouseScript::start(GameObject& gameObject) { //start function (does n
 }
 void FollowMouseScript::update(GameObject& gameObject) { //update function
 	//Get the mouse position and make the object follow it
+	if (!Game::getIsOverGameWindow())
+		return;
 	Vector2f mousePosition = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-	mousePosition = Game::getWindow()->mapPixelToCoords(Vector2i(mousePosition.x, mousePosition.y), *Game::getSceneView());
+	mousePosition = Game::getWindow()->mapPixelToCoords(Vector2i(mousePosition.x, mousePosition.y), *Game::getGameView());
 	if (applySmoothness)
 		mousePosition = gameObject.getPosition() + (-gameObject.getPosition() + mousePosition) * GameTime::getInstance()->getDeltaTime() * smoothnessSpeed;
 	//cout << mousePosition.x<<" "<<mousePosition.y <<" "<< GameTime::getInstance()->getDeltaTime() << endl;

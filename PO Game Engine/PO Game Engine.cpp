@@ -57,9 +57,9 @@ Gizmo* Game::gizmo = NULL;
 View* Game::sceneView = NULL;
 View* Game::guiView = NULL;
 bool EditorWindow::clickedUI = false;
-Vector2f Game::sceneViewPositionBeforePlaying = Vector2f(0, 0);
-Vector2f Game::sceneViewZoomBeforePlaying = Vector2f(1, 1);
 bool Game::blockClick = false;
+bool Game::isOverGameWindow = false;
+View* Game::gameView = NULL;
 
 
 
@@ -142,12 +142,21 @@ int main()
         Game::setGizmo(&gizmos);
 
         View sceneView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
+        sceneView.setViewport(FloatRect(0.13177083f, 0.04814f, 0.684375f, 0.672222f));
         View editorView = window.getDefaultView();
+        View gameView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
+        gameView.setViewport(FloatRect(0.13177083f, 0.04814f, 0.684375f, 0.672222f));
+
+        cout<<"Scene view size: "<<sceneView.getSize().x<<" "<<sceneView.getSize().y<<endl;
 
         Game::setSceneView(&sceneView);
         Game::setGuiView(&editorView);
+        Game::setGameView(&gameView);
 
         Vector2f lastMousePos = Vector2f(0, 0);
+
+        RectangleShape rect(Vector2f(1920, 780)); //Used to cover up the overflowing game files window
+        rect.setFillColor(Color::Black);
 
     
         while (window.isOpen()) //Game loop
@@ -194,7 +203,7 @@ int main()
                 }
 
                 //If we are scrolling, zoom the scene
-                if (event.type == Event::MouseWheelScrolled && !inspectorWindow.isMouseOver() && !hierarchyWindow.isMouseOver() && !gameFilesWindow.isMouseOver()) {
+                if (event.type == Event::MouseWheelScrolled && !inspectorWindow.isMouseOver() && !hierarchyWindow.isMouseOver() && !gameFilesWindow.isMouseOver() && !Game::getIsOverGameWindow()) {
 					if (event.mouseWheelScroll.delta > 0)
 						sceneView.zoom(0.9f);
 					else
@@ -203,7 +212,7 @@ int main()
             }
 
             //If we are holding the right mouse button and moving the mouse, pan the scene
-            if (Mouse::isButtonPressed(Mouse::Right) && !inspectorWindow.isMouseOver() && !hierarchyWindow.isMouseOver() && !gameFilesWindow.isMouseOver()) {
+            if (Mouse::isButtonPressed(Mouse::Right) && !inspectorWindow.isMouseOver() && !hierarchyWindow.isMouseOver() && !gameFilesWindow.isMouseOver() && !Game::getIsOverGameWindow()) {
                 Vector2f mousePos = Vector2f(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
                 mousePos = window.mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), sceneView);
                 Vector2f lastMousePosCpy = lastMousePos;
@@ -245,18 +254,28 @@ int main()
             //Clear the window
             window.clear();
 
+            //Draw the game files window
+            if (Game::getDrawEditor()) {
+                gameFilesWindow.draw(window);
+                window.draw(rect);
+            }
+
             //Draw the objects
-            window.setView(sceneView);
+            if(!Game::getIsOverGameWindow())
+                window.setView(sceneView);
+            else
+                window.setView(gameView);
             Game::getCurrentScene()->drawScene(false, window);
 
             //Draw the editor
             if (Game::getDrawEditor()) {
-                gizmos.draw(window);
+                if(!Game::getIsOverGameWindow())
+                    gizmos.draw(window);
                 window.setView(editorView);
                 hierarchyWindow.setTitle("Hierarchy (" + to_string(Game::getCurrentScene()->getObjectsCount()) + ")");
                 hierarchyWindow.draw(window);
                 inspectorWindow.draw(window);
-                gameFilesWindow.draw(window);
+                //gameFilesWindow.draw(window);
                 topBarWindow.draw(window);
                 colorPicker.draw(window);
                 window.draw(fpsCounter);
@@ -268,7 +287,7 @@ int main()
         }
 
         //Cleaning up
-        if (folderIcon)
+        /*if (folderIcon)
             delete folderIcon;
         if (Game::getCurrentScene())
             delete Game::getCurrentScene();
@@ -287,17 +306,19 @@ int main()
         if (Game::getGuiView())
             Game::setGuiView(NULL);
         if (Game::getFont())
-            Game::setFont(NULL);
+            Game::setFont(NULL);*/
+        Game::clearGame();
     }
     catch (exception& e) {
 		cout<<e.what()<<endl;
+        Game::clearGame();
 	}
     catch (...) {
         cout<<"An error occurred"<<endl;
+        Game::clearGame();
     }
 
-    //A "memory leak" can happen when an exception is thrown and the program exits before the memory is deallocated
-
+    //A "memory leak" can happen when an exception is thrown and the program exits before the memory is deallocated (fixed i think)
     
     //A memory leak to test if the tool works (it does)
     //int* a = new int[1005];
