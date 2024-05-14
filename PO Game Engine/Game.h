@@ -1,4 +1,5 @@
 #pragma once
+#include <list>
 #include "SFML\Graphics.hpp"
 #include "Scene.h"
 #include "DebugMacro.h"
@@ -21,12 +22,14 @@ private:
     static sf::View* guiView;
     static sf::View* gameView;
     static Gizmo* gizmo;
-    static sf::Texture* folderTexture;
     static bool isPlaying;
     static bool drawEditor;
     static bool blockClick;
 
     static bool isOverGameWindow;
+
+    static std::list<Scene*> controlZScenes;
+    static std::list<Scene*> controlYScenes;
 public:
     static void setFont(sf::Font* font);
     static sf::Font* getFont();
@@ -70,13 +73,18 @@ public:
     static Gizmo* getGizmo();
     static void setGizmo(Gizmo* gizmo);
 
-    static sf::Texture* getFolderTexture();
-    static void setFolderTexture(sf::Texture* texture);
-
     static void loadScene(const std::string& scenePath);
 
     static bool getBlockClick();
     static void setBlockClick(bool blockClick);
+
+    static void addControlZScene();
+    static void addControlYScene();
+    static void clearControlZScenes();
+    static void clearControlYScenes();
+    static Scene* getControlZScene();
+    static void undo();
+    static void redo();
 
     static void clearGame();
 };

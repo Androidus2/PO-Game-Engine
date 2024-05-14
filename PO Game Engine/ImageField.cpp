@@ -85,8 +85,9 @@ void ImageField::update() { //update function
 void ImageField::handleEvent(Event& event) { //handle event function
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && Game::getInspector()->isMouseOver()) {
 		Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-		if (imageField.getGlobalBounds().contains(mousePos) && !Game::getBlockClick()) {
+		if (imageField.getGlobalBounds().contains(mousePos) && !Game::getBlockClick() && !isSelected) {
 			isSelected = true;
+			Game::addControlZScene();
 			Game::setBlockClick(true);
 		}
 		else if(isSelected)

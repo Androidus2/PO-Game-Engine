@@ -80,6 +80,8 @@ void Gizmo::handleEvent(Event& event) { //handle event function
                 Vector2f mousePos = Vector2f(event.mouseButton.x, event.mouseButton.y);
                 mousePos = Game::getWindow()->mapPixelToCoords(Vector2i(mousePos.x, mousePos.y), *Game::getSceneView());
                 if (Game::getCurrentScene()->getObjectByIndex(ind)->getGlobalBounds().contains(mousePos)) {
+                    if(!dragging)
+                        Game::addControlZScene();
                     dragging = true;
                     dragStart = mousePos;
                     if (type == 2) {

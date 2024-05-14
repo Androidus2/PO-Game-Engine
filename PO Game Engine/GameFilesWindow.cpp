@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "GameTime.h"
 #include "InspectorWindow.h"
+#include "Camera.h"
+#include "EditorTextureManager.h"
 #include <filesystem>
 #include <fstream>
 
@@ -28,7 +30,7 @@ void GameFilesWindow::makeTree(FileNode* node) { //make tree function
     //Make a fake directory in the tree which links to the parent directory
     if (node->getName() != "GameFiles" && node->childIndex("\\") == -1) {
 		FileNode* tmp = new FileNode("\\", true);
-		tmp->setIcon(Game::getFolderTexture());
+		tmp->setIcon(Singleton<EditorTextureManager>::getInstance().getTexture("Folder"));
 		node->addChild(tmp);
 	}
 
@@ -38,8 +40,8 @@ void GameFilesWindow::makeTree(FileNode* node) { //make tree function
         //If a file exists and is not in the tree, add it
         if (name.find(".") == string::npos && node->childIndex(name) == -1) {
             FileNode* tmp = new FileNode(name, true);
-            tmp->setIcon(Game::getFolderTexture());
-            if (!Game::getFolderTexture())
+            tmp->setIcon(Singleton<EditorTextureManager>::getInstance().getTexture("Folder"));
+            if (!Singleton<EditorTextureManager>::getInstance().getTexture("Folder"))
                 cout << "Folder texture not loaded" << endl;
             node->addChild(tmp);
             makeTree(tmp);
@@ -51,7 +53,7 @@ void GameFilesWindow::makeTree(FileNode* node) { //make tree function
         }
         else if (node->childIndex(name) == -1 && (name.find(".poscene") != string::npos)) {
             FileNode* tmp = new FileNode(name, false);
-            tmp->setIcon(makeTexture("Resources/Sans.png"));
+            tmp->setIcon(Singleton<EditorTextureManager>::getInstance().getTexture("Sans"));
             node->addChild(tmp);
         }
     }
@@ -205,7 +207,7 @@ void GameFilesWindow::handleEvent(Event& event) { //handle event function
             int index = -1;
             for (int i = 0; i < icons.size(); i++) {
                 if (icons[i].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) || texts[i].getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
-                    if (GameTime::getInstance()->getTime() - lastClickTime < 0.5f && selectedFile == i) {
+                    if (Singleton<GameTime>::getInstance().getTime() - lastClickTime < 0.5f && selectedFile == i) {
                         if (texts[i].getString().find(".") == string::npos) {
                             if(texts[i].getString() != "\\")
                                 currentDirectory += texts[i].getString() + "/"; 
@@ -247,7 +249,7 @@ void GameFilesWindow::handleEvent(Event& event) { //handle event function
                         inspector->changeImage("");
                 }
             }
-            lastClickTime = GameTime::getInstance()->getTime();
+            lastClickTime = Singleton<GameTime>::getInstance().getTime();
         }
         if (event.mouseButton.button == Mouse::Right) {
             if (isMouseOver()) {
@@ -346,7 +348,8 @@ void GameFilesWindow::draw(RenderWindow& window) const { //draw function
     }
     window.draw(selectedBackground);
     for (int i = 0; i < texts.size() - 1; i++) {
-		window.draw(texts[i]);
+        if(i != selectedFile || !inputFields[0].getSelected())
+		    window.draw(texts[i]);
 	}
     window.draw(topBar);
     window.draw(texts[texts.size() - 1]);
@@ -382,7 +385,12 @@ void GameFilesWindow::makeScene() { //make scene function
     file << -1 << endl;
     file << 960 << ' ' << 540 << ' ';
     file << 1920 << ' ' << 1080 << endl;
-    file << 0 << endl;
+    file << 1 << endl;
+
+    Camera* tmp = new Camera();
+    file << *tmp;
+    delete tmp;
+
     file.close();
     loadFiles();
 }

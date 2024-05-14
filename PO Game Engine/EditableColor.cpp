@@ -36,17 +36,19 @@ void EditableColor::update() { //update function
 	else {
 		if (updateValue) {
 			colorBox.setFillColor(stringToColor(updateValue(Game::getCurrentScene(), callIndex)));
-			if (onChange)
-				onChange(Game::getCurrentScene(), updateValue(Game::getCurrentScene(), callIndex), callIndex);
+			//Seems fine to comment it?
+			//if (onChange)
+			//	onChange(Game::getCurrentScene(), updateValue(Game::getCurrentScene(), callIndex), callIndex);
 		}
 	}
 }
 void EditableColor::handleEvent(Event& event) { //handle event function
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 		Vector2f mousePos = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
-		if (colorBox.getGlobalBounds().contains(mousePos) && !Game::getBlockClick()) {
+		if (colorBox.getGlobalBounds().contains(mousePos) && !Game::getBlockClick() && !isSelected) {
 			Game::setBlockClick(true);
 			isSelected = true;
+			Game::addControlZScene();
 			ColorPicker* colorPicker = dynamic_cast<ColorPicker*>(Game::getColorPicker());
 			if (colorPicker) {
 				colorPicker->setActive(true);

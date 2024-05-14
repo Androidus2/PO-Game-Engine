@@ -193,7 +193,9 @@ void GameObject::startScripts() { //start all scripts
         attachedScripts[i]->start(*this);
 }
 void GameObject::updateScripts() { //update all scripts (called every frame), also moves the object
-    float dt = GameTime::getInstance()->getDeltaTime();
+    //Reset the collisions ids
+    collisionIds.clear();
+    float dt = Singleton<GameTime>::getInstance().getDeltaTime();
     move(velocity * dt);
     if (useGravity) {
         move(dt * dt * Vector2f(0, 9.81f * 100) / 2.f);
@@ -205,10 +207,16 @@ void GameObject::updateScripts() { //update all scripts (called every frame), al
         attachedScripts[i]->update(*this);
 }
 void GameObject::triggerScripts(GameObject& trigger) { //trigger all scripts
+    if(collisionIds.find(trigger.getId()) != collisionIds.end())
+        return;
+    collisionIds.insert(trigger.getId());
     for (int i = 0; i < attachedScripts.size(); i++)
         attachedScripts[i]->trigger(*this, trigger);
 }
 void GameObject::collisionScripts(GameObject& collision) { //collision all scripts
+    if(collisionIds.find(collision.getId()) != collisionIds.end())
+		return;
+    collisionIds.insert(collision.getId());
     for (int i = 0; i < attachedScripts.size(); i++)
         attachedScripts[i]->collision(*this, collision);
 }
@@ -308,6 +316,7 @@ ostream& GameObject::write(ostream& out) const { //write function
 
 GameObject::~GameObject() { //destructor (deletes all scripts to free memory)
     removeAllScripts();
+    cout<<"Destroying "<<name<<endl;
 }
 
 void GameObject::changeTexture(const string& path) { //change the texture of the object
@@ -407,6 +416,8 @@ bool Collider::polygonCollision(GameObject& collider1, GameObject& collider2) { 
             collider2.triggerScripts(collider1);
             return true;
         }
+        collider1.collisionScripts(collider2); //Send message
+        collider2.collisionScripts(collider1);
         moveCollidersInCollision(collider1, collider2, displacement); //Move the colliders
         return true;
     }
@@ -470,7 +481,7 @@ void Collider::handleAllCollisions(const vector<GameObject*>& objects, const vec
         Vector2f displacement = objects[i]->getPosition() - lastPositions[i];
 
         // If the object has moved in the opposite direction of its velocity, reset its velocity in that direction
-        float minMov = 0.01f * GameTime::getInstance()->getDeltaTime();
+        float minMov = 0.01f * Singleton<GameTime>::getInstance().getDeltaTime();
         if (displacement.x >= -minMov && objects[i]->getVelocity().x < 0) {
             objects[i]->setVelocity(Vector2f(0, objects[i]->getVelocity().y));
         }

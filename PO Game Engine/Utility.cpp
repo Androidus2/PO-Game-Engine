@@ -6,6 +6,7 @@
 #include "Utility.h"
 #include "Game.h"
 #include "EditorWindow.h"
+#include "Camera.h"
 
 #include "TestScript.h"
 #include "FollowMouseScript.h"
@@ -238,6 +239,9 @@ void createObj() { //Create object function (it is called when the create object
 }
 
 void deleteObj() { //Delete object function (it is called when the delete object button is clicked)
+    if (Game::getCurrentScene()->getSelectedObjectIndex() == -1 || Game::getCurrentScene()->getSelectedObjectIndex() == 0) //If no object is selected or the camera is selected, return
+        return;
+    Game::addControlZScene();
     Game::getHierarchy()->deleteText(Game::getCurrentScene()->getSelectedObjectIndex());
     Game::getCurrentScene()->removeSelectedObject();
 }
@@ -255,6 +259,8 @@ void removeTextFromHierarchy(int index) { //Remove text from hierarchy function
 
 
 GameObject* makeObjFromString(const string& obj) { //Make object from string function (used to know which variant of GameObject to create when reading a scene from a file)
+    if (obj == "Camera")
+        return new Camera();
     return new GameObject();
 }
 

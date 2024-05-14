@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <set>
 #include "SFML\System.hpp"
 #include "SFML\Graphics.hpp"
 #include "Collider.h"
@@ -19,6 +20,8 @@ protected:
     static int idCounter;
     std::vector<BehaviourScript*> attachedScripts; //Scripts attached to the GameObject
 
+    std::set<int> collisionIds;
+
     std::istream& pRead(std::istream& in) override;
     std::ostream& pWrite(std::ostream& out) const override;
 public:
@@ -31,10 +34,10 @@ public:
     void setName(std::string name);
 
     std::string getTag() const;
-    void setTag(std::string tag);
+    virtual void setTag(std::string tag);
 
     bool getActive() const;
-    void setActive(bool isActive);
+    virtual void setActive(bool isActive);
 
     int getId() const;
 
@@ -68,18 +71,18 @@ public:
 
     int getAttributeCountFromScripts(int scriptIndex) const;
 
-    void setPosition(const sf::Vector2f& position);
-    void setPosition(float x, float y);
-    void move(const sf::Vector2f& position);
-    void move(float x, float y);
+    virtual void setPosition(const sf::Vector2f& position);
+    virtual void setPosition(float x, float y);
+    virtual void move(const sf::Vector2f& position);
+    virtual void move(float x, float y);
 
-    void setRotation(float angle);
-    void rotate(float angle);
+    virtual void setRotation(float angle);
+    virtual void rotate(float angle);
 
-    void setScale(const sf::Vector2f& factors);
-    void setScale(float x, float y);
-    void scale(const sf::Vector2f& factors);
-    void scale(float x, float y);
+    virtual void setScale(const sf::Vector2f& factors);
+    virtual void setScale(float x, float y);
+    virtual void scale(const sf::Vector2f& factors);
+    virtual void scale(float x, float y);
 
     void changeId();
 

@@ -33,7 +33,7 @@ void InputField::draw(RenderWindow& window) const { //draw function
 }
 void InputField::update() { //update function
     if (isSelected) { //If the input field is selected, show the cursor
-        float t = fmod(GameTime::getInstance()->getTime(), 1.0f);
+        float t = fmod(Singleton<GameTime>::getInstance().getTime(), 1.0f);
         if (t < 0.7f) {
             string tmp = str;
             tmp.insert(cursorIndex, "|");
@@ -157,6 +157,10 @@ void InputField::handleEvent(Event& event) { //handle event function
 void InputField::select() { //select function
     isSelected = true;
     cursorIndex = str.size();
+
+    //Very poor implementation but I don't want to spend time on this
+    if(!finishEdit)
+        Game::addControlZScene();
 }
 void InputField::deselect() { //deselect function
 

@@ -136,11 +136,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CheckBox.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColorPicker.cpp" />
     <ClCompile Include="Dropdown.cpp" />
     <ClCompile Include="EditableColor.cpp" />
+    <ClCompile Include="EditorTextureManager.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="FileNode.cpp" />
     <ClCompile Include="FollowMouseScript.cpp" />
@@ -162,12 +164,14 @@
   <ItemGroup>
     <ClInclude Include="BehaviourScript.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CheckBox.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ColorPicker.h" />
     <ClInclude Include="DebugMacro.h" />
     <ClInclude Include="Dropdown.h" />
     <ClInclude Include="EditableColor.h" />
+    <ClInclude Include="EditorTextureManager.h" />
     <ClInclude Include="EditorWindow.h" />
     <ClInclude Include="FileNode.h" />
     <ClInclude Include="FollowMouseScript.h" />
@@ -181,6 +185,7 @@
     <ClInclude Include="InputField.h" />
     <ClInclude Include="InspectorWindow.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="TestScript.h" />
     <ClInclude Include="TopBarWindow.h" />
     <ClInclude Include="Utility.h" />

@@ -352,7 +352,6 @@ ostream& Collider::write(ostream& out) const { //"public" write function
 }
 
 Collider::~Collider() { //destructor
-    cout << "Destroying collider\n";
     if (colliderShape != NULL)
         delete colliderShape;
 }

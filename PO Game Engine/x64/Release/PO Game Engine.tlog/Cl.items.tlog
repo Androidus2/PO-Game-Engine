@@ -1,9 +1,11 @@
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Button.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\Button.obj
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Camera.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\Camera.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\CheckBox.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\CheckBox.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Collider.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\Collider.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\ColorPicker.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\ColorPicker.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Dropdown.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\Dropdown.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\EditableColor.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\EditableColor.obj
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\EditorTextureManager.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\EditorTextureManager.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\EditorWindow.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\EditorWindow.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\FileNode.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\FileNode.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\FollowMouseScript.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\FollowMouseScript.obj

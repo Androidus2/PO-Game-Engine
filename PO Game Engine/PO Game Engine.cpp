@@ -34,6 +34,7 @@
 #include "GameFilesWindow.h"
 #include "TopBarWindow.h"
 #include "DebugMacro.h"
+#include "EditorTextureManager.h"
 
 
 
@@ -52,7 +53,6 @@ bool Game::isPlaying = false;
 bool Game::drawEditor = true;
 EditorWindow* Game::colorPicker = NULL;
 EditorWindow* Game::gameFilesWindow = NULL;
-Texture* Game::folderTexture = NULL;
 Gizmo* Game::gizmo = NULL;
 View* Game::sceneView = NULL;
 View* Game::guiView = NULL;
@@ -60,6 +60,8 @@ bool EditorWindow::clickedUI = false;
 bool Game::blockClick = false;
 bool Game::isOverGameWindow = false;
 View* Game::gameView = NULL;
+list<Scene*> Game::controlZScenes;
+list<Scene*> Game::controlYScenes;
 
 
 
@@ -76,15 +78,13 @@ int main()
         Game::setFont(&font);
         //window.setFramerateLimit(60);
 
-        Image folderIconimg;
-        if (!folderIconimg.loadFromFile("Resources/Folder.png"))
-            cout << "Failed to load image" << endl;
-        Texture* folderIcon = new Texture();
-        if (!folderIcon->loadFromImage(folderIconimg))
-            cout << "Failed to load texture" << endl;
-        Game::setFolderTexture(folderIcon);
-        if (!Game::getFolderTexture())
-            cout << "Failed to set folder texture" << endl;
+
+        Singleton<EditorTextureManager>::getInstance().loadTexture("Folder", "Resources/Folder.png");
+        Singleton<EditorTextureManager>::getInstance().loadTexture("Sans", "Resources/Sans.png");
+
+        View gameView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
+        gameView.setViewport(FloatRect(0.13177083f, 0.04814f, 0.684375f, 0.672222f));
+        Game::setGameView(&gameView);
 
         Scene* scene = new Scene();
         Game::setCurrentScene(scene);
@@ -97,7 +97,7 @@ int main()
         Game::setInspector(&inspectorWindow);
         Game::setColorPicker(&colorPicker);
         Game::setGameFilesWindow(&gameFilesWindow);
-        GameTime* time = GameTime::getInstance();
+        GameTime* time = &Singleton<GameTime>::getInstance();
 
 
         bool save = false;
@@ -135,23 +135,17 @@ int main()
         fpsCounter.setFillColor(Color::White);
         fpsCounter.setPosition(10, 10);
 
-        //if(Game::getIsPlaying())
-        //    scene.startScene();
-
         Gizmo gizmos;
         Game::setGizmo(&gizmos);
 
         View sceneView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
         sceneView.setViewport(FloatRect(0.13177083f, 0.04814f, 0.684375f, 0.672222f));
         View editorView = window.getDefaultView();
-        View gameView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
-        gameView.setViewport(FloatRect(0.13177083f, 0.04814f, 0.684375f, 0.672222f));
 
         cout<<"Scene view size: "<<sceneView.getSize().x<<" "<<sceneView.getSize().y<<endl;
 
         Game::setSceneView(&sceneView);
         Game::setGuiView(&editorView);
-        Game::setGameView(&gameView);
 
         Vector2f lastMousePos = Vector2f(0, 0);
 
@@ -209,6 +203,16 @@ int main()
 					else
 						sceneView.zoom(1.1f);
 				}
+
+                //If we press control z, undo
+                if (event.type == Event::KeyPressed && event.key.code == Keyboard::Z && Keyboard::isKeyPressed(Keyboard::LControl)) {
+					Game::undo();
+				}
+
+				//If we press control y, redo
+                if (event.type == Event::KeyPressed && event.key.code == Keyboard::Y && Keyboard::isKeyPressed(Keyboard::LControl)) {
+                    Game::redo();
+                }
             }
 
             //If we are holding the right mouse button and moving the mouse, pan the scene
@@ -286,27 +290,6 @@ int main()
             window.display();
         }
 
-        //Cleaning up
-        /*if (folderIcon)
-            delete folderIcon;
-        if (Game::getCurrentScene())
-            delete Game::getCurrentScene();
-        if (Game::getHierarchy())
-            Game::setHierarchy(NULL);
-        if (Game::getInspector())
-            Game::setInspector(NULL);
-        if (Game::getColorPicker())
-            Game::setColorPicker(NULL);
-        if (Game::getGameFilesWindow())
-            Game::setGameFilesWindow(NULL);
-        if (Game::getGizmo())
-            Game::setGizmo(NULL);
-        if (Game::getSceneView())
-            Game::setSceneView(NULL);
-        if (Game::getGuiView())
-            Game::setGuiView(NULL);
-        if (Game::getFont())
-            Game::setFont(NULL);*/
         Game::clearGame();
     }
     catch (exception& e) {

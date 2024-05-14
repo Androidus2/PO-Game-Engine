@@ -25,7 +25,7 @@ void FollowMouseScript::update(GameObject& gameObject) { //update function
 	Vector2f mousePosition = Vector2f(Mouse::getPosition(*Game::getWindow()).x, Mouse::getPosition(*Game::getWindow()).y);
 	mousePosition = Game::getWindow()->mapPixelToCoords(Vector2i(mousePosition.x, mousePosition.y), *Game::getGameView());
 	if (applySmoothness)
-		mousePosition = gameObject.getPosition() + (-gameObject.getPosition() + mousePosition) * GameTime::getInstance()->getDeltaTime() * smoothnessSpeed;
+		mousePosition = gameObject.getPosition() + (-gameObject.getPosition() + mousePosition) * Singleton<GameTime>::getInstance().getDeltaTime() * smoothnessSpeed;
 	//cout << mousePosition.x<<" "<<mousePosition.y <<" "<< GameTime::getInstance()->getDeltaTime() << endl;
 	gameObject.setPosition(mousePosition);
 }

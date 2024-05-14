@@ -27,7 +27,6 @@ private:
     sf::RectangleShape dragVisual;
 
     sf::RectangleShape selectedBackground;
-    void loadFiles();
     void makeTree(FileNode* node);
     sf::Texture* makeTexture(const std::string& path);
     void updateElementsWithVerticalOffset(float old) override;
@@ -46,5 +45,6 @@ public:
     void copy();
     void paste();
     void renameFile(const std::string& newName);
+    void loadFiles();
     ~GameFilesWindow();
 };

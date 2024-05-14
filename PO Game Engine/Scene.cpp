@@ -4,7 +4,9 @@
 #include "Utility.h"
 #include "Collider.h"
 #include "GameObject.h"
+#include "Camera.h"
 #include "HierarchyWindow.h"
+#include "GameFilesWindow.h"
 #include "Game.h"
 
 using namespace std;
@@ -25,6 +27,9 @@ Scene::Scene() : sceneId(sceneIdCounter++) { //default constructor
     scenePath = "GameFiles";
     sceneViewPositionBeforePlaying = Vector2f(0, 0);
     sceneViewZoomBeforePlaying = Vector2f(1, 1);
+    Camera *camera = new Camera();
+    addObject(camera);
+    delete camera;
 }
 Scene::Scene(const Scene& scene) : sceneId(scene.sceneId) { //copy constructor
     sceneName = scene.sceneName;
@@ -89,6 +94,7 @@ void Scene::setObjectByIndex(int index, const GameObject* object) { //set an obj
     }
 }
 void Scene::clearObjects() { //clear all objects in the scene
+    cout << "Clearing objects "<<sceneObjects.size() << " " << sceneId << " " << getSelectedSceneId() << endl;
     for (int i = 0; i < sceneObjects.size(); i++) {
         delete sceneObjects[i];
         if (sceneId == getSelectedSceneId())
@@ -98,9 +104,11 @@ void Scene::clearObjects() { //clear all objects in the scene
     sceneObjects.clear();
     clearLastPositions();
     selectedObjectIndex = -1;
+    cout<<sceneObjects.size()<<endl;
 }
 void Scene::addObject(const GameObject* object) { //add an object to the scene
     sceneObjects.push_back(object->clone());
+    cout << "Adding object to scene with id " << sceneId << " " << getSelectedSceneId() << endl;
     if (sceneId == getSelectedSceneId()) {
         addTextToHierarchy(object->getName());
     }
@@ -532,8 +540,9 @@ void Scene::drawScene(bool drawColliders, RenderWindow& window) const { //draw t
     sort(sortedObjects.begin(), sortedObjects.end(), [](const GameObject* a, const GameObject* b) {
         return a->getZLayer() < b->getZLayer();
         });
+    window.draw(*sceneObjects[0]); //Draw the camera background before anything else to make sure it's behind everything
     for (int i = 0; i < sortedObjects.size(); i++) {
-        if (sortedObjects[i]->getActive()) {
+        if (sortedObjects[i]->getActive() && sortedObjects[i]->getId() != sceneObjects[0]->getId()) {
             if (drawColliders || (selectedObjectIndex != -1 && sortedObjects[i]->getId() == sceneObjects[selectedObjectIndex]->getId())) {
                 if (sortedObjects[i]->getColliderIsActive()) {
                     window.draw(*sortedObjects[i]->getColliderShape());
@@ -544,7 +553,7 @@ void Scene::drawScene(bool drawColliders, RenderWindow& window) const { //draw t
     }
 }
 void Scene::updateScene() { //update the scene
-    for (int i = 0; i < sceneObjects.size(); i++) {
+    for (int i = 1; i < sceneObjects.size(); i++) { //Start from 1 because the first object is the camera
         if (sceneObjects[i]->getActive())
             sceneObjects[i]->updateScripts();
     }
@@ -552,6 +561,8 @@ void Scene::updateScene() { //update the scene
     lastPositions.clear();
     for (int i = 0; i < sceneObjects.size(); i++)
         addLastPosition(sceneObjects[i]->getPosition()); //Last positions are used to reset the velocity of objects when they collide (to prevent them from going through each other)
+    if (sceneObjects.size() > 0)
+        sceneObjects[0]->updateScripts(); //Update the camera after the objects (in case its position is changed by a script)
 }
 void Scene::endScene() { //end the scene
     //cout<<"End scene\n";
@@ -655,10 +666,15 @@ void Scene::saveScene() { //save the scene to its path
 	ofstream out(scenePath + "/" + sceneName + ".poscene");
 	out << *this;
 	out.close();
+    GameFilesWindow* gameFiles = dynamic_cast<GameFilesWindow*>(Game::getGameFilesWindow());
+    if (gameFiles)
+        gameFiles->loadFiles();
 }
 
 Scene::~Scene() {
+    cout << "Clearing objects" << endl;
     clearObjects();
 	if (sceneBeforePlaying)
 		delete sceneBeforePlaying;
+    cout << "Finished destroying scene" << endl;
 } //destructor

@@ -45,6 +45,7 @@ void InspectorWindow::makeDefaultFields() {
 
             Button* tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Square");
             tmpButton->setOnClick([]() {
+                Game::addControlZScene();
                 Game::getCurrentScene()->changeSelectedColliderType(0);
 				});
             addButton(*tmpButton);
@@ -52,6 +53,7 @@ void InspectorWindow::makeDefaultFields() {
 
             tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 90, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Circle");
             tmpButton->setOnClick([]() {
+                Game::addControlZScene();
                 Game::getCurrentScene()->changeSelectedColliderType(1);
                 });
             addButton(*tmpButton);
@@ -59,6 +61,7 @@ void InspectorWindow::makeDefaultFields() {
 
             tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 170, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Triangle");
             tmpButton->setOnClick([]() {
+                Game::addControlZScene();
 				Game::getCurrentScene()->changeSelectedColliderType(2);
 				});
             addButton(*tmpButton);
@@ -66,6 +69,7 @@ void InspectorWindow::makeDefaultFields() {
 
             tmpButton = new Button(*Game::getFont(), Vector2f(position.x + 250, position.y + title.getCharacterSize() + 10 + yLevel * 30), Vector2f(70, 20), "Hexagon");
             tmpButton->setOnClick([]() {
+                Game::addControlZScene();
                 Game::getCurrentScene()->changeSelectedColliderType(3);
                 });
             addButton(*tmpButton);
@@ -146,6 +150,7 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
 
     scriptAddDropdown.setCallback([sc](int index) {
         if (Game::getCurrentScene()->getSelectedObjectIndex() != -1) {
+            Game::addControlZScene();
 			Game::getCurrentScene()->addScriptToSelectedObject(sc->getElementName(index));
 			dynamic_cast<InspectorWindow*>(Game::getInspector())->makeCustomFields();
 		}

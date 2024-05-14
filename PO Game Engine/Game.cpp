@@ -90,7 +90,7 @@ bool Game::getIsPlaying() { //get if the game is playing
 }
 void Game::setIsPlaying(bool isPlaying) { //set if the game is playing
 	Game::isPlaying = isPlaying;
-	GameTime::getInstance()->reset();
+	Singleton<GameTime>::getInstance().reset();
 	if (isPlaying && currentScene) {
 		isOverGameWindow = true;
 		currentScene->startScene();
@@ -119,13 +119,6 @@ void Game::setGizmo(Gizmo* gizmo) { //set the gizmo
 	Game::gizmo = gizmo;
 }
 
-Texture* Game::getFolderTexture() { //get the folder texture
-	return folderTexture;
-}
-void Game::setFolderTexture(Texture* texture) { //set the folder texture
-	folderTexture = texture;
-}
-
 void Game::loadScene(const string& scenePath) { //load the scene
 	if (isPlaying) {
 		return;
@@ -133,6 +126,7 @@ void Game::loadScene(const string& scenePath) { //load the scene
 	if (currentScene) {
 		delete currentScene;
 	}
+	clearControlZScenes();
 	dynamic_cast<HierarchyWindow*>(hierarchy)->clearTexts();
 	currentScene = new Scene();
 	ifstream file(scenePath);
@@ -151,6 +145,105 @@ bool Game::getBlockClick() { //get if the click is blocked
 }
 void Game::setBlockClick(bool blockClick) { //set if the click is blocked
 	Game::blockClick = blockClick;
+}
+
+void Game::addControlZScene() { //add a scene to the control z scenes
+	Scene* scene = new Scene(*currentScene, -500);
+	scene->setSelectedObjectIndex(currentScene->getSelectedObjectIndex());
+	scene->setId(currentScene->getId());
+	controlZScenes.push_back(scene);
+	if (controlZScenes.size() > 10) {
+		delete controlZScenes.front();
+		controlZScenes.pop_front();
+	}
+
+	//Clear control Y scenes
+	clearControlYScenes();
+}
+void Game::addControlYScene() { //add a scene to the control y scenes
+	Scene* scene = new Scene(*currentScene, -505);
+	scene->setSelectedObjectIndex(currentScene->getSelectedObjectIndex());
+	scene->setId(currentScene->getId());
+	controlYScenes.push_back(scene);
+	if (controlYScenes.size() > 10) {
+		delete controlYScenes.front();
+		controlYScenes.pop_front();
+	}
+}
+void Game::clearControlZScenes() { //clear the control z scenes
+	for (Scene* scene : controlZScenes) {
+		if (scene != NULL && scene != currentScene) {
+			scene->setId(-511);
+			delete scene;
+		}
+	}
+	controlZScenes.clear();
+	clearControlYScenes();
+}
+void Game::clearControlYScenes() { //clear the control y scenes
+	for (Scene* scene : controlYScenes) {
+		if (scene != NULL && scene != currentScene) {
+			scene->setId(-510);
+			delete scene;
+		}
+	}
+	controlYScenes.clear();
+}
+Scene* Game::getControlZScene() { //get the control z scene
+	if (controlZScenes.empty()) {
+		return NULL;
+	}
+	Scene* scene = controlZScenes.back();
+	controlZScenes.pop_back();
+	return scene;
+}
+void Game::undo() {
+	if (isPlaying) {
+		return;
+	}
+	if (controlZScenes.empty()) {
+		return;
+	}
+	Scene* scene = getControlZScene();
+	if (scene) {
+		addControlYScene();
+		dynamic_cast<HierarchyWindow*>(hierarchy)->clearTexts();
+		*currentScene = *scene;
+		int slctd = scene->getSelectedObjectIndex();
+		scene->setId(-501);
+		delete scene;
+		scene = NULL;
+		dynamic_cast<HierarchyWindow*>(hierarchy)->changeSelectedObject(slctd);
+	}
+}
+
+void Game::redo() {
+	if (isPlaying) {
+		return;
+	}
+	if (controlYScenes.empty()) {
+		return;
+	}
+	Scene* scene = controlYScenes.back();
+	controlYScenes.pop_back();
+	if (scene) {
+		Scene* scene2 = new Scene(*currentScene, -500);
+		scene2->setSelectedObjectIndex(currentScene->getSelectedObjectIndex());
+		scene2->setId(currentScene->getId());
+		controlZScenes.push_back(scene2);
+		if (controlZScenes.size() > 10) {
+			delete controlZScenes.front();
+			controlZScenes.pop_front();
+		}
+		//addControlZScene();
+		dynamic_cast<HierarchyWindow*>(hierarchy)->clearTexts();
+		*currentScene = *scene;
+		int slctd = scene->getSelectedObjectIndex();
+		scene->setId(-502);
+		delete scene;
+		scene = NULL;
+		dynamic_cast<HierarchyWindow*>(hierarchy)->changeSelectedObject(slctd);
+	}
 }
 
 void Game::clearGame() { //clear the game
@@ -172,9 +265,6 @@ void Game::clearGame() { //clear the game
 	if (gizmo) {
 		gizmo = nullptr;
 	}
-	if (folderTexture) {
-		delete folderTexture;
-	}
 	if (font) {
 		font = nullptr;
 	}
@@ -183,5 +273,11 @@ void Game::clearGame() { //clear the game
 	}
 	if (guiView) {
 		guiView = nullptr;
+	}
+	if (controlZScenes.size() > 0) {
+		clearControlZScenes();
+	}
+	if (controlYScenes.size() > 0) {
+		clearControlYScenes();
 	}
 }

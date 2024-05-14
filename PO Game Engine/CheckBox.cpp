@@ -23,6 +23,7 @@ void CheckBox::handleEvent(Event& event) { //handle the event
 		Vector2f mousePos = Vector2f(event.mouseButton.x, event.mouseButton.y);
 		if (box.getGlobalBounds().contains(mousePos)) {
 			Game::setBlockClick(true);
+			Game::addControlZScene();
 			isChecked = !isChecked;
 			if (isChecked)
 				box.setFillColor(Color::Green);

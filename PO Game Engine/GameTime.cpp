@@ -7,7 +7,7 @@ using namespace sf;
 
 GameTime::GameTime() {
     reset();
-    cout<<"Created the Singleton GameTime"<<endl;
+    cout<<"Created the GameTime"<<endl;
 }
 void GameTime::reset() {
     deltaTime = 0;
@@ -23,11 +23,7 @@ float GameTime::getDeltaTime() const {
 float GameTime::getTime() const {
     return time;
 }
-GameTime* GameTime::getInstance() {
-    static GameTime instance;
-    return &instance;
-}
 GameTime::~GameTime() {
 	//empty
-    cout<<"Destroyed the Singleton GameTime"<<endl;
+    cout<<"Destroyed the GameTime"<<endl;
 }

@@ -22,7 +22,11 @@ void HierarchyWindow::updateElementsWithVerticalOffset(float old) { //update the
 HierarchyWindow::HierarchyWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText) {
     setTitle("Hierarchy");
     Button* createButton = new Button(font, Vector2f(position.x + 10, position.y + size.y - 40), Vector2f(size.x - 20, 30), "Create Object");
-    createButton->setOnClick(createObj);
+    createButton->setOnClick([]() {
+            Game::addControlZScene();
+            createObj();
+        }
+    );
     addButton(*createButton);
     delete createButton;
 

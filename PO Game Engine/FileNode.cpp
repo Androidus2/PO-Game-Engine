@@ -77,6 +77,7 @@ FileNode::~FileNode() { //destructor
 	for (int i = 0; i < children.size(); i++) {
 		delete children[i];
 	}
-	if (icon != nullptr && !isDir)
+	string extension = name.substr(name.find_last_of('.') + 1);
+	if (icon != nullptr && !isDir && extension != "poscene")
 		delete icon;
 }
