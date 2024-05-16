@@ -155,9 +155,13 @@
     <ClCompile Include="ImageField.cpp" />
     <ClCompile Include="InputField.cpp" />
     <ClCompile Include="InspectorWindow.cpp" />
+    <ClCompile Include="KeyBindField.cpp" />
+    <ClCompile Include="KeyboardMoveScript.cpp" />
     <ClCompile Include="PO Game Engine.cpp" />
+    <ClCompile Include="PongBallScript.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="TestScript.cpp" />
+    <ClCompile Include="TextScript.cpp" />
     <ClCompile Include="TopBarWindow.cpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
@@ -184,9 +188,13 @@
     <ClInclude Include="ImageField.h" />
     <ClInclude Include="InputField.h" />
     <ClInclude Include="InspectorWindow.h" />
+    <ClInclude Include="KeyBindField.h" />
+    <ClInclude Include="KeyboardMoveScript.h" />
+    <ClInclude Include="PongBallScript.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="TestScript.h" />
+    <ClInclude Include="TextScript.h" />
     <ClInclude Include="TopBarWindow.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>

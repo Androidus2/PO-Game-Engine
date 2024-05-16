@@ -10,6 +10,9 @@
 
 #include "TestScript.h"
 #include "FollowMouseScript.h"
+#include "TextScript.h"
+#include "KeyboardMoveScript.h"
+#include "PongBallScript.h"
 
 using namespace std;
 using namespace sf;
@@ -269,5 +272,11 @@ BehaviourScript* makeScriptFromString(const string& script) { //Make script from
 		return new TestScript();
 	if (script == "FollowMouseScript")
 		return new FollowMouseScript();
+    if (script == "TextScript")
+		return new TextScript();
+    if (script == "KeyboardMoveScript")
+        return new KeyboardMoveScript();
+    if (script == "PongBallScript")
+        return new PongBallScript();
     throw runtime_error("Script not found");
 }

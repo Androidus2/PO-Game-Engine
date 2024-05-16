@@ -76,7 +76,7 @@ void FollowMouseScript::read(istream& stream) { //read function
 	stream >> smoothnessSpeed;
 	cout<<"Read the values: " << applySmoothness << " " << smoothnessSpeed << endl;
 }
-void FollowMouseScript::write(ostream& stream) { //write function
+void FollowMouseScript::write(ostream& stream) const { //write function
 	//Write the applySmoothness and smoothnessSpeed variables to the file
 	stream << applySmoothness << " ";
 	stream << smoothnessSpeed << " ";

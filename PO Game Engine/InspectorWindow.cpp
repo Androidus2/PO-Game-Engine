@@ -1,6 +1,7 @@
 #include "InspectorWindow.h"
 #include "Utility.h"
 #include "Game.h"
+#include "DebugMacro.h"
 
 using namespace std;
 using namespace sf;
@@ -19,6 +20,8 @@ void InspectorWindow::updateElementsWithVerticalOffset(float old) {
 		imageFields[i].setPosition(imageFields[i].getPosition() + Vector2f(0, delta));
 	for (int i = 0; i < checkBoxes.size(); i++)
 		checkBoxes[i].setPosition(checkBoxes[i].getPosition() + Vector2f(0, delta));
+    for (int i = 0; i < keyBindFields.size(); i++)
+        keyBindFields[i].setPosition(keyBindFields[i].getPosition() + Vector2f(0, delta));
 }
 void InspectorWindow::makeDefaultFields() {
     int yLevel = 0;
@@ -145,6 +148,9 @@ void InspectorWindow::makeDefaultFields() {
 InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, const Vector2f& size, const string& titleText) : EditorWindow(font, position, size, titleText), scriptAddDropdown(font, Vector2f(position.x + 10, position.y + size.y - 450), Vector2f(size.x / 2, 300)) {
     scriptAddDropdown.addElement("TestScript");
     scriptAddDropdown.addElement("FollowMouseScript");
+    scriptAddDropdown.addElement("TextScript");
+    scriptAddDropdown.addElement("KeyboardMoveScript");
+    scriptAddDropdown.addElement("PongBallScript");
 
     Dropdown* sc = &scriptAddDropdown;
 
@@ -187,6 +193,7 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
     texts.clear();
     imageFields.clear();
     checkBoxes.clear();
+    keyBindFields.clear();
     maxVerticalOffset = 0;
     //Remove all the buttons except for the first 2
     for (int i = 2; i < buttons.size(); i++) {
@@ -237,12 +244,12 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
                         addText(*tmpText);
                     }
                     else if (type == 6) { //Add a label called Y
-                        tmpText->setPosition(inputFields[inputFields.size() - 1].getPosition().x + 110, tmpText->getPosition().y);
+                        tmpText->setPosition(inputFields[inputFields.size() - 1].getPosition().x + 110, tmpText->getPosition().y - 30);
                         tmpText->setString("Y");
                         addText(*tmpText);
                     }
                     tmp = new InputField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "0");
-                    tmp->setPosition(Vector2f(position.x + tmpText->getGlobalBounds().width + 20, tmpText->getPosition().y));
+                    tmp->setPosition(Vector2f(tmpText->getPosition().x + tmpText->getGlobalBounds().width + 10, tmpText->getPosition().y));
                     /*tmp->setOnChange(&Scene::modifySelectedCustom);
                     tmp->setUpdateValue(&Scene::getSelectedCustom);*/
                     tmp->setOnChange([cnt](string value) {
@@ -287,6 +294,19 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
                     delete tmpCheck;
                     cnt++;
                 }
+                else if (type == 8) {
+					KeyBindField* tmpKeyBind = new KeyBindField(*Game::getFont(), Vector2f(position.x + 10, position.y + title.getCharacterSize() + 10), Vector2f(100, 20), "Unknown");
+					tmpKeyBind->setPosition(Vector2f(position.x + tmpText->getGlobalBounds().width + 20, tmpText->getPosition().y));
+                    tmpKeyBind->setOnChange([cnt](string value) {
+						Game::getCurrentScene()->modifySelectedCustom(value, cnt);
+						});
+                    tmpKeyBind->setUpdateValue([cnt]() {
+						return Game::getCurrentScene()->getSelectedCustom(cnt);
+						});
+                    keyBindFields.push_back(*tmpKeyBind);
+					delete tmpKeyBind;
+					cnt++;
+                }
                 delete tmpText;
             }
             //extraOffset += 30 * totalAttributes;
@@ -310,6 +330,9 @@ void InspectorWindow::update() { //update function
         }
         for (int i = 0; i < imageFields.size(); i++) {
             imageFields[i].update();
+        }
+        for (int i = 0; i < keyBindFields.size(); i++) {
+            keyBindFields[i].update();
         }
     }
 }
@@ -335,6 +358,9 @@ void InspectorWindow::handleEvent(Event& event) { //handle event function
         for (int i = 0; i < checkBoxes.size(); i++) {
             checkBoxes[i].handleEvent(event);
         }
+        for (int i = 0; i < keyBindFields.size(); i++) {
+			keyBindFields[i].handleEvent(event);
+		}
     }
 }
 void InspectorWindow::draw(RenderWindow& window) const { //draw function
@@ -354,6 +380,9 @@ void InspectorWindow::draw(RenderWindow& window) const { //draw function
         for (int i = 0; i < checkBoxes.size(); i++) {
 			checkBoxes[i].draw(window);
 		}
+        for (int i = 0; i < keyBindFields.size(); i++) {
+            keyBindFields[i].draw(window);
+        }
         for(int i = 0; i < inputFields.size(); i++)
 			inputFields[i].draw(window);
         for (int i = 2; i < buttons.size(); i++)

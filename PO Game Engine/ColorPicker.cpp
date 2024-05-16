@@ -190,7 +190,8 @@ ColorPicker::ColorPicker(Font& font, const Vector2f& position, const Vector2f& s
     isActive = false;
     isDragglable = true;
 
-
+    topBar.setSize(Vector2f(0, 0));
+    bottomBar.setSize(Vector2f(0, 0));
 }
 void ColorPicker::handleEvent(Event& event) { //handle event function
     if (!isActive)

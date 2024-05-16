@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "SFML\Graphics.hpp"
 #include "SFML\System.hpp"
+#include "DebugMacro.h"
 
 
 class Scene { //Scene class
@@ -48,6 +49,7 @@ public:
     bool sceneHasObject(int id) const;
     int getIndexOfObject(int id) const;
     void removeSelectedObject();
+    GameObject* getObjectByTag(const std::string& tag) const;
 
     void moveSelectedObject(sf::Vector2f moveBy);
 

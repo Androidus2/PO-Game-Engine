@@ -148,11 +148,15 @@ void Game::setBlockClick(bool blockClick) { //set if the click is blocked
 }
 
 void Game::addControlZScene() { //add a scene to the control z scenes
+	if (isPlaying) {
+		return;
+	}
 	Scene* scene = new Scene(*currentScene, -500);
 	scene->setSelectedObjectIndex(currentScene->getSelectedObjectIndex());
 	scene->setId(currentScene->getId());
 	controlZScenes.push_back(scene);
 	if (controlZScenes.size() > 10) {
+		controlZScenes.front()->setId(-510);
 		delete controlZScenes.front();
 		controlZScenes.pop_front();
 	}

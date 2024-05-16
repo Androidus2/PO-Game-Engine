@@ -1,14 +1,14 @@
-Pong
+Scene
 -1
-1406.39 382.399 3911.35 2200.14
-3
-GameObject
-Pallete
-1 0 0 0 477.597 174.669 0 1 3.36 255 255 255 32
-Default
+251.324 -25.2892 1920 1080
+4
+Camera
+Camera
+1 0 0 0 0 0 0 1920 1080 0 0 0 255
+Camera
 None
 0 0 0 1 1
-0 1 0 1 0 0
+0 0 0 1 1 0
 4
 0 0
 100 0
@@ -16,24 +16,52 @@ None
 0 100
 0
 GameObject
-Ball
-1 0 0 0 1018.45 246.254 0 1 1 255 255 255 68
+Object0
+1 0 0 0 -558.995 -11.5702 0 0.77 5.88 255 255 255 255
+Paleta
+None
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+KeyboardMoveScript
+0
+400
+W
+S
+A
+D
+GameObject
+Object1
+1 0 0 0 0 0 45 1 1 0 255 0 255
 Default
 None
 0 0 0 1 1
 1 1 0 1 1 0
 50
-0
-GameObject
-Pallete
-1 0 0 0 1854.72 164.483 0 1 3.36 255 255 255 32
-Default
+1
+PongBallScript
+Paleta End 200 GameObject
+Object0
+1 0 0 0 741.461 12.2314 0 0.77 5.88 255 255 255 255
+Paleta
 None
 0 0 0 1 1
-0 1 0 1 0 0
+0 1 0 1 1 0
 4
 0 0
 100 0
 100 100
 0 100
+1
+KeyboardMoveScript
 0
+400
+I
+K
+J
+L

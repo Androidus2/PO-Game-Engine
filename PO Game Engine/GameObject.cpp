@@ -111,6 +111,12 @@ GameObject* GameObject::clone() const { //clone function (used for adding object
     return new GameObject(*this);
 }
 
+void GameObject::drawObject(RenderWindow& window) const { //draw the object
+    window.draw(*this);
+	for (int i = 0; i < attachedScripts.size(); i++)
+		attachedScripts[i]->drawScriptElements(*this);
+}
+
 string GameObject::getName() const { //get name
     return this->name;
 }
@@ -165,6 +171,14 @@ int GameObject::scriptIndex(BehaviourScript* script) const { //get the index of 
 			return i;
 	}
 	return -1;
+}
+int GameObject::scriptIndex(const string& scriptName) const { //get the index of a script
+    //Loop and check if there is a script with the same name
+    for (int i = 0; i < attachedScripts.size(); i++) {
+     	if (attachedScripts[i]->getScriptName() == scriptName)
+     		return i;
+    }
+    return -1;
 }
 void GameObject::removeScript(BehaviourScript* script) { //remove a script from the object
     removeScript(scriptIndex(script));

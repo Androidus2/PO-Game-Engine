@@ -15,6 +15,8 @@ public:
     virtual void trigger(GameObject& gameObject, GameObject& triggerObject) = 0;
     virtual void destroy(GameObject& gameObject) = 0;
 
+    virtual void drawScriptElements(const GameObject& gameObject) const = 0;
+
     virtual int getAttributeCount() const { return attributeCount; }
     virtual std::string getAttributeName(int index) const = 0;
     virtual int getAttributeType(int index) const = 0;
@@ -25,7 +27,7 @@ public:
     virtual void setAttribute(int index, std::string value) = 0;
 
     virtual void read(std::istream& stream) = 0;
-    virtual void write(std::ostream& stream) = 0;
+    virtual void write(std::ostream& stream) const = 0;
 
     virtual ~BehaviourScript() {}
 };

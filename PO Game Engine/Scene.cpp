@@ -8,6 +8,8 @@
 #include "HierarchyWindow.h"
 #include "GameFilesWindow.h"
 #include "Game.h"
+#include "DebugMacro.h"
+#include "BehaviourScript.h"
 
 using namespace std;
 using namespace sf;
@@ -94,7 +96,7 @@ void Scene::setObjectByIndex(int index, const GameObject* object) { //set an obj
     }
 }
 void Scene::clearObjects() { //clear all objects in the scene
-    cout << "Clearing objects "<<sceneObjects.size() << " " << sceneId << " " << getSelectedSceneId() << endl;
+    //cout << "Clearing objects "<<sceneObjects.size() << " " << sceneId << " " << getSelectedSceneId() << endl;
     for (int i = 0; i < sceneObjects.size(); i++) {
         delete sceneObjects[i];
         if (sceneId == getSelectedSceneId())
@@ -104,11 +106,11 @@ void Scene::clearObjects() { //clear all objects in the scene
     sceneObjects.clear();
     clearLastPositions();
     selectedObjectIndex = -1;
-    cout<<sceneObjects.size()<<endl;
+    //cout<<sceneObjects.size()<<endl;
 }
 void Scene::addObject(const GameObject* object) { //add an object to the scene
     sceneObjects.push_back(object->clone());
-    cout << "Adding object to scene with id " << sceneId << " " << getSelectedSceneId() << endl;
+    //cout << "Adding object to scene with id " << sceneId << " " << getSelectedSceneId() << endl;
     if (sceneId == getSelectedSceneId()) {
         addTextToHierarchy(object->getName());
     }
@@ -161,6 +163,13 @@ void Scene::removeSelectedObject() { //remove the selected object
         eraseLastPosition(selectedObjectIndex);
         selectedObjectIndex = -1;
     }
+}
+GameObject* Scene::getObjectByTag(const string& tag) const { //get an object by tag
+    for (int i = 0; i < sceneObjects.size(); i++) {
+		if (sceneObjects[i]->getTag() == tag)
+			return sceneObjects[i];
+	}
+	return NULL;
 }
 
 void Scene::moveSelectedObject(Vector2f moveBy) { //move the selected object
@@ -402,7 +411,7 @@ string Scene::getSelectedCustomName(int index) const { //get the name of a custo
 }
 int Scene::getSelectedCustomType(int index) const {
     //get the type of a custom value of the selected object
-    //0 - string, 1 - float, 2 - color, 3 - int, 4 - bool, 5 - Vector2f.x, 6 - Vector2f.y, 7 - Texture path
+    //0 - string, 1 - float, 2 - color, 3 - int, 4 - bool, 5 - Vector2f.x, 6 - Vector2f.y, 7 - Texture path, 8 - Keybind string
     if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
         if (index == 0)
             return 0;
@@ -479,14 +488,16 @@ string Scene::getNameOfScriptOnSelectedObject(int scriptIndex) const { //get the
 }
 void Scene::addScriptToSelectedObject(const string& scriptName) { //add a script to the selected object
     if (selectedObjectIndex < sceneObjects.size() && selectedObjectIndex >= 0) {
+        BehaviourScript* script = NULL;
         try {
-            BehaviourScript* script = makeScriptFromString(scriptName);
+            script = makeScriptFromString(scriptName);
             sceneObjects[selectedObjectIndex]->addScript(script);
-            delete script;
         }
         catch (const exception& e) {
 			cout << e.what() << endl;
 		}
+        if(script)
+            delete script;
     }
 }
 void Scene::removeScriptFromSelectedObject(int scriptIndex) { //remove a script from the selected object
@@ -531,6 +542,7 @@ void Scene::startScene() { //start the scene
     sceneViewZoomBeforePlaying = Game::getSceneView()->getSize();
     sceneBeforePlaying = new Scene(*this, -500);
     for (int i = 0; i < sceneObjects.size(); i++) {
+        lastPositions[i] = sceneObjects[i]->getPosition();
         if (sceneObjects[i]->getActive())
             sceneObjects[i]->startScripts();
     }
@@ -544,11 +556,11 @@ void Scene::drawScene(bool drawColliders, RenderWindow& window) const { //draw t
     for (int i = 0; i < sortedObjects.size(); i++) {
         if (sortedObjects[i]->getActive() && sortedObjects[i]->getId() != sceneObjects[0]->getId()) {
             if (drawColliders || (selectedObjectIndex != -1 && sortedObjects[i]->getId() == sceneObjects[selectedObjectIndex]->getId())) {
-                if (sortedObjects[i]->getColliderIsActive()) {
+                if (sortedObjects[i]->getColliderIsActive() && !Game::getIsOverGameWindow()) {
                     window.draw(*sortedObjects[i]->getColliderShape());
                 }
             }
-            window.draw(*sortedObjects[i]);
+            sortedObjects[i]->drawObject(window);
         }
     }
 }
@@ -672,9 +684,9 @@ void Scene::saveScene() { //save the scene to its path
 }
 
 Scene::~Scene() {
-    cout << "Clearing objects" << endl;
+    //cout << "Clearing objects" << endl;
     clearObjects();
 	if (sceneBeforePlaying)
 		delete sceneBeforePlaying;
-    cout << "Finished destroying scene" << endl;
+    //cout << "Finished destroying scene" << endl;
 } //destructor

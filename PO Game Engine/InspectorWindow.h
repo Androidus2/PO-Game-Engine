@@ -4,6 +4,7 @@
 #include "ImageField.h"
 #include "CheckBox.h"
 #include "Dropdown.h"
+#include "KeyBindField.h"
 
 
 class InspectorWindow : public EditorWindow { //Inspector window class
@@ -12,6 +13,7 @@ private:
     std::vector<EditableColor> colors;
     std::vector<ImageField> imageFields;
     std::vector<CheckBox> checkBoxes;
+    std::vector<KeyBindField> keyBindFields;
     void makeDefaultFields();
     void updateElementsWithVerticalOffset(float old) override;
 public:

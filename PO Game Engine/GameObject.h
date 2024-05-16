@@ -5,6 +5,7 @@
 #include "SFML\System.hpp"
 #include "SFML\Graphics.hpp"
 #include "Collider.h"
+#include "DebugMacro.h"
 
 class BehaviourScript;
 
@@ -30,6 +31,8 @@ public:
     GameObject& operator=(const GameObject& gameObject);
     virtual GameObject* clone() const;
 
+    void drawObject(sf::RenderWindow& window) const;
+
     std::string getName() const;
     void setName(std::string name);
 
@@ -50,6 +53,7 @@ public:
 
     void addScript(BehaviourScript* script);
     int scriptIndex(BehaviourScript* script) const;
+    int scriptIndex(const std::string& scriptName) const;
     void removeScript(BehaviourScript* script);
     void removeScript(int index);
     void removeAllScripts();
