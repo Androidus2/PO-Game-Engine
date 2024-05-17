@@ -13,6 +13,7 @@
 #include "TextScript.h"
 #include "KeyboardMoveScript.h"
 #include "PongBallScript.h"
+#include "SpawnerScript.h"
 
 using namespace std;
 using namespace sf;
@@ -278,5 +279,7 @@ BehaviourScript* makeScriptFromString(const string& script) { //Make script from
         return new KeyboardMoveScript();
     if (script == "PongBallScript")
         return new PongBallScript();
+    if(script == "SpawnerScript")
+		return new SpawnerScript();
     throw runtime_error("Script not found");
 }

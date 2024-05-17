@@ -18,8 +18,12 @@ D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HierarchyWindow.
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\ImageField.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\ImageField.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\InputField.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\InputField.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\InspectorWindow.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\InspectorWindow.obj
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\KeyBindField.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\KeyBindField.obj
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\KeyboardMoveScript.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\KeyboardMoveScript.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PO Game Engine.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\PO Game Engine.obj
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\PongBallScript.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\PongBallScript.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Scene.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\Scene.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\TestScript.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\TestScript.obj
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\TextScript.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\TextScript.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\TopBarWindow.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\TopBarWindow.obj
 D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\Utility.cpp;D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\x64\Release\Utility.obj

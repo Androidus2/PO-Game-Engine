@@ -25,7 +25,7 @@ void InspectorWindow::updateElementsWithVerticalOffset(float old) {
 }
 void InspectorWindow::makeDefaultFields() {
     int yLevel = 0;
-    for (int i = 0; i < 22; i++) {
+    for (int i = 0; i < 23; i++) {
         int type = Game::getCurrentScene()->getSelectedCustomType(i);
 
         if (i == 12) {
@@ -151,6 +151,7 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
     scriptAddDropdown.addElement("TextScript");
     scriptAddDropdown.addElement("KeyboardMoveScript");
     scriptAddDropdown.addElement("PongBallScript");
+    scriptAddDropdown.addElement("SpawnerScript");
 
     Dropdown* sc = &scriptAddDropdown;
 
@@ -206,7 +207,7 @@ void InspectorWindow::makeCustomFields() { //make custom fields function (used t
         InputField* tmp = NULL;
         Text* tmpText = NULL;
         Button* tmpButton = NULL;
-        int cnt = 22;
+        int cnt = 23;
         float extraOffset = 15;
         for (int i = 0; i < selectedObject->getScriptsCount(); i++) {
             if (texts.size() > 0)

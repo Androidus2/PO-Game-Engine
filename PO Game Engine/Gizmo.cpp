@@ -128,7 +128,7 @@ void Gizmo::update() { //update function
                 float newAngle = currentRotation + deltaAngle;
 
                 // Set the new rotation
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(newAngle), 4);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(newAngle), 5);
 
                 // Rotate the rotation box
                 rotationBox.setRotation(newAngle);
@@ -193,8 +193,8 @@ void Gizmo::update() { //update function
                 float scX = (drag.x * 2 / (sideLengthX * initialScale.x) + 1) * initialScale.x;
                 float scY = (drag.y * 2 / (sideLengthY * initialScale.y) + 1) * initialScale.y;
 
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(scX), 5);
-                Game::getCurrentScene()->modifySelectedCustom(floatToString(scY), 6);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scX), 6);
+                Game::getCurrentScene()->modifySelectedCustom(floatToString(scY), 7);
 
                 //dragStart = dragEnd;
 

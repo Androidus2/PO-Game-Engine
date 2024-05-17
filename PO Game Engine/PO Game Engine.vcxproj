@@ -160,6 +160,7 @@
     <ClCompile Include="PO Game Engine.cpp" />
     <ClCompile Include="PongBallScript.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SpawnerScript.cpp" />
     <ClCompile Include="TestScript.cpp" />
     <ClCompile Include="TextScript.cpp" />
     <ClCompile Include="TopBarWindow.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="PongBallScript.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="SpawnerScript.h" />
     <ClInclude Include="TestScript.h" />
     <ClInclude Include="TextScript.h" />
     <ClInclude Include="TopBarWindow.h" />

@@ -123,16 +123,37 @@ void Game::loadScene(const string& scenePath) { //load the scene
 	if (isPlaying) {
 		return;
 	}
+
+	Scene* newScene = new Scene();
+	try{
+		ifstream file(scenePath);
+		newScene->read(file);
+		file.close();
+		delete newScene;
+	}
+	catch (exception e) {
+		cout<<"Error loading scene: "<<e.what()<<endl;
+		delete newScene;
+		return;
+	}
+	catch (...) {
+		cout<<"Error loading scene"<<endl;
+		delete newScene;
+		return;
+	}
+
 	if (currentScene) {
 		delete currentScene;
 	}
 	clearControlZScenes();
 	dynamic_cast<HierarchyWindow*>(hierarchy)->clearTexts();
 	currentScene = new Scene();
-	ifstream file(scenePath);
+
+	ifstream file(scenePath); //We have a valid scene, so we can load it
 	currentScene->read(file);
-	currentScene->setSelectedObjectIndex(-1);
 	file.close();
+
+	currentScene->setSelectedObjectIndex(-1);
 	string pathWithoutFile = scenePath.substr(0, scenePath.find_last_of('/') + 1);
 	currentScene->setScenePath(pathWithoutFile);
 	string sceneName = scenePath.substr(scenePath.find_last_of('/') + 1);

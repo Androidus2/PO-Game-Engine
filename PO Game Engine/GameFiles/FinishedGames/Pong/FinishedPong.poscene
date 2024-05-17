@@ -1,0 +1,148 @@
+FinishedPong
+-1
+9.20543 -47.901 3452.48 1942.03
+9
+Camera
+Camera
+1 0 0 0 0 0 0 1920 1080 0 0 0 255
+Camera
+None
+0 0 0 1 1
+0 0 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+0
+GameObject
+Left
+1 0 0 0 -909.242 -0.264416 0 0.5 2 255 255 255 255
+Paleta
+None
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+KeyboardMoveScript
+0
+800
+W
+S
+A
+D
+GameObject
+Ball
+1 0 0 0 0 0 45 0.5 0.5 0 255 0 255
+Default
+None
+0 0 0 1 1
+1 1 1 1 1 0
+50
+1
+PongBallScript
+Paleta
+End
+ScoreText
+1500
+GameObject
+Right
+1 0 0 0 894.886 19.6694 0 0.5 2 255 255 255 255
+Paleta
+None
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+KeyboardMoveScript
+0
+800
+Up
+Down
+Left
+Right
+GameObject
+BottomWall
+1 0 0 0 0 600 0 20 1.4 255 255 255 255
+Default
+None
+0 0 0 1 1
+0 1 1 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+0
+GameObject
+TopWall
+1 0 0 0 0 -600 0 20 1.4 255 255 255 255
+Default
+None
+0 0 0 1 1
+0 1 1 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+0
+GameObject
+GameEnderLeft
+1 0 0 0 -1100 0 0 2 13.41 255 255 255 255
+End
+None
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+0
+GameObject
+GameEnderRight
+1 0 0 0 1100 0 0 2 13.41 255 255 255 255
+End
+None
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+0
+GameObject
+ScoreText
+1 0 0 0 0 0 0 1 1 255 255 255 0
+ScoreText
+None
+0 0 0 1 1
+0 0 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+TextScript
+0 - 0
+-100
+-400
+FFFFFFFF
+0
+1
+1
+100
+0
+000000FF
+0

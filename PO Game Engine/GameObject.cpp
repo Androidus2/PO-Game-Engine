@@ -39,8 +39,14 @@ istream& GameObject::pRead(istream& in) { //private read function
 		in >> scriptName;
 		BehaviourScript* script = makeScriptFromString(scriptName);
         if (script) {
-			script->read(in);
-			addScript(script);
+            try {
+                script->read(in);
+                addScript(script);
+            }
+            catch (...) {
+                delete script;
+                throw;
+            }
             delete script;
 		}
 	}
