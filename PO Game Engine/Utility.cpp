@@ -14,6 +14,8 @@
 #include "KeyboardMoveScript.h"
 #include "PongBallScript.h"
 #include "SpawnerScript.h"
+#include "HoleyCastleEnemyScript.h"
+#include "HoleyCastleMainScript.h"
 
 using namespace std;
 using namespace sf;
@@ -281,5 +283,9 @@ BehaviourScript* makeScriptFromString(const string& script) { //Make script from
         return new PongBallScript();
     if(script == "SpawnerScript")
 		return new SpawnerScript();
+    if(script == "HoleyCastleEnemyScript")
+        return new HoleyCastleEnemyScript();
+    if(script == "HoleyCastleMainScript")
+        return new HoleyCastleMainScript();
     throw runtime_error("Script not found");
 }

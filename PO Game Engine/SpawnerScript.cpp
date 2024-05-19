@@ -36,6 +36,8 @@ void SpawnerScript::update(GameObject& object) {
 			if(entitiesReference[i] == nullptr || !ok)
 				continue;
 			for (int j = 0; j < entityCounts[i]; j++) {
+				if(!ok)
+					break;
 				GameObject* entity = entitiesReference[i]->clone();
 				int maxX = (maxPosition.x - minPosition.x);
 				int maxY = (maxPosition.y - minPosition.y);
@@ -44,6 +46,8 @@ void SpawnerScript::update(GameObject& object) {
 				if(maxY != 0)
 					maxY = rand() % maxY;
 				entity->setPosition(Vector2f(maxX + minPosition.x, maxY + minPosition.y));
+				entity->setActive(true);
+				entity->changeId();
 				Game::getCurrentScene()->addObject(entity);
 				delete entity;
 				entityCounts[i]--;

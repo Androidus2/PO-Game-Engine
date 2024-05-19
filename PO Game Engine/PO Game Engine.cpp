@@ -76,11 +76,19 @@ int main()
         Font font;
         font.loadFromFile("Resources/Roboto-Black.ttf");
         Game::setFont(&font);
+
+        Image icon;
+        if(icon.loadFromFile("Resources/Logo.png"))
+            window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+        else
+            cout<<"Failed to load icon"<<endl;
+        
+        
         //window.setFramerateLimit(60);
 
 
         Singleton<EditorTextureManager>::getInstance().loadTexture("Folder", "Resources/Folder.png");
-        Singleton<EditorTextureManager>::getInstance().loadTexture("Sans", "Resources/Sans.png");
+        Singleton<EditorTextureManager>::getInstance().loadTexture("Logo", "Resources/Logo.png");
 
         View gameView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
         gameView.setViewport(FloatRect(0.13177083f, 0.04814f, 0.684375f, 0.672222f));

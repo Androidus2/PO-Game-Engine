@@ -129,6 +129,12 @@
     <ClCompile Include="SpawnerScript.cpp">
       <Filter>Source Files\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="HoleyCastleEnemyScript.cpp">
+      <Filter>Source Files\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="HoleyCastleMainScript.cpp">
+      <Filter>Source Files\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestScript.h">
@@ -225,6 +231,12 @@
       <Filter>Header Files\Scripts</Filter>
     </ClInclude>
     <ClInclude Include="SpawnerScript.h">
+      <Filter>Header Files\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="HoleyCastleEnemyScript.h">
+      <Filter>Header Files\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="HoleyCastleMainScript.h">
       <Filter>Header Files\Scripts</Filter>
     </ClInclude>
   </ItemGroup>

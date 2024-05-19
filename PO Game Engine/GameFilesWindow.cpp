@@ -53,7 +53,7 @@ void GameFilesWindow::makeTree(FileNode* node) { //make tree function
         }
         else if (node->childIndex(name) == -1 && (name.find(".poscene") != string::npos)) {
             FileNode* tmp = new FileNode(name, false);
-            tmp->setIcon(Singleton<EditorTextureManager>::getInstance().getTexture("Sans"));
+            tmp->setIcon(Singleton<EditorTextureManager>::getInstance().getTexture("Logo"));
             node->addChild(tmp);
         }
     }

@@ -1,7 +1,7 @@
 HoleyCastle
 -1
--55.6568 -12.106 2057.87 1157.55
-33
+-5.76319 4.67914 2616.59 1471.84
+35
 Camera
 Camera
 1 0 0 0 0 0 0 1920 1080 14 118 14 255
@@ -69,7 +69,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/castlewall.png
 0
 GameObject
 Enemy
-1 0 100 0 -850.308 -64.035 0 0.5 1 255 255 255 255
+0 0 100 0 -850.308 -64.035 0 0.5 1 255 255 255 255
 Enemy
 GameFiles/FinishedGames/HoleyCastle/Assets/defaultenemy.psd
 0 0 0 1 1
@@ -79,7 +79,10 @@ GameFiles/FinishedGames/HoleyCastle/Assets/defaultenemy.psd
 100 0
 100 100
 0 100
-0
+1
+HoleyCastleEnemyScript
+100 200 5 10
+HoleyCastle
 GameObject
 Tree
 1 100 0 0 880.621 497.188 0 1 1.3 255 255 255 255
@@ -147,7 +150,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 222.856 460.516 0 1 1.3 255 255 255 255
+1 99 0 0 222.856 460.516 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -277,7 +280,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 -835.833 479.649 0 1 1.3 255 255 255 255
+1 101 0 0 -835.833 479.649 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -303,7 +306,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 -729.338 509.943 0 1 1.3 255 255 255 255
+1 101 0 0 -729.338 509.943 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -316,7 +319,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 -503.819 509.943 0 1 1.3 255 255 255 255
+1 101 0 0 -503.819 509.943 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -329,7 +332,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 -356.604 503.566 0 1 1.3 255 255 255 255
+1 101 0 0 -356.604 503.566 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -342,7 +345,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 -43.3827 517.915 0 1 1.3 255 255 255 255
+1 101 0 0 -43.3827 517.915 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -355,7 +358,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 205.628 519.51 0 1 1.3 255 255 255 255
+1 101 0 0 205.628 519.51 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -368,7 +371,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 370.07 522.699 0 1 1.3 255 255 255 255
+1 101 0 0 370.07 522.699 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -381,7 +384,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 532.945 498.782 0 1 1.3 255 255 255 255
+1 101 0 0 532.945 498.782 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -394,7 +397,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Tree
-1 100 0 0 739.671 497.188 0 1 1.3 255 255 255 255
+1 101 0 0 739.671 497.188 0 1 1.3 255 255 255 255
 Default
 GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0 0 0 1 1
@@ -407,16 +410,12 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Hole
-1 0 0 0 -83.9274 -8.42064 0 1 1 255 255 255 255
-Hole
+0 0 0 0 -83.9274 -8.42064 0 1 1 255 255 255 255
+HoleModel
 GameFiles/FinishedGames/HoleyCastle/Assets/defaulthole.psd
 0 0 0 1 1
-0 1 1 1 1 0
-4
-0 0
-100 0
-100 100
-0 100
+1 1 1 1 1 0
+50
 0
 GameObject
 Spawner
@@ -438,3 +437,50 @@ SpawnerScript
 1
 Enemy
 10
+GameObject
+MoneyText
+1 0 0 0 400 100 0 1 1 255 255 255 0
+MoneyText
+None
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+TextScript
+Money: 0
+0
+-500
+FFFFFFFF
+0
+1
+1
+50
+0
+000000FF
+0
+GameObject
+HoleyCastle
+1 0 0 0 400 100 0 1 1 255 255 255 0
+HoleyCastle
+None
+0 0 0 1 1
+0 1 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+HoleyCastleMainScript
+HoleModel
+0
+30
+0
+0
+1
+5 100 150 200 250 300 
+5 1 1.5 2 2.5 3 

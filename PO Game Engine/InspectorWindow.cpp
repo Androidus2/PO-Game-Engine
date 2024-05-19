@@ -152,6 +152,8 @@ InspectorWindow::InspectorWindow(const Font& font, const Vector2f& position, con
     scriptAddDropdown.addElement("KeyboardMoveScript");
     scriptAddDropdown.addElement("PongBallScript");
     scriptAddDropdown.addElement("SpawnerScript");
+    scriptAddDropdown.addElement("HoleyCastleEnemyScript");
+    scriptAddDropdown.addElement("HoleyCastleMainScript");
 
     Dropdown* sc = &scriptAddDropdown;
 
