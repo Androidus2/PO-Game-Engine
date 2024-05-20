@@ -1,6 +1,6 @@
 HoleyCastle
 -1
--5.76319 4.67914 2616.59 1471.84
+184.97 47.2172 2792.76 1570.94
 35
 Camera
 Camera
@@ -443,7 +443,7 @@ MoneyText
 MoneyText
 None
 0 0 0 1 1
-0 1 0 1 1 0
+0 0 0 1 1 0
 4
 0 0
 100 0
@@ -468,19 +468,10 @@ HoleyCastle
 HoleyCastle
 None
 0 0 0 1 1
-0 1 0 1 1 0
+0 0 0 1 1 0
 4
 0 0
 100 0
 100 100
 0 100
-1
-HoleyCastleMainScript
-HoleModel
 0
-30
-0
-0
-1
-5 100 150 200 250 300 
-5 1 1.5 2 2.5 3 

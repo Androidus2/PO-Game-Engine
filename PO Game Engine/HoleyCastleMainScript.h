@@ -12,6 +12,10 @@ private:
 	std::vector<float> sizePerLevel;
 	int maxHoles;
 
+	std::vector<float> damageCostPerLevel;
+	std::vector<float> sizeCostPerLevel;
+	std::vector<float> holesCostPerLevel;
+
 	int damageLevel;
 	int sizeLevel;
 	int holesLevel;

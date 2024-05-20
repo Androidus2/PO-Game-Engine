@@ -35,11 +35,15 @@ void HoleyCastleEnemyScript::trigger(GameObject& object, GameObject& triggerObje
 			//Add the object to the collisionIds set
 			collisionIds.insert(triggerObject.getId());
 			//Decrease the health of the object
-			health -= 100; //Will change later to be based on the hole's depth
+			GameObject* mainScriptObject = Game::getCurrentScene()->getObjectByTag(holeyCastleTag);
+			/*if (mainScriptObject != nullptr) {
+				health -= valoarea corecta
+			}*/
+			health -= 100;
 			//Check if the health is less than or equal to 0
 			if (health <= 0) {
 				//Destroy the object
-				GameObject* mainScriptObject = Game::getCurrentScene()->getObjectByTag(holeyCastleTag);
+				
 				if (mainScriptObject != nullptr) {
 					mainScriptObject->setAttributeOnScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), 1, floatToString(stof(mainScriptObject->getAttributeFromScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), 1)) + moneyOnDeath));
 				}
