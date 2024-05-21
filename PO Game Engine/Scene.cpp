@@ -111,10 +111,15 @@ void Scene::clearObjects() { //clear all objects in the scene
 void Scene::addObject(const GameObject* object) { //add an object to the scene
     sceneObjects.push_back(object->clone());
     //cout << "Adding object to scene with id " << sceneId << " " << getSelectedSceneId() << endl;
+    cout<<"Last object is "<<sceneObjects[sceneObjects.size() - 1]->getName()<<endl;
     if (sceneId == getSelectedSceneId()) {
         addTextToHierarchy(object->getName());
     }
     addLastPosition(object->getPosition());
+
+    if(Game::getIsPlaying() && object->getActive())
+		sceneObjects[sceneObjects.size() - 1]->startScripts();
+
 }
 void Scene::removeObjectByIndex(int index) { //remove an object by index
     if (selectedObjectIndex == index)
@@ -166,8 +171,9 @@ void Scene::removeSelectedObject() { //remove the selected object
 }
 GameObject* Scene::getObjectByTag(const string& tag) const { //get an object by tag
     for (int i = 0; i < sceneObjects.size(); i++) {
-		if (sceneObjects[i]->getTag() == tag)
-			return sceneObjects[i];
+        if (sceneObjects[i]->getTag() == tag) {
+            return sceneObjects[i];
+        }
 	}
 	return NULL;
 }

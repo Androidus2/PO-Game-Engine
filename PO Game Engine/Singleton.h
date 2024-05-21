@@ -6,6 +6,9 @@ class Singleton { //Singleton class
 private:
 	T data;
 	Singleton() : data() { std::cout << "Created a singleton" << std::endl; }
+	~Singleton() {
+		std::cout<<"Singleton destroyed"<<std::endl;
+	}
 public:
 	static T& getInstance() {
 		static Singleton<T> instance;
@@ -13,7 +16,4 @@ public:
 	}
 	Singleton(const Singleton&) = delete;
 	Singleton& operator=(const Singleton&) = delete;
-	~Singleton() {
-		std::cout<<"Singleton destroyed"<<std::endl;
-	}
 };

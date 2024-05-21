@@ -21,6 +21,7 @@ SpawnerScript* SpawnerScript::clone() const {
 
 void SpawnerScript::start(GameObject& object) {
 	//initialize the entities reference
+	entitiesReference.clear();
 	for (int i = 0; i < entityTags.size(); i++) {
 		entitiesReference.push_back(Game::getCurrentScene()->getObjectByTag(entityTags[i]));
 	}
@@ -191,6 +192,7 @@ int SpawnerScript::getAttributeType(int index) const {
 			cnt++;
 		}
 	}
+	return -1;
 }
 string SpawnerScript::getAttributeName(int index) const {
 	if (index == 0) {
@@ -226,6 +228,7 @@ string SpawnerScript::getAttributeName(int index) const {
 			cnt++;
 		}
 	}
+	return "";
 }
 
 void SpawnerScript::read(istream& stream) {

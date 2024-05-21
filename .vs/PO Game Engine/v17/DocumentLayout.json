@@ -3,28 +3,16 @@
   "WorkspaceRootPath": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleMainScript.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\HoleyCastleMainScript.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleMainScript.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\HoleyCastleMainScript.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleEnemyScript.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\HoleyCastleEnemyScript.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleEnemyScript.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\HoleyCastleEnemyScript.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Utility.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Utility.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\PO Game Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\PO Game Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\GameObject.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -53,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Utility.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2ACD8D09-0DB5-4B4E-9885-2694DFE4F096}|PO Game Engine\\PO Game Engine.vcxproj|solutionrelative:PO Game Engine\\Utility.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -66,72 +50,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "HoleyCastleMainScript.cpp",
-              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleMainScript.cpp",
-              "RelativeDocumentMoniker": "PO Game Engine\\HoleyCastleMainScript.cpp",
-              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleMainScript.cpp",
-              "RelativeToolTip": "PO Game Engine\\HoleyCastleMainScript.cpp",
-              "ViewState": "AQIAACIAAAAAAAAAAAAAAHkAAABBAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-18T17:47:29.845Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "HoleyCastleMainScript.h",
-              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleMainScript.h",
-              "RelativeDocumentMoniker": "PO Game Engine\\HoleyCastleMainScript.h",
-              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleMainScript.h",
-              "RelativeToolTip": "PO Game Engine\\HoleyCastleMainScript.h",
-              "ViewState": "AQIAABsAAAAAAAAAAAAAABAAAAAmAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-18T17:41:36.954Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "HoleyCastleEnemyScript.cpp",
-              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleEnemyScript.cpp",
-              "RelativeDocumentMoniker": "PO Game Engine\\HoleyCastleEnemyScript.cpp",
-              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleEnemyScript.cpp",
-              "RelativeToolTip": "PO Game Engine\\HoleyCastleEnemyScript.cpp",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAACkAAAAQAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-18T17:27:49.561Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "HoleyCastleEnemyScript.h",
-              "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleEnemyScript.h",
-              "RelativeDocumentMoniker": "PO Game Engine\\HoleyCastleEnemyScript.h",
-              "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\HoleyCastleEnemyScript.h",
-              "RelativeToolTip": "PO Game Engine\\HoleyCastleEnemyScript.h",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAAAsAAAASAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-18T17:21:41.062Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
               "Title": "Utility.h",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Utility.h",
               "RelativeDocumentMoniker": "PO Game Engine\\Utility.h",
               "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Utility.h",
               "RelativeToolTip": "PO Game Engine\\Utility.h",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-16T15:27:58.065Z"
+              "WhenOpened": "2024-05-16T15:27:58.065Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 7,
               "Title": "Utility.cpp",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Utility.cpp",
               "RelativeDocumentMoniker": "PO Game Engine\\Utility.cpp",
@@ -143,7 +79,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
               "Title": "GameObject.h",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\GameObject.h",
               "RelativeDocumentMoniker": "PO Game Engine\\GameObject.h",
@@ -151,11 +87,12 @@
               "RelativeToolTip": "PO Game Engine\\GameObject.h",
               "ViewState": "AQIAADMAAAAAAAAAAAAAADcAAAA5AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-14T18:34:04.507Z"
+              "WhenOpened": "2024-05-14T18:34:04.507Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 5,
               "Title": "GameObject.cpp",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\GameObject.cpp",
               "RelativeDocumentMoniker": "PO Game Engine\\GameObject.cpp",
@@ -167,7 +104,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 8,
               "Title": "Game.h",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.h",
               "RelativeDocumentMoniker": "PO Game Engine\\Game.h",
@@ -179,7 +116,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 9,
               "Title": "Game.cpp",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Game.cpp",
               "RelativeDocumentMoniker": "PO Game Engine\\Game.cpp",
@@ -191,7 +128,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 4,
               "Title": "Scene.h",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.h",
               "RelativeDocumentMoniker": "PO Game Engine\\Scene.h",
@@ -203,31 +140,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Scene.cpp",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.cpp",
               "RelativeDocumentMoniker": "PO Game Engine\\Scene.cpp",
               "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\Scene.cpp",
               "RelativeToolTip": "PO Game Engine\\Scene.cpp",
-              "ViewState": "AQIAAJ4AAAAAAAAAAAAIwHkCAAAAAAAA",
+              "ViewState": "AQIAADcAAAAAAAAAAAAIwK4AAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-11T17:46:54.689Z"
+              "WhenOpened": "2024-05-11T17:46:54.689Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "PO Game Engine.cpp",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\PO Game Engine.cpp",
               "RelativeDocumentMoniker": "PO Game Engine\\PO Game Engine.cpp",
               "ToolTip": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\PO Game Engine.cpp",
               "RelativeToolTip": "PO Game Engine\\PO Game Engine.cpp",
-              "ViewState": "AQIAAEwAAAAAAAAAAAAAAFoAAABIAAAA",
+              "ViewState": "AQIAABsBAAAAAAAAAAAAACoBAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-11T17:37:20.794Z"
+              "WhenOpened": "2024-05-11T17:37:20.794Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 6,
               "Title": "InspectorWindow.cpp",
               "DocumentMoniker": "D:\\C\u002B\u002B Codes\\Visual Studio\\Engine\\PO-Game-Engine\\PO Game Engine\\InspectorWindow.cpp",
               "RelativeDocumentMoniker": "PO Game Engine\\InspectorWindow.cpp",

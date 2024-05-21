@@ -1,11 +1,22 @@
-﻿  HoleyCastleMainScript.cpp
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(30,75): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(56,91): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(103,24): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(105,43): warning C4244: 'argument': conversion from 'unsigned __int64' to 'float', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(111,41): warning C4244: 'argument': conversion from 'unsigned __int64' to 'float', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(117,24): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(130,76): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(144,76): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\HoleyCastleMainScript.cpp(157,76): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+﻿  SpawnerScript.cpp
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(43,14): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(43,14): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(43,14): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(43,14): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(43,14): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(44,14): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(44,14): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(44,14): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(44,14): warning C4244:             T=float
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(44,14): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(87,39): warning C4244: 'argument': conversion from 'unsigned __int64' to 'float', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(99,40): warning C4244: 'argument': conversion from 'const _Ty' to 'float', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(99,40): warning C4244:         with
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(99,40): warning C4244:         [
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(99,40): warning C4244:             _Ty=int
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(99,40): warning C4244:         ]
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(135,14): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(138,14): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(141,42): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\PO Game Engine\SpawnerScript.cpp(249,41): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   PO Game Engine.vcxproj -> D:\C++ Codes\Visual Studio\Engine\PO-Game-Engine\x64\Debug\PO Game Engine.exe

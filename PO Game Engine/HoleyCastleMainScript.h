@@ -16,6 +16,11 @@ private:
 	std::vector<float> sizeCostPerLevel;
 	std::vector<float> holesCostPerLevel;
 
+	float health;
+
+	std::string healthTextTag;
+	GameObject* healthText;
+
 	int damageLevel;
 	int sizeLevel;
 	int holesLevel;

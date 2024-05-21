@@ -1,7 +1,7 @@
 HoleyCastle
 -1
-184.97 47.2172 2792.76 1570.94
-35
+-15.4857 105.018 3056.12 1719.08
+36
 Camera
 Camera
 1 0 0 0 0 0 0 1920 1080 14 118 14 255
@@ -20,7 +20,7 @@ Castle
 1 -49 0 0 600 0 0 5 5 255 255 255 255
 Castle
 GameFiles/FinishedGames/HoleyCastle/Assets/maincastle.png
-0 0 0 1 1
+0 0 0 0.9 3
 0 1 1 1 1 0
 4
 0 0
@@ -81,7 +81,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/defaultenemy.psd
 0 100
 1
 HoleyCastleEnemyScript
-100 200 5 10
+100 100 5 15
 HoleyCastle
 GameObject
 Tree
@@ -410,7 +410,7 @@ GameFiles/FinishedGames/HoleyCastle/Assets/tree.psd
 0
 GameObject
 Hole
-0 0 0 0 -83.9274 -8.42064 0 1 1 255 255 255 255
+0 -100 0 0 -83.9274 -8.42064 0 1 1 255 255 255 255
 HoleModel
 GameFiles/FinishedGames/HoleyCastle/Assets/defaulthole.psd
 0 0 0 1 1
@@ -436,7 +436,7 @@ SpawnerScript
 0.5
 1
 Enemy
-10
+100
 GameObject
 MoneyText
 1 0 0 0 400 100 0 1 1 255 255 255 0
@@ -474,4 +474,39 @@ None
 100 0
 100 100
 0 100
+1
+HoleyCastleMainScript
+HoleModel
+0
+0
+0
+1
+100
+HealthText
+5 100 150 200 250 300 0 100 250 400 500 
+5 1 1.5 2 2.5 3 0 100 250 400 500 5 0 100 250 400 500 
+GameObject
+HealthText
+1 0 0 0 400 100 0 1 1 255 255 255 0
+HealthText
+None
+0 0 0 1 1
+0 0 0 1 1 0
+4
+0 0
+100 0
+100 100
+0 100
+1
+TextScript
+Health: 100
+0
+-400
+FFFFFFFF
+0
+1
+1
+50
+0
+000000FF
 0

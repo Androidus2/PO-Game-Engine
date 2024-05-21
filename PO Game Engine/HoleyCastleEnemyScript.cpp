@@ -36,10 +36,11 @@ void HoleyCastleEnemyScript::trigger(GameObject& object, GameObject& triggerObje
 			collisionIds.insert(triggerObject.getId());
 			//Decrease the health of the object
 			GameObject* mainScriptObject = Game::getCurrentScene()->getObjectByTag(holeyCastleTag);
-			/*if (mainScriptObject != nullptr) {
-				health -= valoarea corecta
-			}*/
-			health -= 100;
+			if (mainScriptObject != nullptr) {
+				int dmgLevel = stoi(mainScriptObject->getAttributeFromScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), 2));
+				float damage = stof(mainScriptObject->getAttributeFromScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), 6 + dmgLevel));
+				health -= damage;
+			};
 			//Check if the health is less than or equal to 0
 			if (health <= 0) {
 				//Destroy the object
@@ -47,6 +48,18 @@ void HoleyCastleEnemyScript::trigger(GameObject& object, GameObject& triggerObje
 				if (mainScriptObject != nullptr) {
 					mainScriptObject->setAttributeOnScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), 1, floatToString(stof(mainScriptObject->getAttributeFromScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), 1)) + moneyOnDeath));
 				}
+				Game::getCurrentScene()->removeObjectById(object.getId());
+			}
+		}
+	}
+
+	if (triggerObject.getTag() == "Castle") {
+		if(collisionIds.find(triggerObject.getId()) == collisionIds.end()) {
+			collisionIds.insert(triggerObject.getId());
+			GameObject* mainScriptObject = Game::getCurrentScene()->getObjectByTag(holeyCastleTag);
+			if(mainScriptObject != nullptr) {
+				int mainScriptAttributeCount = mainScriptObject->getAttributeCountFromScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"));
+				mainScriptObject->setAttributeOnScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), mainScriptAttributeCount - 1, floatToString(stof(mainScriptObject->getAttributeFromScripts(mainScriptObject->scriptIndex("HoleyCastleMainScript"), mainScriptAttributeCount - 1)) - damage));
 				Game::getCurrentScene()->removeObjectById(object.getId());
 			}
 		}
