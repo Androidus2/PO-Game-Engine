@@ -13,6 +13,8 @@ PO Game Engine is a C++ and SFML based engine made in around 2 months which has 
 - **Navigate folders**
 - **Delete files and folders**
 
+  <video src='DemoVideos/GameFilesDemo.mp4' width=540/>
+
 ### Hierarchy View
 - **Display all objects in the scene**
 - **Selection support**
