@@ -29,7 +29,7 @@ void SpawnerScript::start(GameObject& object) {
 }
 void SpawnerScript::update(GameObject& object) {
 	//spawn entities
-	timeSinceLastSpawn += Singleton<GameTime>::getInstance().getDeltaTime();
+	timeSinceLastSpawn += Singleton<GameTime>::getInstance().getData().getDeltaTime();
 	if (timeSinceLastSpawn >= 1 / spawnRate) {
 		timeSinceLastSpawn = 0;
 		bool ok = true;

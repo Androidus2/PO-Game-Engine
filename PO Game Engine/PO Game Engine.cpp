@@ -87,8 +87,8 @@ int main()
         //window.setFramerateLimit(60);
 
 
-        Singleton<EditorTextureManager>::getInstance().loadTexture("Folder", "Resources/Folder.png");
-        Singleton<EditorTextureManager>::getInstance().loadTexture("Logo", "Resources/Logo.png");
+        Singleton<EditorTextureManager>::getInstance().getData().loadTexture("Folder", "Resources/Folder.png");
+        Singleton<EditorTextureManager>::getInstance().getData().loadTexture("Logo", "Resources/Logo.png");
 
         View gameView(Vector2f(window.getSize().x / 2, window.getSize().y / 2), Vector2f(window.getSize().x, window.getSize().y));
         gameView.setViewport(FloatRect(0.13177083f, 0.04814f, 0.684375f, 0.672222f));
@@ -105,7 +105,7 @@ int main()
         Game::setInspector(&inspectorWindow);
         Game::setColorPicker(&colorPicker);
         Game::setGameFilesWindow(&gameFilesWindow);
-        GameTime* time = &Singleton<GameTime>::getInstance();
+        GameTime* time = &Singleton<GameTime>::getInstance().getData();
 
 
         bool save = false;

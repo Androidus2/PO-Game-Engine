@@ -215,7 +215,7 @@ void GameObject::startScripts() { //start all scripts
 void GameObject::updateScripts() { //update all scripts (called every frame), also moves the object
     //Reset the collisions ids
     collisionIds.clear();
-    float dt = Singleton<GameTime>::getInstance().getDeltaTime();
+    float dt = Singleton<GameTime>::getInstance().getData().getDeltaTime();
     move(velocity * dt);
     if (useGravity) {
         move(dt * dt * Vector2f(0, 9.81f * 100) / 2.f);
@@ -501,7 +501,7 @@ void Collider::handleAllCollisions(const vector<GameObject*>& objects, const vec
         Vector2f displacement = objects[i]->getPosition() - lastPositions[i];
 
         // If the object has moved in the opposite direction of its velocity, reset its velocity in that direction
-        float minMov = 0.01f * Singleton<GameTime>::getInstance().getDeltaTime();
+        float minMov = 0.01f * Singleton<GameTime>::getInstance().getData().getDeltaTime();
         if (displacement.x >= -minMov && objects[i]->getVelocity().x < 0) {
             objects[i]->setVelocity(Vector2f(0, objects[i]->getVelocity().y));
         }

@@ -90,7 +90,7 @@ bool Game::getIsPlaying() { //get if the game is playing
 }
 void Game::setIsPlaying(bool isPlaying) { //set if the game is playing
 	Game::isPlaying = isPlaying;
-	Singleton<GameTime>::getInstance().reset();
+	Singleton<GameTime>::getInstance().getData().reset();
 	if (isPlaying && currentScene) {
 		isOverGameWindow = true;
 		currentScene->startScene();

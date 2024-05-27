@@ -28,19 +28,19 @@ void KeyboardMoveScript::update(GameObject& gameObject)
 {
 	if (Keyboard::isKeyPressed(upKey))
 	{
-		gameObject.move(Vector2f(0, -moveSpeed.y * Singleton<GameTime>::getInstance().getDeltaTime()));
+		gameObject.move(Vector2f(0, -moveSpeed.y * Singleton<GameTime>::getInstance().getData().getDeltaTime()));
 	}
 	if (Keyboard::isKeyPressed(downKey))
 	{
-		gameObject.move(Vector2f(0, moveSpeed.y * Singleton<GameTime>::getInstance().getDeltaTime()));
+		gameObject.move(Vector2f(0, moveSpeed.y * Singleton<GameTime>::getInstance().getData().getDeltaTime()));
 	}
 	if (Keyboard::isKeyPressed(leftKey))
 	{
-		gameObject.move(Vector2f(-moveSpeed.x * Singleton<GameTime>::getInstance().getDeltaTime(), 0));
+		gameObject.move(Vector2f(-moveSpeed.x * Singleton<GameTime>::getInstance().getData().getDeltaTime(), 0));
 	}
 	if (Keyboard::isKeyPressed(rightKey))
 	{
-		gameObject.move(Vector2f(moveSpeed.x * Singleton<GameTime>::getInstance().getDeltaTime(), 0));
+		gameObject.move(Vector2f(moveSpeed.x * Singleton<GameTime>::getInstance().getData().getDeltaTime(), 0));
 	}
 }
 void KeyboardMoveScript::collision(GameObject& gameObject, GameObject& collisionObject)

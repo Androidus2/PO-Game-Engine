@@ -10,10 +10,14 @@ private:
 		std::cout<<"Singleton destroyed"<<std::endl;
 	}
 public:
-	static T& getInstance() {
+	static Singleton<T>& getInstance() {
 		static Singleton<T> instance;
-		return instance.data;
+		return instance;
 	}
 	Singleton(const Singleton&) = delete;
 	Singleton& operator=(const Singleton&) = delete;
+
+	T& getData() {
+		return data;
+	}
 };

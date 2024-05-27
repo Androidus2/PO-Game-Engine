@@ -69,7 +69,7 @@ void HoleyCastleMainScript::update(GameObject& object) {
 		else
 			healthText->setAttributeOnScripts(healthText->scriptIndex("TextScript"), 0, "Game Over");
 	}
-	timeSinceLastHole += Singleton<GameTime>::getInstance().getDeltaTime();
+	timeSinceLastHole += Singleton<GameTime>::getInstance().getData().getDeltaTime();
 	if (timeSinceLastHole >= 0.4f) {
 		//cout<<"Enough time has passed"<<endl;
 		if (Mouse::isButtonPressed(Mouse::Left) && Game::getIsOverGameWindow() && holesLeft > 0 && holeModel != nullptr) {

@@ -33,7 +33,7 @@ void InputField::draw(RenderWindow& window) const { //draw function
 }
 void InputField::update() { //update function
     if (isSelected) { //If the input field is selected, show the cursor
-        float t = fmod(Singleton<GameTime>::getInstance().getTime(), 1.0f);
+        float t = fmod(Singleton<GameTime>::getInstance().getData().getTime(), 1.0f);
         if (t < 0.7f) {
             string tmp = str;
             tmp.insert(cursorIndex, "|");
