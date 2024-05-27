@@ -77,3 +77,8 @@ PO Game Engine is a C++ and SFML based engine made in around 2 months which has 
 ---
 
 My choice of a game engine for the project stems from my passion of making games, primarly in Unity. I wanted a challenge for this project and I decided to try and recreate the basic features of Unity in the best way I could think of. It could be improved a lot, but it served its purpose of teaching me C++ and OOP concepts. In the future I do want to try making a game engine again, but this time I would try it in a more planned out manner rather than simply trying to implement features in the best way I can think of.
+
+---
+
+### Installation
+- This repository contains all the files necessary to run the project, but it does require Visual Studio Community with the C++ add-ons to work. After cloning, it is as simple as opening the solution file and pressing run.
